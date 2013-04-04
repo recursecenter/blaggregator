@@ -14,3 +14,11 @@ class User(models.Model):
     twitter     = models.CharField(max_length=200)
     irc         = models.CharField(max_length=200)
 
+class Blog(models.Model):
+
+    def __unicode__(self):
+        return self.feed_url
+
+    feed_url     = models.CharField(max_length=200)
+    user         = models.ForeignKey(User)
+    last_crawled = models.DateTimeField('last crawled')

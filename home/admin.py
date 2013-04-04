@@ -1,9 +1,11 @@
-from home.models import User
+from home.models import User, Blog
 from django.contrib import admin
 
 class HomeAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None,                  {'fields': ['email', 'first_name', 'last_name']}),
+        ('Hacker Schoolers',                  {'fields': ['email', 'first_name', 'last_name']}),
+        ('Blogs',                             {'fields': ['user', 'url']}),
     ]
 
 admin.site.register(User)
+admin.site.register(Blog)
