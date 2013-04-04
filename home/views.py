@@ -8,14 +8,13 @@ from home.models import User
 
 def login(request):
     if request.method == 'POST':
-        return HttpResponse(request.POST['email'])
-        email = request.params.email
-        password = request.params.password
-        resp = requests.post('https://www.hackerschool.com/auth', auth=('email', 'password'))
-        if resp.status_code == 200:
+        email = request.POST['email']
+        password = request.POST['password']
+        resp = requests.get('https://www.hackerschool.com/auth', params={'email':email, 'password':password})
+        if resp.status_code == requests.codes.ok:
             return HttpResponse("Success!")
         else:
-            return HttpResponse("Failed!")
+            return HttpResponse("Auth Failed! Error code %s" % resp.status_code)
     else:
         # todo: serve error!
         return render_to_response('home/login.html', {},
