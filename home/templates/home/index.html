@@ -1,0 +1,7 @@
+{% if current_user %}
+    <ul>
+        <li>Welcome, {{ current_user.first_name }} {{ current_user.last_name }}!</li>
+    </ul>
+{% else %}
+    <p>These are not the users you're looking for.</p>
+{% endif %}

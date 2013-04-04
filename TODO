@@ -1,6 +1,6 @@
 FOR VERSION 1.0
 
-[ ] add route for /profile/id
+[x] add route for /profile/id
 [ ] build profile template
 [ ] build login page and get successful 200 response
 [ ] handle incoming payload: if existing, show their profile. if not existing, add them to db and show their profile
