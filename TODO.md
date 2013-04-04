@@ -11,3 +11,4 @@ FOR FUTURE
 [x] add field for blog url in User model
 [ ] display the user's blogs, if any, on their profile page
 [ ] make some fields optional http://www.djangobook.com/en/2.0/chapter06.html
+[ ] add 404 handling to views
