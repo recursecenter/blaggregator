@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/Users/sasha/code/blaggregator/bin python
 import os
 import sys
 
