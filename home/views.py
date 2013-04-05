@@ -2,6 +2,7 @@ from django.http import HttpResponse
 from django.template import Context, loader, RequestContext
 from django.core.context_processors import csrf
 from django.shortcuts import render_to_response
+from home.models import User
 import requests
 
 from home.models import User
@@ -21,7 +22,17 @@ def login(request):
                 user = User.objects.get(hs_id = r['hs_id'])
                 return HttpResponse("Welcome back %s! Returning user %s" % (r['first_name'], r['hs_id']))
             except:
-                return HttpResponse("You're new here, %s. let's create your new account!" % r['first_name'])
+                # create a new account
+                user = User(email = email,
+                            hs_id = r['hs_id'],
+                            first_name = r['first_name'],
+                            last_name = r['last_name'],
+                            github = r['github'],
+                            twitter = r['twitter'],
+                            irc = r['irc']
+                            )
+                user.save()
+                return HttpResponse("Just created user %s with id %s" % (r['first_name'], r['hs_id']))
         else:
             return HttpResponse("Auth Failed! Error code %s" % resp.status_code)
     else:
