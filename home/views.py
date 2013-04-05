@@ -12,16 +12,16 @@ def login(request):
 
         email = request.POST['email']
         password = request.POST['password']
+
         resp = requests.get('https://www.hackerschool.com/auth', params={'email':email, 'password':password})
         r = resp.json()
-        first_name = r['first_name']
-        hs_id = r['hs_id']
 
         if resp.status_code == requests.codes.ok:
-            '''>>> resp.json
-            {u'first_name': u'Sasha', u'github': u'sursh', u'twitter': u'sashalaundy', u'last_name': u'Laundy', u'hs_id': 293, u'irc': u''}'''
-
-            return HttpResponse("Success! Logged in %s, user number %s" % (first_name, hs_id))
+            try:
+                user = User.objects.get(hs_id = r['hs_id'])
+                return HttpResponse("Welcome back %s! Returning user %s" % (r['first_name'], r['hs_id']))
+            except:
+                return HttpResponse("You're new here, %s. let's create your new account!" % r['first_name'])
         else:
             return HttpResponse("Auth Failed! Error code %s" % resp.status_code)
     else:
