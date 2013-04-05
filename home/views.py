@@ -7,12 +7,21 @@ import requests
 from home.models import User
 
 def login(request):
+    ''''''
     if request.method == 'POST':
+
         email = request.POST['email']
         password = request.POST['password']
         resp = requests.get('https://www.hackerschool.com/auth', params={'email':email, 'password':password})
+        r = resp.json()
+        first_name = r['first_name']
+        hs_id = r['hs_id']
+
         if resp.status_code == requests.codes.ok:
-            return HttpResponse("Success!")
+            '''>>> resp.json
+            {u'first_name': u'Sasha', u'github': u'sursh', u'twitter': u'sashalaundy', u'last_name': u'Laundy', u'hs_id': 293, u'irc': u''}'''
+
+            return HttpResponse("Success! Logged in %s, user number %s" % (first_name, hs_id))
         else:
             return HttpResponse("Auth Failed! Error code %s" % resp.status_code)
     else:
