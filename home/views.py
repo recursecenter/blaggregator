@@ -18,8 +18,8 @@ def login(request):
         if resp.status_code == requests.codes.ok:
             r = resp.json()
             try:
-                user = User.objects.get(id = r['hs_id'])
-                #return HttpResponse("Welcome back %s! Returning user %s" % (r['first_name'], r['hs_id']))
+                User.objects.get(id = r['hs_id'])
+                return HttpResponse("Welcome back %s! Returning user %s" % (r['first_name'], r['hs_id']))
             except:
                 # create a new account
                 username = r['first_name']+r['last_name']
@@ -32,7 +32,7 @@ def login(request):
                 user.hacker.irc = r['irc']
                 user.save()
                 user.hacker.save()
-                #return HttpResponse("Just created user %s with id %s" % (r['first_name'], r['hs_id']))
+                return HttpResponse("Just created user %s with id %s" % (r['first_name'], r['hs_id']))
             return render_to_response('home/new.html')
         else:
             return HttpResponse("Auth Failed! Error code %s. Please try again." % resp.status_code)
