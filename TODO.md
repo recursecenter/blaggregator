@@ -14,9 +14,8 @@ FOR VERSION 0.2: Full login flow with skeleton pages
 
 FOR VERSION 0.3: Sessions
 [M] implement django's built in user model
-[ ] auth users with django
+[ ] auth users with django left off [here](https://docs.djangoproject.com/en/dev/topics/auth/default/#topic-authorization) on `user = authenticate(username='john', password='secret')`
 [ ] make /new require a logged in user
-[ ] build an account edit page (that redirects to /new on save) (deferred until after native auth implemented) http://birdhouse.org/blog/2009/06/27/django-profiles/
 
 FOR VERSION 0.4: Handle their blogs
 [ ] expose blog field in the user profile & edit views
@@ -31,6 +30,7 @@ FOR VERSION 0.6: Auxiliary stuff
 [ ] Add GA
 
 FOR FUTURE
+[ ] build an account edit page (that redirects to /new on save) (deferred until after native auth implemented) http://birdhouse.org/blog/2009/06/27/django-profiles/
 [ ] if they just had a new account created, redirect them to the account edit page (deferred)
 [ ] implement auth with django's built-in lib, intercepting non-new emails
 [ ] make some fields optional http://www.djangobook.com/en/2.0/chapter06.html
