@@ -6,10 +6,10 @@ FOR VERSION 0.1: Handle user login and data
 [x] check the db for their hacker school username. display status page
 [x] add Blog model
 [x] if they're a new user, create a new account for them
-[ ] fix login/login redirection bug
+[-] fix login/login redirection bug
 
 FOR VERSION 0.2: Full login flow with skeleton pages
-[ ] if they have an account, forward them to the /new page on login
+[x] if they have an account, forward them to the /new page on login
 [ ] build an account edit page (that redirects to /new on save)
 [ ] if they just had a new account created, redirect them to the account edit page
 [ ] add 404 handling to views
@@ -33,3 +33,4 @@ FOR FUTURE
 [ ] make some fields optional http://www.djangobook.com/en/2.0/chapter06.html
 [ ] only allow you to view your own profile
 [ ] make a public profile view (aka what another user sees when they view your profile)
+[ ] make /new require a logged in user

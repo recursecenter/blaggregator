@@ -20,7 +20,7 @@ def login(request):
             r = resp.json()
             try:
                 user = User.objects.get(hs_id = r['hs_id'])
-                return HttpResponse("Welcome back %s! Returning user %s" % (r['first_name'], r['hs_id']))
+                #return HttpResponse("Welcome back %s! Returning user %s" % (r['first_name'], r['hs_id']))
             except:
                 # create a new account
                 user = User(email = email,
@@ -32,17 +32,14 @@ def login(request):
                             irc = r['irc']
                             )
                 user.save()
-                return HttpResponse("Just created user %s with id %s" % (r['first_name'], r['hs_id']))
+                #return HttpResponse("Just created user %s with id %s" % (r['first_name'], r['hs_id']))
+            return render_to_response('home/new.html')
         else:
             return HttpResponse("Auth Failed! Error code %s" % resp.status_code)
     else:
         # todo: serve error!
         return render_to_response('home/login.html', {},
                                    context_instance=RequestContext(request))
-
-def render_login_form():
-    template = loader.get_template('home/login.html')
-    return HttpResponse(template.render(RequestContext({})))
 
 def profile(request, user_id):
     current_user = User.objects.get(hs_id=user_id)
@@ -51,3 +48,6 @@ def profile(request, user_id):
         'current_user': current_user,
     })
     return HttpResponse(template.render(context))
+
+def new(request):
+    return render_to_response('home/new.html')
