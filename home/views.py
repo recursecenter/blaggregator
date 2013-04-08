@@ -17,8 +17,8 @@ def login(request):
         resp = requests.get('https://www.hackerschool.com/auth', params={'email':email, 'password':password})
 
         if resp.status_code == requests.codes.ok:
+            r = resp.json()
             try:
-                r = resp.json()
                 user = User.objects.get(hs_id = r['hs_id'])
                 return HttpResponse("Welcome back %s! Returning user %s" % (r['first_name'], r['hs_id']))
             except:
