@@ -1,11 +1,9 @@
 from django.http import HttpResponse, Http404
+from django.contrib.auth.models import User
 from django.template import Context, loader, RequestContext
 from django.core.context_processors import csrf
 from django.shortcuts import render_to_response
-from home.models import User
 import requests
-
-from home.models import User
 
 def login(request):
     ''''''
@@ -20,19 +18,20 @@ def login(request):
             r = resp.json()
             try:
                 user = User.objects.get(hs_id = r['hs_id'])
-                #return HttpResponse("Welcome back %s! Returning user %s" % (r['first_name'], r['hs_id']))
+                return HttpResponse("Welcome back %s! Returning user %s" % (r['first_name'], r['hs_id']))
             except:
                 # create a new account
-                user = User(email = email,
-                            hs_id = r['hs_id'],
-                            first_name = r['first_name'],
-                            last_name = r['last_name'],
-                            github = r['github'],
-                            twitter = r['twitter'],
-                            irc = r['irc']
-                            )
+                user = User.objects.create_user(r['first_name']+r['last_name'], email, password, id=r['hs_id'])
+                user.hs_id = r['hs_id']
+                user.first_name = r['first_name']
+                user.last_name = r['last_name']
+                user.github = r['github']
+                user.twitter = r['twitter']
+                user.irc = r['irc']
+
                 user.save()
-                #return HttpResponse("Just created user %s with id %s" % (r['first_name'], r['hs_id']))
+                uid = User.objects.get(username = "SashaLaundy")
+                return HttpResponse("Just created user %s with id %s" % (r['first_name'], uid.id))
             return render_to_response('home/new.html')
         else:
             return HttpResponse("Auth Failed! Error code %s" % resp.status_code)

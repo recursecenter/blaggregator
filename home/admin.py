@@ -1,4 +1,4 @@
-from home.models import User, Blog
+from home.models import Blog
 from django.contrib import admin
 
 class HomeAdmin(admin.ModelAdmin):
@@ -7,5 +7,5 @@ class HomeAdmin(admin.ModelAdmin):
         ('Blogs',                             {'fields': ['user', 'url']}),
     ]
 
-admin.site.register(User)
+# admin.site.register(User)
 admin.site.register(Blog)
