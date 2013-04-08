@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.template import Context, loader, RequestContext
 from django.core.context_processors import csrf
 from django.shortcuts import render_to_response
@@ -42,11 +42,14 @@ def login(request):
                                    context_instance=RequestContext(request))
 
 def profile(request, user_id):
-    current_user = User.objects.get(hs_id=user_id)
-    template = loader.get_template('home/index.html')
-    context = Context({
-        'current_user': current_user,
-    })
+    try:
+        current_user = User.objects.get(hs_id=user_id)
+        template = loader.get_template('home/index.html')
+        context = Context({
+            'current_user': current_user,
+        })
+    except User.DoesNotExist:
+        raise Http404
     return HttpResponse(template.render(context))
 
 def new(request):

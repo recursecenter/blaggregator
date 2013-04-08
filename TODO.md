@@ -10,12 +10,13 @@ FOR VERSION 0.1: Handle user login and data
 
 FOR VERSION 0.2: Full login flow with skeleton pages
 [x] if they have an account, forward them to the /new page on login
-[ ] build an account edit page (that redirects to /new on save)
-[ ] if they just had a new account created, redirect them to the account edit page
-[ ] add 404 handling to views
+[x] add 404 handling to views
 
 FOR VERSION 0.3: Sessions
+[ ] implement auth with django's built-in lib
 [ ] recognize logged in users with cookies https://docs.djangoproject.com/en/dev/topics/http/sessions/
+[ ] build an account edit page (that redirects to /new on save) (deferred until after native auth implemented)
+[ ] if they just had a new account created, redirect them to the account edit page (deferred)
 
 FOR VERSION 0.4: Handle their blogs
 [ ] expose blog field in the user profile & edit views
@@ -33,4 +34,5 @@ FOR FUTURE
 [ ] make some fields optional http://www.djangobook.com/en/2.0/chapter06.html
 [ ] only allow you to view your own profile
 [ ] make a public profile view (aka what another user sees when they view your profile)
+[ ] redirect /profile to the profile of the logged-in user
 [ ] make /new require a logged in user
