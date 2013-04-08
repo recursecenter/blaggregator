@@ -14,9 +14,9 @@ FOR VERSION 0.2: Full login flow with skeleton pages
 
 FOR VERSION 0.3: Sessions
 [ ] implement auth with django's built-in lib
-[ ] recognize logged in users with cookies https://docs.djangoproject.com/en/dev/topics/http/sessions/
 [ ] build an account edit page (that redirects to /new on save) (deferred until after native auth implemented)
 [ ] if they just had a new account created, redirect them to the account edit page (deferred)
+[ ] recognize logged in users with cookies https://docs.djangoproject.com/en/dev/topics/http/sessions/
 
 FOR VERSION 0.4: Handle their blogs
 [ ] expose blog field in the user profile & edit views
