@@ -13,6 +13,7 @@ FOR VERSION 0.2: Full login flow with skeleton pages
 [x] add 404 handling to views
 
 FOR VERSION 0.3: Sessions
+[x] implement django's built in user model
 [ ] implement auth with django's built-in lib
 [ ] build an account edit page (that redirects to /new on save) (deferred until after native auth implemented)
 [ ] if they just had a new account created, redirect them to the account edit page (deferred)

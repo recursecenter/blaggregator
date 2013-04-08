@@ -1,18 +1,14 @@
 from django.db import models
+from django.contrib.auth.models import User
 
-# class User(models.Model):
-
-#     def __unicode__(self):
-#         return self.email
-
-#     email       = models.EmailField(max_length=200)
-#     avatar_url  = models.CharField(max_length=400)
-#     hs_id       = models.IntegerField(default=0)
-#     first_name  = models.CharField(max_length=200)
-#     last_name   = models.CharField(max_length=200)
-#     github      = models.CharField(max_length=200)
-#     twitter     = models.CharField(max_length=200)
-#     irc         = models.CharField(max_length=200)
+# extends the User class to hold additional profile info
+# access with u.hacker.github (where u is user object instance)
+class Hacker(models.Model):
+    user = models.OneToOneField(User)
+    avatar_url  = models.CharField(max_length=400)
+    github      = models.CharField(max_length=200)
+    twitter     = models.CharField(max_length=200)
+    irc         = models.CharField(max_length=200)
 
 class Blog(models.Model):
 
