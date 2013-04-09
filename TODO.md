@@ -14,8 +14,9 @@ FOR VERSION 0.2: Full login flow with skeleton pages
 
 FOR VERSION 0.3: Sessions
 [M] implement django's built in user model
-[ ] auth users with django left off [here](https://docs.djangoproject.com/en/dev/topics/auth/default/#topic-authorization) on `user = authenticate(username='john', password='secret')`
+[M] auth users with django left off [here](https://docs.djangoproject.com/en/dev/topics/auth/default/#topic-authorization) on `user = authenticate(username='john', password='secret')`
 [ ] make /new require a logged in user
+[ ] refactor login view to have a separate login and create_account views
 
 FOR VERSION 0.4: Handle their blogs
 [ ] expose blog field in the user profile & edit views
