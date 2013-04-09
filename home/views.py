@@ -1,6 +1,7 @@
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 from django.template import Context, loader, RequestContext
 from django.core.context_processors import csrf
 from django.shortcuts import render_to_response
@@ -19,7 +20,8 @@ def log_in(request):
             # if user exists locally:
             if user.is_active:
                 login(request, user)
-                return HttpResponse("Welcome back, returning user %s!" % (email))
+                #return HttpResponse("Welcome back, returning user %s!" % (email))
+                return HttpResponseRedirect('/new')
             else:
                 return HttpResponse("Your account is disabled. Please contact administrator for help.")
 
@@ -31,7 +33,7 @@ def log_in(request):
                 r = resp.json()
                 try:
                     User.objects.get(id = r['hs_id'])
-                    return HttpResponse("Welcome back %s! Returning user %s" % (r['first_name'], r['hs_id']))
+                    return HttpResponseRedirect('/new')
                 except:
                     # create a new account
                     username = r['first_name']+r['last_name']
@@ -49,7 +51,6 @@ def log_in(request):
             else:
                 return HttpResponse("Auth Failed! (%s). Please hit 'back' and try again." % resp.status_code)
     else:
-        # todo: serve error!
         return render_to_response('home/log_in.html', {},
                                    context_instance=RequestContext(request))
 
@@ -64,5 +65,6 @@ def profile(request, user_id):
         raise Http404
     return HttpResponse(template.render(context))
 
+@login_required(login_url='/log_in')
 def new(request):
     return render_to_response('home/new.html')
