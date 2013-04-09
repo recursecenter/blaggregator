@@ -1,5 +1,5 @@
 from django.http import HttpResponse, Http404
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.template import Context, loader, RequestContext
 from django.core.context_processors import csrf
@@ -7,7 +7,7 @@ from django.shortcuts import render_to_response
 from home.models import Hacker
 import requests
 
-def login(request):
+def log_in(request):
     ''''''
     if request.method == 'POST':
         email = request.POST['email']
@@ -18,6 +18,7 @@ def login(request):
         if user is not None:
             # if user exists locally:
             if user.is_active:
+                login(request, user)
                 return HttpResponse("Welcome back, returning user %s!" % (email))
             else:
                 return HttpResponse("Your account is disabled. Please contact administrator for help.")
@@ -49,7 +50,7 @@ def login(request):
                 return HttpResponse("Auth Failed! (%s). Please hit 'back' and try again." % resp.status_code)
     else:
         # todo: serve error!
-        return render_to_response('home/login.html', {},
+        return render_to_response('home/log_in.html', {},
                                    context_instance=RequestContext(request))
 
 def profile(request, user_id):

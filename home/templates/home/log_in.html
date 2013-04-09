@@ -1,0 +1,16 @@
+<h1>Please log in with your Hacker School credentials</h1>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<form action="log_in" method="post">
+
+{% csrf_token %}
+
+    <label for="email">Email</label>
+    <input data-validate="email, notEmpty" type="text" name="email" />
+    <label for="password">Password</label>
+    <input data-validate="notEmpty" type="password" name="password" />
+
+<input type="submit" value="Log In" />
+
+</form>
