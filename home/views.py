@@ -11,6 +11,7 @@ import requests
 def log_in(request):
     ''''''
     if request.method == 'POST':
+
         email = request.POST['email']
         password = request.POST['password']
 
@@ -26,34 +27,41 @@ def log_in(request):
                 return HttpResponse("Your account is disabled. Please contact administrator for help.")
 
         else:
-            # this is an unknown user, try to auth against Hacker School
-            resp = requests.get('https://www.hackerschool.com/auth', params={'email':email, 'password':password})
-
-            if resp.status_code == requests.codes.ok:
-                r = resp.json()
-                try:
-                    User.objects.get(id = r['hs_id'])
-                    return HttpResponseRedirect('/new')
-                except:
-                    # create a new account
-                    username = r['first_name']+r['last_name']
-                    user = User.objects.create_user(username, email, password, id=r['hs_id'])
-                    Hacker.objects.create(user=User.objects.get(id=r['hs_id']))
-                    user.first_name = r['first_name']
-                    user.last_name = r['last_name']
-                    user.hacker.github = r['github']
-                    user.hacker.twitter = r['twitter']
-                    user.hacker.irc = r['irc']
-                    user.save()
-                    user.hacker.save()
-                    return HttpResponse("Just created user %s with id %s" % (r['first_name'], r['hs_id']))
-                return render_to_response('home/new.html')
-            else:
-                return HttpResponse("Auth Failed! (%s). Please hit 'back' and try again." % resp.status_code)
+            return HttpResponse("Auth Failed! Please hit 'back' and try again.")
     else:
         return render_to_response('home/log_in.html', {},
                                    context_instance=RequestContext(request))
 
+def create_account(request):
+    if request.method == 'POST':
+
+        email = request.POST['email']
+        password = request.POST['password']
+
+        if User.objects.filter(email=email).count() > 0:
+            return HttpResponse("You already have an account. Please <a href='/log_in'>log in</a> instead.")
+
+        resp = requests.get('https://www.hackerschool.com/auth', params={'email':email, 'password':password})
+
+        if resp.status_code == requests.codes.ok:
+            r = resp.json()
+            # create a new account
+            username = r['first_name']+r['last_name']
+            user = User.objects.create_user(username, email, password, id=r['hs_id'])
+            Hacker.objects.create(user=User.objects.get(id=r['hs_id']))
+            user.first_name = r['first_name']
+            user.last_name = r['last_name']
+            user.hacker.github = r['github']
+            user.hacker.twitter = r['twitter']
+            user.hacker.irc = r['irc']
+            user.save()
+            user.hacker.save()
+            return HttpResponse("Just created user %s with id %s" % (r['first_name'], r['hs_id']))
+        else:
+            return HttpResponse("Auth Failed! (%s). Please hit 'back' and try again." % resp.status_code)
+    return render_to_response('home/create_account.html', {}, context_instance=RequestContext(request))
+
+@login_required(login_url='/log_in')
 def profile(request, user_id):
     try:
         current_user = User.objects.get(id=user_id)

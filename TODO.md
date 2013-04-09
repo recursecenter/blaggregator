@@ -15,10 +15,11 @@ FOR VERSION 0.2: Full login flow with skeleton pages
 FOR VERSION 0.3: Sessions
 [M] implement django's built in user model
 [M] auth users with django left off [here](https://docs.djangoproject.com/en/dev/topics/auth/default/#topic-authorization) on `user = authenticate(username='john', password='secret')`
-[ ] make /new require a logged in user
+[M] make /new require a logged in user
 [ ] refactor login view to have a separate login and create_account views
 
-FOR VERSION 0.4: Handle their blogs
+FOR VERSION 0.4: Profiles ++: Handle their blogs
+[ ] ask for blog URL as part of account creation process
 [ ] expose blog field in the user profile & edit views
 [ ] make /new template that lists links to everyone's blogs
 
