@@ -5,8 +5,9 @@ from django.contrib.auth.decorators import login_required
 from django.template import Context, loader, RequestContext
 from django.core.context_processors import csrf
 from django.shortcuts import render_to_response
-from home.models import Hacker
+from home.models import Hacker, Blog
 import requests
+import datetime
 
 def log_in(request):
     ''''''
@@ -76,8 +77,11 @@ def create_account(request):
 def add_blog(request):
     if request.method == 'POST':
         if request.POST['feed_url']:
-            feed_url = request.POST['feed_url']
-            return HttpResponse("your feed url is %s" % feed_url)
+            blog = Blog.objects.create(user=User.objects.get(id=request.user.id),
+                                       feed_url=request.POST['feed_url'],
+                                       created=datetime.datetime.now())
+            blog.save()
+            return HttpResponseRedirect('/new')
         else:
             return HttpResponse("Got post request with no feed URL yet")
     else:

@@ -17,4 +17,5 @@ class Blog(models.Model):
 
     user         = models.ForeignKey(User)
     feed_url     = models.CharField(max_length=200)
-    last_crawled = models.DateTimeField('last crawled')
+    last_crawled = models.DateTimeField('last crawled', blank=True, null=True)
+    created      = models.DateTimeField('date created')
