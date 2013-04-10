@@ -15,6 +15,6 @@ class Blog(models.Model):
     def __unicode__(self):
         return self.feed_url
 
+    user         = models.ForeignKey(User)
     feed_url     = models.CharField(max_length=200)
-    # user         = models.ForeignKey(User)
     last_crawled = models.DateTimeField('last crawled')

@@ -19,7 +19,7 @@ FOR VERSION 0.3: Sessions
 [M] refactor login view to have a separate login and create_account views
 
 FOR VERSION 0.4: Profiles++: Handle their blogs
-[T] forward successfully created accounts to a page that asks for their blog feed url
+[T/W] forward successfully created accounts to a page that asks for their blog feed url
 [ ] fix the models so the blog connects to a user
 [ ] expose blog url in the admin interface
 [ ] make /new template that lists links to everyone's blogs
