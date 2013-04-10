@@ -41,11 +41,12 @@ def create_account(request):
         if User.objects.filter(email=email).count() > 0:
             return HttpResponse("You already have an account. Please <a href='/log_in'>log in</a> instead.")
 
+        # auth against hacker school and create a new local account
         resp = requests.get('https://www.hackerschool.com/auth', params={'email':email, 'password':password})
-
         if resp.status_code == requests.codes.ok:
             r = resp.json()
-            # create a new account
+
+            # construct new local account
             username = r['first_name']+r['last_name']
             user = User.objects.create_user(username, email, password, id=r['hs_id'])
             Hacker.objects.create(user=User.objects.get(id=r['hs_id']))
@@ -56,10 +57,31 @@ def create_account(request):
             user.hacker.irc = r['irc']
             user.save()
             user.hacker.save()
-            return HttpResponse("Just created user %s with id %s" % (r['first_name'], r['hs_id']))
+
+            # auth and log in locally
+            current_user = authenticate(username=username, password=password)
+            login(request, current_user)
+
+            #return HttpResponse("Just created user %s with id %s" % (r['first_name'], r['hs_id']))
+            template = loader.get_template('home/add_blog.html')
+            context = RequestContext(request, {
+                'current_user': current_user,
+            })
+            return HttpResponse(template.render(context))
         else:
             return HttpResponse("Auth Failed! (%s). Please hit 'back' and try again." % resp.status_code)
     return render_to_response('home/create_account.html', {}, context_instance=RequestContext(request))
+
+@login_required(login_url='/log_in')
+def add_blog(request):
+    if request.method == 'POST':
+        if request.POST['feed_url']:
+            feed_url = request.POST['feed_url']
+            return HttpResponse("your feed url is %s" % feed_url)
+        else:
+            return HttpResponse("Got post request with no feed URL yet")
+    else:
+        return HttpResponseRedirect('/new')
 
 @login_required(login_url='/log_in')
 def profile(request, user_id):

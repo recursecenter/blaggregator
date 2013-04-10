@@ -1,0 +1,16 @@
+<h1>Don't be shy - we'd love to see your blog!</h1>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<form action="/add_blog/" method="post">
+
+{% csrf_token %}
+
+    <label for="feed_url">Feed URL</label>
+    <input type="text" name="feed_url" />
+
+<input type="submit" value="Add blog" />
+
+<a href="/new">Skip this step</a>
+
+</form>

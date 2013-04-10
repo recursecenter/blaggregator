@@ -7,4 +7,5 @@ urlpatterns = patterns('',
     url(r'^create_account', views.create_account, name='create_account'),
     url(r'^profile/(?P<user_id>\d+)/$', views.profile, name='profile'),
     url(r'^new/', views.new, name='new'),
+    url(r'^add_blog/', views.add_blog),
 )
