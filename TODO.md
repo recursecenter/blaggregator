@@ -23,7 +23,9 @@ FOR VERSION 0.4: Profiles++: Handle their blogs
 [W] fix the models so the blog connects to a user
 [W] expose blog url in the admin interface
 [W] make some profile fields optional http://www.djangobook.com/en/2.0/chapter06.html
-[ ] make /new template that lists links to everyone's blogs
+[W] make /new template that lists links to everyone's blogs
+[ ] display First Last rather than FirstLast (need to pull first_name and last_name from the user database that corresponds to the blog instance)
+[ ] fix the link so that it goes to the blog, not to the feed
 
 FOR VERSION 0.5: Vanity
 [ ] Add Twitter Bootstrap themes

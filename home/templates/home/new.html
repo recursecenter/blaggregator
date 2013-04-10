@@ -1,3 +1,9 @@
-<h1>New</h1>
+<h1>Here are all the blogs!</h1>
 
-This is where the new blog posts will go.
+<div class="container">
+    {% for blog in blogList %}
+    <div>
+        <a href="{{ blog.feed_url }}">{{ blog.user }}</a>
+    </div>
+    {% endfor %}
+</div>
