@@ -10,7 +10,6 @@ import requests
 import datetime
 
 def log_in(request):
-    ''''''
     if request.method == 'POST':
 
         email = request.POST['email']

@@ -24,10 +24,6 @@ FOR VERSION 0.4: Profiles++: Handle their blogs
 [W] expose blog url in the admin interface
 [W] make some profile fields optional http://www.djangobook.com/en/2.0/chapter06.html
 [ ] make /new template that lists links to everyone's blogs
-[ ] create profile views /profile/293
-[ ] create edit profile view /profile/edit
-[ ] have "edit" button only appear on your own profile
-[ ] expose blog field in the user profile & edit views
 
 FOR VERSION 0.5: Vanity
 [ ] Add Twitter Bootstrap themes
@@ -40,7 +36,10 @@ FOR VERSION 0.6: Put all posts into /new
 [ ] Show them in the /new view - title, author, link
 
 FOR FUTURE
-
+[ ] create profile views /profile/293
+[ ] create edit profile view /profile/edit
+[ ] have "edit" button only appear on your own profile
+[ ] expose blog field in the user profile & edit views
 [ ] make a public profile view (aka what another user sees when they view your profile)
 [ ] redirect /profile to the profile of the logged-in user
 [ ] Maybe add more content to the external view to the outside world
