@@ -101,26 +101,16 @@ def profile(request, user_id):
 @login_required(login_url='/log_in')
 def new(request):
 
-    blogList = list(Blog.objects.all()) # this is janky fix later
+    blogList = list(Blog.objects.all()) # this is janky but temporary
 
     context = Context({
         "blogList": blogList
-        })
+    })
 
     return render_to_response('home/new.html',
                               context,
                               context_instance=RequestContext(request))
 
-'''
 
-<h1>All the blogs!</h1>
 
-<div class="container">
-    {% for blog in blogList %}
-    <div>
-        <a href="{{ blog.url }}">{{ blog.name }}</a>
-    </div>
-    {% endfor %}
-</div>
 
-'''
