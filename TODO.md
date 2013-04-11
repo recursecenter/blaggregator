@@ -30,17 +30,18 @@ FOR VERSION 0.4: Profiles++: Handle their blogs
 - [R] fix the link so that it goes to the blog, not to the feed
 - [R] add 'or create account' link to the login page
 
-FOR VERSION 0.5: Vanity
+FOR VERSION 0.5: MVP
 - [ ] Add Twitter Bootstrap themes
+- [ ] Deploy to Heroku and get people to start signing into it. 
 - [ ] Add GA
-- [ ] Add flash messaging (this might still work in 1.5 https://groups.google.com/forum/?fromgroups=#!topic/django-users/1YtRSukvviE)
-- [ ] Also useful https://docs.djangoproject.com/en/dev/ref/contrib/messages/
 
 FOR VERSION 0.6: Put all posts into /new
 - [ ] Pull Planet's spider and scraper to grab ALL new posts
 - [ ] Show them in the /new view - title, author, link
 
 FOR FUTURE
+- [ ] Add flash messaging (this might still work in 1.5 https://groups.google.com/forum/?fromgroups=#!topic/django-users/1YtRSukvviE)
+- [ ] Also useful https://docs.djangoproject.com/en/dev/ref/contrib/messages/
 - [ ] check the submitted blog url to make sure it returns a 200
 - [ ] create profile views /profile/293
 - [ ] create edit profile view /profile/edit
@@ -48,3 +49,4 @@ FOR FUTURE
 - [ ] expose blog field in the user profile & edit views
 - [ ] make a public profile view (aka what another user sees when they view your profile)
 - [ ] redirect /profile to the profile of the logged-in user
+- [ ] graphs of blogging over time. github timestamp
