@@ -27,8 +27,8 @@ FOR VERSION 0.4: Profiles++: Handle their blogs
 [R] add 'url' to the Blog model
 [R] display First Last rather than FirstLast (need to pull first_name and last_name from the user database that corresponds to the blog instance)
 [R] make sure links start with http://
-[ ] fix the link so that it goes to the blog, not to the feed
-[ ] add 'or create account' link to the login page
+[R] fix the link so that it goes to the blog, not to the feed
+[R] add 'or create account' link to the login page
 
 FOR VERSION 0.5: Vanity
 [ ] Add Twitter Bootstrap themes
