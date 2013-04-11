@@ -103,8 +103,13 @@ def new(request):
 
     blogList = list(Blog.objects.all()) # this is janky but temporary
 
+    for blog in blogList:
+        first_name  = User.objects.get(id=blog.user_id).first_name
+        last_name   = User.objects.get(id=blog.user_id).last_name
+        blog.author = first_name + " " + last_name
+
     context = Context({
-        "blogList": blogList
+        "blogList": blogList,
     })
 
     return render_to_response('home/new.html',
