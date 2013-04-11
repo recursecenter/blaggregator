@@ -26,7 +26,7 @@ FOR VERSION 0.4: Profiles++: Handle their blogs
 [W] make /new template that lists links to everyone's blogs
 [R] add 'url' to the Blog model
 [R] display First Last rather than FirstLast (need to pull first_name and last_name from the user database that corresponds to the blog instance)
-[ ] make sure links start with http://
+[R] make sure links start with http://
 [ ] fix the link so that it goes to the blog, not to the feed
 [ ] add 'or create account' link to the login page
 
@@ -41,6 +41,7 @@ FOR VERSION 0.6: Put all posts into /new
 [ ] Show them in the /new view - title, author, link
 
 FOR FUTURE
+[ ] check the submitted blog url to make sure it returns a 200
 [ ] create profile views /profile/293
 [ ] create edit profile view /profile/edit
 [ ] have "edit" button only appear on your own profile

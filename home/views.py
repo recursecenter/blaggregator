@@ -76,13 +76,23 @@ def create_account(request):
 def add_blog(request):
     if request.method == 'POST':
         if request.POST['feed_url']:
-            blog = Blog.objects.create(user=User.objects.get(id=request.user.id),
-                                       feed_url=request.POST['feed_url'],
-                                       created=datetime.datetime.now())
+
+            feed_url = request.POST['feed_url']
+
+            # add http prefix if missing
+            if feed_url[:4] != "http":
+                feed_url = "http://" + feed_url
+
+            # create new blog record in db
+            blog = Blog.objects.create(
+                                        user=User.objects.get(id=request.user.id),
+                                        feed_url=feed_url,
+                                        created=datetime.datetime.now()
+                                       )
             blog.save()
             return HttpResponseRedirect('/new')
         else:
-            return HttpResponse("Got post request with no feed URL yet")
+            return HttpResponse("I didn't get your feed URL. Please go back and try again.")
     else:
         return HttpResponseRedirect('/new')
 
