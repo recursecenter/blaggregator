@@ -8,6 +8,7 @@ from django.shortcuts import render_to_response
 from home.models import Hacker, Blog
 import requests
 import datetime
+import re
 
 def log_in(request):
     if request.method == 'POST':
@@ -79,15 +80,23 @@ def add_blog(request):
 
             feed_url = request.POST['feed_url']
 
-            # add http prefix if missing
+            # add http:// prefix if missing
             if feed_url[:4] != "http":
                 feed_url = "http://" + feed_url
+
+            # pull out human-readable url from feed_url
+            # (naively - later we will crawl blog url for feed url)
+            if re.search('atom.xml/*$', feed_url):
+                url = re.sub('atom.xml/*$', '', feed_url)
+            elif re.search('rss/*$', feed_url):
+                url = re.sub('rss/*$', '', feed_url)
 
             # create new blog record in db
             blog = Blog.objects.create(
                                         user=User.objects.get(id=request.user.id),
                                         feed_url=feed_url,
-                                        created=datetime.datetime.now()
+                                        url=url,
+                                        created=datetime.datetime.now(),
                                        )
             blog.save()
             return HttpResponseRedirect('/new')

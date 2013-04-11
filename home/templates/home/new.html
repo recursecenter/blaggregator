@@ -3,7 +3,7 @@
 <div class="container">
     {% for blog in blogList %}
     <div>
-        <a href="{{ blog.feed_url }}">{{ blog.author }}</a>
+        <a href="{{ blog.url }}">{{ blog.author }}</a>
     </div>
     {% endfor %}
 </div>
