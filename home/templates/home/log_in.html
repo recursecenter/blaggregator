@@ -1,18 +1,34 @@
-<h1>Please log in!</h1>
+{% extends "home/base.html" %}
 
-{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+{% block pagetitle %}Blaggregator{% endblock %}
 
-<form action="log_in" method="post">
+{% block firstName %}{{ user.first_name }}{% endblock %}
 
-{% csrf_token %}
+{% block title %}
+    Please log in!
+{% endblock %}
 
-    <label for="email">Username (FirstLast)</label>
-    <input data-validate="email, notEmpty" type="text" name="email" />
-    <label for="password">Password</label>
-    <input data-validate="notEmpty" type="password" name="password" />
+{% block content %}
 
-<input type="submit" value="Log In" />
+    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
-</form>
+    <form action="log_in" method="post">
 
-<div><a href="/create_account">or create a new account</a></div>
+    {% csrf_token %}
+
+        <label for="email">Username (FirstLast)</label>
+        <input data-validate="email, notEmpty" type="text" name="email" />
+        <label for="password">Password</label>
+        <input data-validate="notEmpty" type="password" name="password" />
+
+    <input type="submit" value="Log In" />
+
+    </form>
+
+    <div><a href="/create_account">or create a new account</a></div>
+
+
+{% endblock %}
+
+
+

@@ -1,16 +1,28 @@
-<h1>Don't be shy - we'd love to see your blog!</h1>
+{% extends "home/base.html" %}
 
-{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+{% block pagetitle %}Blaggregator{% endblock %}
 
-<form action="/add_blog/" method="post">
+{% block firstName %}{{ user.first_name }}{% endblock %}
 
-{% csrf_token %}
+{% block title %}
+    Don't be shy - we'd love to see your blog!
+{% endblock %}
 
-    <label for="feed_url">Feed URL</label>
-    <input type="text" name="feed_url" />
+{% block content %}
 
-<input type="submit" value="Add blog" />
+    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
-<a href="/new">Skip this step</a>
+    <form action="/add_blog/" method="post">
 
-</form>
+    {% csrf_token %}
+
+        <label for="feed_url">Feed URL</label>
+        <input type="text" name="feed_url" />
+
+    <input type="submit" value="Add blog" />
+
+    <a href="/new">Skip this step</a>
+
+    </form>
+
+{% endblock %}

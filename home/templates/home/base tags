@@ -5,26 +5,14 @@
 {% block firstName %}{{ user.first_name }}{% endblock %}
 
 {% block title %}
-    Here are all the blogs! Individual posts coming soon.
+
 {% endblock %}
 
 {% block content %}
 
     {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
-    <div class="container">
-        {% for blog in blogList %}
-            <div>
-                <a href="{{ blog.url }}">{{ blog.author }}</a>
-            </div>
-        {% endfor %}
-    </div>
 
 
 
 {% endblock %}
-
-
-
-
-

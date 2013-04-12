@@ -32,9 +32,10 @@ FOR VERSION 0.4: Profiles++: Handle their blogs
 
 FOR VERSION 0.5: Bootstrap
 - [R] Add Twitter Bootstrap themes
-- [ ] Add navbar fixed to the top with title and logged in user firstname
-- [ ] Style the login/account forms
-- [ ] Style /new
+- [F] Add navbar fixed to the top with title and logged in user firstname
+- [F] Style the login/account forms
+- [F] Style /new
+- [ ] Style all forms
 - [ ] Deploy to Heroku and get people to start signing into it. 
 
 FOR VERSION 0.6: Put all posts into /new
