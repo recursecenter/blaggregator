@@ -42,6 +42,7 @@ FOR VERSION 0.6: Put all posts into /new
 - [ ] Show them in the /new view - title, author, link
 
 FOR FUTURE
+- [ ] add responsive layouts with bootstrap?
 - [ ] Add GA
 - [ ] Add flash messaging (this might still work in 1.5 https://groups.google.com/forum/?fromgroups=#!topic/django-users/1YtRSukvviE)
 - [ ] Also useful https://docs.djangoproject.com/en/dev/ref/contrib/messages/
