@@ -5,11 +5,15 @@
 {% block firstName %}{{ user.first_name }}{% endblock %}
 
 {% block title %}
-    You're new here! Want to create an account? You only need to do this once.
+
 {% endblock title %}
 
 
 {% block content %}
+
+<div class="well span6 offset3">
+
+    <h2 class="text-center" style="margin-bottom:20px">Welcome! Create an account.</h2>
 
     <form class="form-horizontal" action="create_account" method="post">
     {% csrf_token %}
@@ -32,6 +36,7 @@
         </div>
       </div>
     </form>
+</div>
 
 {% endblock %}
 
