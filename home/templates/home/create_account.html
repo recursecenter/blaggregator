@@ -8,24 +8,30 @@
     You're new here! Want to create an account? You only need to do this once.
 {% endblock title %}
 
+
 {% block content %}
 
-    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+    <form class="form-horizontal" action="create_account" method="post">
+    {% csrf_token %}
 
-    <form action="create_account" method="post">
-
-        {% csrf_token %}
-
-            <label for="email">Email on Hacker School account</label>
-            <input data-validate="email, notEmpty" type="text" name="email" />
-            <label for="password">Hacker School Password</label>
-            <input data-validate="notEmpty" type="password" name="password" />
-
-        <input type="submit" value="Log In" />
-
+      <div class="control-group">
+        <label class="control-label" for="email">Email</label>
+        <div class="controls">
+          <input type="email" name="email" placeholder="Hacker School Email">
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="inputPassword">Password</label>
+        <div class="controls">
+          <input type="password" name="password" placeholder="Password">
+        </div>
+      </div>
+      <div class="control-group">
+        <div class="controls">
+          <button type="submit" class="btn">Create account</button>
+        </div>
+      </div>
     </form>
 
 {% endblock %}
-
-
 

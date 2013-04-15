@@ -5,27 +5,47 @@
 {% block firstName %}{{ user.first_name }}{% endblock %}
 
 {% block title %}
-    Please log in!
+
 {% endblock %}
 
 {% block content %}
 
     {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+    <div class="well span6 offset3">
 
-    <form action="log_in" method="post">
+        <h2 class="text-center" style="margin-bottom:20px">Please log in</h2>
 
-    {% csrf_token %}
+        <div style="margin-right:auto; margin-left:auto;">
+            <form class="form-horizontal" action="log_in" method="post">
+            {% csrf_token %}
 
-        <label for="email">Username (FirstLast)</label>
-        <input data-validate="email, notEmpty" type="text" name="email" />
-        <label for="password">Password</label>
-        <input data-validate="notEmpty" type="password" name="password" />
+              <div class="control-group">
+                <label class="control-label" for="email">Username</label>
+                <div class="controls">
+                  <input type="text" name="email" placeholder="FirstLast" autofocus>
+                </div>
+              </div>
+              <div class="control-group">
+                <label class="control-label" for="inputPassword">Password</label>
+                <div class="controls">
+                  <input type="password" name="password" placeholder="Password">
+                </div>
+              </div>
+              <div class="control-group">
+                <div class="controls">
+                  <button type="submit" class="btn">Sign in</button>
+                </div>
+              </div>
 
-    <input type="submit" value="Log In" />
+            <div class="text-center">
+                <a href="/create_account">or create a new account</a>
+            </div>
 
-    </form>
 
-    <div><a href="/create_account">or create a new account</a></div>
+            </form>
+        </div>
+</div>
+
 
 
 {% endblock %}

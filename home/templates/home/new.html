@@ -12,14 +12,17 @@
 
     {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
-    <div class="container">
-        {% for blog in blogList %}
-            <div>
-                <a href="{{ blog.url }}">{{ blog.author }}</a>
-            </div>
-        {% endfor %}
+{% for blog in blogList %}
+    <div class="media">
+      <a class="pull-left" href="#">
+        <img class="media-object" src="/static/img/holder64x64.png">
+      </a>
+      <div class="media-body">
+        <h4 class="media-heading">{{ blog.author }}</h4>
+        <a href="{{ blog.url }}">Blog</a>
+      </div>
     </div>
-
+        {% endfor %}
 
 
 {% endblock %}

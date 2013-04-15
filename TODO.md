@@ -35,7 +35,7 @@ FOR VERSION 0.5: Bootstrap
 - [F] Add navbar fixed to the top with title and logged in user firstname
 - [F] Style the login/account forms
 - [F] Style /new
-- [ ] Style all forms
+- [M] Style all forms
 - [ ] Deploy to Heroku and get people to start signing into it. 
 
 FOR VERSION 0.6: Put all posts into /new
@@ -43,6 +43,7 @@ FOR VERSION 0.6: Put all posts into /new
 - [ ] Show them in the /new view - title, author, link
 
 FOR FUTURE
+- [ ] Fix "Welcome Firstname!" bug - template processors are probably the issues here
 - [ ] add responsive layouts with bootstrap?
 - [ ] Add GA
 - [ ] Add flash messaging (this might still work in 1.5 https://groups.google.com/forum/?fromgroups=#!topic/django-users/1YtRSukvviE)
@@ -55,3 +56,4 @@ FOR FUTURE
 - [ ] make a public profile view (aka what another user sees when they view your profile)
 - [ ] redirect /profile to the profile of the logged-in user
 - [ ] graphs of blogging over time. github timestamp
+- [ ] redirect /log_in if they're already logged in

@@ -15,7 +15,7 @@
                 <a class="brand" href="#">HackerSchool.Blaggregator</a>
 
                 <ul class="nav pull-right">
-                    <li><a>Welcome, {% block firstName %}{% endblock %}</a></li>
+                    <li><a>Welcome{% if user.is_authenicated %} {% block firstName %}{% endblock firstName%}{% endif %}!</a></li>
                 </ul>
 
             </div>
