@@ -4,6 +4,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.template import Context, loader, RequestContext
 from django.core.context_processors import csrf
+from django.core.files import File
+from django.core.files.temp import NamedTemporaryFile
 from django.shortcuts import render_to_response
 from home.models import Hacker, Blog
 import requests
@@ -56,6 +58,7 @@ def create_account(request):
             user.hacker.github = r['github']
             user.hacker.twitter = r['twitter']
             user.hacker.irc = r['irc']
+            user.hacker.avatar_url = r['image']
             user.save()
             user.hacker.save()
 
@@ -126,6 +129,7 @@ def new(request):
         first_name  = User.objects.get(id=blog.user_id).first_name
         last_name   = User.objects.get(id=blog.user_id).last_name
         blog.author = first_name + " " + last_name
+        blog.avatar  = Hacker.objects.get(user=blog.user_id).avatar_url
 
     context = Context({
         "blogList": blogList,

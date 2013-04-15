@@ -5,7 +5,7 @@
 {% block firstName %}{{ user.first_name }}{% endblock %}
 
 {% block title %}
-    Here are all the blogs! Individual posts coming soon.
+    Here are all the blogs! Coming soon: individual blog posts!
 {% endblock %}
 
 {% block content %}
@@ -15,15 +15,14 @@
 {% for blog in blogList %}
     <div class="media">
       <a class="pull-left" href="#">
-        <img class="media-object" src="/static/img/holder64x64.png">
+        <img class="media-object" src="{{ blog.avatar }}" width="64px" height="64px">
       </a>
       <div class="media-body">
         <h4 class="media-heading">{{ blog.author }}</h4>
         <a href="{{ blog.url }}">Blog</a>
       </div>
     </div>
-        {% endfor %}
-
+{% endfor %}
 
 {% endblock %}
 

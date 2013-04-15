@@ -36,6 +36,7 @@ FOR VERSION 0.5: Bootstrap
 - [F] Style the login/account forms
 - [F] Style /new
 - [M] Style all forms
+- [M] Implement avatars from the Hacker School API
 - [ ] Deploy to Heroku and get people to start signing into it. 
 
 FOR VERSION 0.6: Put all posts into /new
@@ -57,3 +58,4 @@ FOR FUTURE
 - [ ] redirect /profile to the profile of the logged-in user
 - [ ] graphs of blogging over time. github timestamp
 - [ ] redirect /log_in if they're already logged in
+- [ ] stop hotlinking to hacker school and save a copy of the file locally
