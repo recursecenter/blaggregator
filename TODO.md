@@ -40,6 +40,9 @@ FOR VERSION 0.5: Bootstrap
 
 DEPLOY 
 - [x] Set Heroku remote to have S3 creds as env vars 
+- [ ] set DJANGO_DEBUG permanently locally
+- [ ] finish reading the django page
+- [ ] get the app to stop 500'ing locally (make sure to comment out S3 stuff, may need to fix the templates too)
 - [ ] set s3 vars locally
 - [ ] Rejigger django app be CDN-agnostic
 
