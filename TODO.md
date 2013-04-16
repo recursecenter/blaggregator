@@ -37,7 +37,11 @@ FOR VERSION 0.5: Bootstrap
 - [F] Style /new
 - [M] Style all forms
 - [M] Implement avatars from the Hacker School API
-- [ ] Deploy to Heroku and get people to start signing into it. 
+
+DEPLOY 
+- [x] Set Heroku remote to have S3 creds as env vars 
+- [ ] set s3 vars locally
+- [ ] Rejigger django app be CDN-agnostic
 
 FOR VERSION 0.6: Put all posts into /new
 - [ ] Pull Planet's spider and scraper to grab ALL new posts
@@ -59,3 +63,4 @@ FOR FUTURE
 - [ ] graphs of blogging over time. github timestamp
 - [ ] redirect /log_in if they're already logged in
 - [ ] stop hotlinking to hacker school and save a copy of the file locally
+- [ ] implement South http://south.readthedocs.org/en/latest/tutorial/index.html
