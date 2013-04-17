@@ -179,10 +179,8 @@ if bool(os.environ.get('HEROKU', '')):
 
 # S3
 
-# AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
-# AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
-AWS_ACCESS_KEY_ID = 'AKIAJQWTQ4AWOCKGTUDQ'
-AWS_SECRET_ACCESS_KEY = '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'
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = 'blaggregator'
 
 STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
