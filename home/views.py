@@ -93,6 +93,8 @@ def add_blog(request):
                 url = re.sub('atom.xml/*$', '', feed_url)
             elif re.search('rss/*$', feed_url):
                 url = re.sub('rss/*$', '', feed_url)
+            else:
+                url = feed_url
 
             # create new blog record in db
             blog = Blog.objects.create(
