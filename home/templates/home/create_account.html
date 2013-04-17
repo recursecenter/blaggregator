@@ -15,19 +15,26 @@
 
     <h2 class="text-center" style="margin-bottom:20px">Welcome! Create an account.</h2>
 
-    <form class="form-horizontal" action="create_account" method="post">
+    <p class="text-center">
+        This site is only open to the Hacker School community, <br />so please log in <strong>with your Hacker School credentials</strong>.
+    </p>
+    <p class="text-center">
+        You'll only have to do this <strong>once</strong>.
+    </p>
+
+    <form class="form-horizontal" id="createaccount" action="create_account" method="post">
     {% csrf_token %}
 
       <div class="control-group">
-        <label class="control-label" for="email">Email</label>
+        <label class="control-label" for="email">HS Email</label>
         <div class="controls">
           <input type="email" name="email" placeholder="Hacker School Email">
         </div>
       </div>
       <div class="control-group">
-        <label class="control-label" for="inputPassword">Password</label>
+        <label class="control-label" for="inputPassword">HS Password</label>
         <div class="controls">
-          <input type="password" name="password" placeholder="Password">
+          <input type="password" name="password" placeholder="Hacker School Password">
         </div>
       </div>
       <div class="control-group">
@@ -37,7 +44,7 @@
       </div>
 
         <div class="text-center">
-            <a href="/log_in">or log in</a>
+            Or just <a href="/log_in">log in</a>.
         </div>
     </form>
 </div>

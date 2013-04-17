@@ -1,3 +1,7 @@
 body {
     padding: 60px;
 }
+
+form {
+    padding-top: 20px;
+}
