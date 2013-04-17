@@ -165,16 +165,19 @@ LOGGING = {
     }
 }
 
-# HEROKU
+# Set an environmental variable on heroku:
+# heroku config:add HEROKU=True
+if bool(os.environ.get('HEROKU', '')):
 
-# Parse database configuration from $DATABASE_URL
-import dj_database_url
-DATABASES['default'] = dj_database_url.config()
+    # Parse database configuration from $DATABASE_URL
+    import dj_database_url
+    print "RESETTING DATABASE"
+    DATABASES['default'] = dj_database_url.config()
 
-# Honor the 'X-Forwarded-Proto' header for request.is_secure()
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    # Honor the 'X-Forwarded-Proto' header for request.is_secure()
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-# # S3
+# S3
 
 # AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
 # AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
