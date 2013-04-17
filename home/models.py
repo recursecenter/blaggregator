@@ -20,3 +20,14 @@ class Blog(models.Model):
     feed_url     = models.CharField(max_length=200)
     last_crawled = models.DateTimeField('last crawled', blank=True, null=True)
     created      = models.DateTimeField('date created')
+
+class Post(models.Model):
+
+    def __unicode__(self):
+        return self.title
+
+    blog         = models.ForeignKey(Blog)
+    url          = models.CharField(max_length=400)
+    title        = models.CharField(max_length=200, blank=True)
+    content      = models.TextField()
+    date_updated = models.DateTimeField('date updated')

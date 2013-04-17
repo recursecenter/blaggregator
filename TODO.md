@@ -43,17 +43,21 @@ DEPLOY
 - [T] finish reading the django page
 - [T] get the app to stop 500'ing locally (make sure to comment out S3 stuff, may need to fix the templates too)
 - [T] Rejigger django app be CDN-agnostic
-- [ ] Clarify the login flow with copy
+- [W] Clarify the login flow with copy
 - [ ] Get master to a point where I can deploy it - with rebase or cherry-pick
-- [ ] set DJANGO_DEBUG permanently locally
-- [ ] set s3 vars locally
+- [W] set DJANGO_DEBUG permanently locally
+- [W] set s3 vars locally
 - [ ] Outline a post about what I found confusing
  
 FOR VERSION 0.6: Put all posts into /new
-- [ ] Plan out a Post model
-- [ ] Build the model and add some dummy data
+- [W] Plan out a Post model
+- [W] Build the model and add some data from dpb
 - [ ] Build the new /new view that looks more like hacker news. 
 - [ ] Read to see if Heroku can handle two different versions of Python in the same app. If not, whether the add-on can have two apps talk to the same db.
+
+I send it a feed url, i get returned a list of feed URLs, get back a list of tuples (link, title). And if there is no title, "No title found."
+
+Need an error code in case the page is hit but can't be parsed.
 
 ON DECK
 - [ ] Fix "Welcome Firstname!" bug - template processors are probably the issues here
@@ -61,6 +65,7 @@ ON DECK
 - [ ] redirect /log_in if they're already logged in
 - [ ] stop hotlinking to hacker school and save a copy of the file locally
 - [ ] implement South http://south.readthedocs.org/en/latest/tutorial/index.html
+- [ ] migrate form fields to proper data types (e.g. URLField)
 - [ ] create profile views /profile/293
 - [ ] create edit profile view /profile/edit
 - [ ] have "edit" button only appear on your own profile
