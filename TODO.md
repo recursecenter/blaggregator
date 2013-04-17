@@ -39,31 +39,37 @@ FOR VERSION 0.5: Bootstrap
 - [M] Implement avatars from the Hacker School API
 
 DEPLOY 
-- [x] Set Heroku remote to have S3 creds as env vars 
+- [T] Set Heroku remote to have S3 creds as env vars 
+- [T] finish reading the django page
+- [T] get the app to stop 500'ing locally (make sure to comment out S3 stuff, may need to fix the templates too)
+- [T] Rejigger django app be CDN-agnostic
+- [ ] Clarify the login flow with copy
+- [ ] Get master to a point where I can deploy it
 - [ ] set DJANGO_DEBUG permanently locally
-- [ ] finish reading the django page
-- [ ] get the app to stop 500'ing locally (make sure to comment out S3 stuff, may need to fix the templates too)
 - [ ] set s3 vars locally
-- [ ] Rejigger django app be CDN-agnostic
-
+- [ ] Outline a post about what I found confusing
+ 
 FOR VERSION 0.6: Put all posts into /new
-- [ ] Pull Planet's spider and scraper to grab ALL new posts
-- [ ] Show them in the /new view - title, author, link
+- [ ] Plan out a Post model
+- [ ] Build the model and add some dummy data
+- [ ] Build the new /new view that looks more like hacker news. 
+- [ ] Read to see if Heroku can handle two different versions of Python in the same app. If not, whether the add-on can have two apps talk to the same db.
 
-FOR FUTURE
+ON DECK
 - [ ] Fix "Welcome Firstname!" bug - template processors are probably the issues here
-- [ ] add responsive layouts with bootstrap?
-- [ ] Add GA
-- [ ] Add flash messaging (this might still work in 1.5 https://groups.google.com/forum/?fromgroups=#!topic/django-users/1YtRSukvviE)
-- [ ] Also useful https://docs.djangoproject.com/en/dev/ref/contrib/messages/
-- [ ] check the submitted blog url to make sure it returns a 200
+- [ ] check the submitted blog url to make sure it returns a 200 - use Ajax to display this?
+- [ ] redirect /log_in if they're already logged in
+- [ ] stop hotlinking to hacker school and save a copy of the file locally
+- [ ] implement South http://south.readthedocs.org/en/latest/tutorial/index.html
 - [ ] create profile views /profile/293
 - [ ] create edit profile view /profile/edit
 - [ ] have "edit" button only appear on your own profile
 - [ ] expose blog field in the user profile & edit views
-- [ ] make a public profile view (aka what another user sees when they view your profile)
+- - [ ] make a public profile view (aka what another user sees when they view your profile)
 - [ ] redirect /profile to the profile of the logged-in user
+
+MAYBE
+- [ ] add responsive layouts with bootstrap?
+- [ ] Add GA
+- [ ] Add flash messaging (this might still work in 1.5 https://groups.google.com/forum/?fromgroups=#!topic/django-users/1YtRSukvviE) Also useful https://docs.djangoproject.com/en/dev/ref/contrib/messages/
 - [ ] graphs of blogging over time. github timestamp
-- [ ] redirect /log_in if they're already logged in
-- [ ] stop hotlinking to hacker school and save a copy of the file locally
-- [ ] implement South http://south.readthedocs.org/en/latest/tutorial/index.html
