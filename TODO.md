@@ -44,7 +44,7 @@ DEPLOY
 - [T] get the app to stop 500'ing locally (make sure to comment out S3 stuff, may need to fix the templates too)
 - [T] Rejigger django app be CDN-agnostic
 - [ ] Clarify the login flow with copy
-- [ ] Get master to a point where I can deploy it
+- [ ] Get master to a point where I can deploy it - with rebase or cherry-pick
 - [ ] set DJANGO_DEBUG permanently locally
 - [ ] set s3 vars locally
 - [ ] Outline a post about what I found confusing
