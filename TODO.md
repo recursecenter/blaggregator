@@ -1,5 +1,6 @@
 add profile links to the hacker school site
 write script that crawls the posts once an hour
+handle the wrong URL more gracefully
 
 ON DECK
 - [ ] Fix "Welcome Firstname!" bug - template processors are probably the issues here
