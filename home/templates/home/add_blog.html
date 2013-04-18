@@ -16,12 +16,14 @@
 
     {% csrf_token %}
 
+        <p>Please add your blog's <span style="color:red">FEED</span> url.</p>
+
         <div class="input-append">
             <input class="span6" name="feed_url" type="url" placeholder="Feed URL">
             <button class="btn" type="button submit">Add Your Blog</button>
         </div>
 
-    <a href="/new">or do this later</a>
+    <p><a href="/new">or do this later</a></p>
 
     </form>
 
