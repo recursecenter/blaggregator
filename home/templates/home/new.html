@@ -5,21 +5,19 @@
 {% block firstName %}{{ user.first_name }}{% endblock %}
 
 {% block title %}
-    Here are all the blogs! Coming soon: individual blog posts!
+    Newest blog posts!
 {% endblock %}
 
 {% block content %}
 
-    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-
-{% for blog in blogList %}
-    <div class="media">
+{% for post in postList %}
+    <div class="media post">
       <a class="pull-left" href="#">
-        <img class="media-object" src="{{ blog.avatar }}" width="64px" height="64px">
+        <img class="media-object" src="{{ post.avatar }}" width="64px" height="64px">
       </a>
       <div class="media-body">
-        <h4 class="media-heading">{{ blog.author }}</h4>
-        <a href="{{ blog.url }}">Blog</a>
+        <h4 class="media-heading"><a href="{{ post.url }}">{{ post.title }}</a></h4>
+        <span>{{ post.author }}</span>
       </div>
     </div>
 {% endfor %}

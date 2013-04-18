@@ -5,3 +5,7 @@ body {
 form {
     padding-top: 20px;
 }
+
+.media .post {
+    margin-top:25px;
+}

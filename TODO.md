@@ -44,20 +44,25 @@ DEPLOY
 - [T] get the app to stop 500'ing locally (make sure to comment out S3 stuff, may need to fix the templates too)
 - [T] Rejigger django app be CDN-agnostic
 - [W] Clarify the login flow with copy
-- [ ] Get master to a point where I can deploy it - with rebase or cherry-pick
+- [R] Get master to a point where I can deploy it - with rebase or cherry-pick
 - [W] set DJANGO_DEBUG permanently locally
 - [W] set s3 vars locally
 - [ ] Outline a post about what I found confusing
+- [ ] change AWS credentials, and update env vars remotely & locally
+- [ ] Make separate dev and prod envs
  
 FOR VERSION 0.6: Put all posts into /new
 - [W] Plan out a Post model
 - [W] Build the model and add some data from dpb
-- [ ] Build the new /new view that looks more like hacker news. 
+- [R] Build the new /new view that looks more like hacker news. 
 - [W] Read to see if Heroku can handle two different versions of Python in the same app. If not, whether the add-on can have two apps talk to the same db.
+- [R] plan out one-time parsing vs. ongoing. How to check for unique posts?
 
 I send it a feed url, i get returned a list of feed URLs, get back a list of tuples (link, title). And if there is no title, "No title found."
 
 Need an error code in case the page is hit but can't be parsed.
+
+need to grab all new posts off of blogs that are just added
 
 ON DECK
 - [ ] Fix "Welcome Firstname!" bug - template processors are probably the issues here
@@ -70,7 +75,7 @@ ON DECK
 - [ ] create edit profile view /profile/edit
 - [ ] have "edit" button only appear on your own profile
 - [ ] expose blog field in the user profile & edit views
-- - [ ] make a public profile view (aka what another user sees when they view your profile)
+- [ ] make a public profile view (aka what another user sees when they view your profile)
 - [ ] redirect /profile to the profile of the logged-in user
 
 MAYBE

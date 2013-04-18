@@ -7,7 +7,7 @@ from django.core.context_processors import csrf
 from django.core.files import File
 from django.core.files.temp import NamedTemporaryFile
 from django.shortcuts import render_to_response
-from home.models import Hacker, Blog
+from home.models import Hacker, Blog, Post
 import requests
 import datetime
 import re
@@ -125,16 +125,15 @@ def profile(request, user_id):
 @login_required(login_url='/log_in')
 def new(request):
 
-    blogList = list(Blog.objects.all()) # this is janky but temporary
+    postList = list(Post.objects.all())[:20] #TODO order_by date
 
-    for blog in blogList:
-        first_name  = User.objects.get(id=blog.user_id).first_name
-        last_name   = User.objects.get(id=blog.user_id).last_name
-        blog.author = first_name + " " + last_name
-        blog.avatar  = Hacker.objects.get(user=blog.user_id).avatar_url
+    for post in postList:
+        user = User.objects.get(blog__id__exact=post.blog_id)
+        post.author = user.first_name + " " + user.last_name
+        post.avatar = Hacker.objects.get(user=user.id).avatar_url
 
     context = Context({
-        "blogList": blogList,
+        "postList": postList,
     })
 
     return render_to_response('home/new.html',
