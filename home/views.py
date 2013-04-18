@@ -11,6 +11,7 @@ from home.models import Hacker, Blog, Post
 import requests
 import datetime
 import re
+import bloggergrabber27
 
 def log_in(request):
     if request.method == 'POST':
@@ -104,6 +105,21 @@ def add_blog(request):
                                         created=datetime.datetime.now(),
                                        )
             blog.save()
+
+            crawled, _ = bloggergrabber27.bloggergrabber(feed_url)
+
+            for post in crawled:
+                post_url, post_title = post
+                newpost = Post.objects.create(
+                                              blog=Blog.objects.get(user=request.user.id),
+                                              url=post_url,
+                                              title=post_title,
+                                              content="",
+                                              date_updated=datetime.datetime.now(),
+                                              )
+
+
+
             return HttpResponseRedirect('/new')
         else:
             return HttpResponse("I didn't get your feed URL. Please go back and try again.")
