@@ -53,7 +53,7 @@ FOR VERSION 0.6: Put all posts into /new
 - [W] Plan out a Post model
 - [W] Build the model and add some data from dpb
 - [ ] Build the new /new view that looks more like hacker news. 
-- [ ] Read to see if Heroku can handle two different versions of Python in the same app. If not, whether the add-on can have two apps talk to the same db.
+- [W] Read to see if Heroku can handle two different versions of Python in the same app. If not, whether the add-on can have two apps talk to the same db.
 
 I send it a feed url, i get returned a list of feed URLs, get back a list of tuples (link, title). And if there is no title, "No title found."
 
