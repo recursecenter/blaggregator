@@ -1,11 +1,14 @@
-installation: 
+This is a blog post aggregator for the Hacker School community. 
 
-- put aws credentials into your env variables
+**Want to contribute? Check out (Contribute.md)[CONTRIBUTE.md].**
+
+### Installation: 
+
+- Set up your virtual environment & install dependencies
+
+- Put AWS credentials (ask Sasha for these) into your environmental variables. In your `bash.rc`: 
+
+```
 export AWS_ACCESS_KEY_ID=''
 export AWS_SECRET_ACCESS_KEY=''
-
-- set up venv
-
-deploy: 
-
-- put django_debug var on heroku if you want it be in debug mode. remove var if you don't.
+```
