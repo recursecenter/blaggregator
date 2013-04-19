@@ -141,7 +141,7 @@ def profile(request, user_id):
 @login_required(login_url='/log_in')
 def new(request):
 
-    postList = list(Post.objects.all().order_by('date_updated').reverse())
+    postList = list(Post.objects.order_by('?')[:20])
 
     for post in postList:
         user = User.objects.get(blog__id__exact=post.blog_id)
