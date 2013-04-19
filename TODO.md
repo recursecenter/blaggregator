@@ -2,6 +2,8 @@
 - write script that crawls the posts once an hour
 - handle the wrong URL more gracefully
 - figure out how to handle USER, HOST, AWS_STORAGE_BUCKET_NAME in settings.py
+- update blog post titles if they've changed
+- figure out how to surface error messages from the scraper
 
 ON DECK
 - [ ] Fix "Welcome Firstname!" bug - template processors are probably the issues here

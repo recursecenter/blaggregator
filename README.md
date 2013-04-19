@@ -1,6 +1,8 @@
-This is a blog post aggregator for the Hacker School community. 
+## Blog post aggregator for the Hacker School community. 
 
-**Want to contribute? Check out [Contribute.md](CONTRIBUTE.md).**
+### Contribute
+
+Want to practice working on web apps? Check out [Contribute.md](CONTRIBUTE.md) for some feature ideas. 
 
 ### Installation: 
 
