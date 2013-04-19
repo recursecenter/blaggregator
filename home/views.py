@@ -17,15 +17,15 @@ def log_in(request):
     if request.method == 'POST':
 
         email = request.POST['email']
+        username = User.objects.get(email=email).username
         password = request.POST['password']
 
-        user = authenticate(username=email, password=password)
+        user = authenticate(username=username, password=password)
 
         if user is not None:
             # if user exists locally:
             if user.is_active:
                 login(request, user)
-                #return HttpResponse("Welcome back, returning user %s!" % (email))
                 return HttpResponseRedirect('/new')
             else:
                 return HttpResponse("Your account is disabled. Please contact administrator for help.")
