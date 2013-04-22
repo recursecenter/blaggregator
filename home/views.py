@@ -8,6 +8,7 @@ from django.core.files import File
 from django.core.files.temp import NamedTemporaryFile
 from django.shortcuts import render_to_response
 from home.models import Hacker, Blog, Post
+from django.conf import settings
 import requests
 import datetime
 import re
@@ -156,6 +157,20 @@ def new(request):
                               context,
                               context_instance=RequestContext(request))
 
+@login_required(login_url='/log_in')
+def feed(request):
 
+    postList = list(Post.objects.all().order_by('-date_updated'))
 
+    for post in postList:
+        user = User.objects.get(blog__id__exact=post.blog_id)
+        post.author = user.first_name + " " + user.last_name
 
+    context = Context({
+        "postList": postList,
+        "domain": settings.SITE_URL
+    })
+
+    return render_to_response('home/atom.xml',
+                              context,
+                              context_instance=RequestContext(request))
