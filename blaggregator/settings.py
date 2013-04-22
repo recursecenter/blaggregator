@@ -1,13 +1,15 @@
 import os
 SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 
-# SITE_URL = 'http://127.0.0.1:8000'
-SITE_URL = 'http://blaggregator.herokuapp.com/'
-
 # heroku config:set DJANGO_DEBUG=True
 # heroku config:remove DJANGO_DEBUG
 DEBUG = bool(os.environ.get('DJANGO_DEBUG', ''))
 TEMPLATE_DEBUG = DEBUG
+
+if bool(os.environ.get('HEROKU', '')):
+    SITE_URL = 'http://blaggregator.herokuapp.com/'
+else:
+    SITE_URL = 'http://127.0.0.1:8000'
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
