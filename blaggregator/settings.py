@@ -1,7 +1,8 @@
 import os
 SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 
-SITE_URL = 'http://127.0.0.1:8000'
+# SITE_URL = 'http://127.0.0.1:8000'
+SITE_URL = 'http://blaggregator.herokuapp.com/'
 
 # heroku config:set DJANGO_DEBUG=True
 # heroku config:remove DJANGO_DEBUG
