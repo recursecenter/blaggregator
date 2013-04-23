@@ -6,7 +6,7 @@ from django.template import Context, loader, RequestContext
 from django.core.context_processors import csrf
 from django.core.files import File
 from django.core.files.temp import NamedTemporaryFile
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, render
 from home.models import Hacker, Blog, Post
 from django.conf import settings
 import requests
@@ -171,6 +171,4 @@ def feed(request):
         "domain": settings.SITE_URL
     })
 
-    return render_to_response('home/atom.xml',
-                              context,
-                              context_instance=RequestContext(request))
+    return render(request, 'home/atom.xml', context, content_type="text/xml")
