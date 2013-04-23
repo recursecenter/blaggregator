@@ -1,15 +1,27 @@
 import os
 SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 
-# heroku config:set DJANGO_DEBUG=True
-# heroku config:remove DJANGO_DEBUG
-DEBUG = bool(os.environ.get('DJANGO_DEBUG', ''))
+# True: heroku config:set DJANGO_DEBUG=True
+# False: heroku config:unset DJANGO_DEBUG
+DEBUG = 'DJANGO_DEBUG' in os.environ 
 TEMPLATE_DEBUG = DEBUG
 
 if bool(os.environ.get('HEROKU', '')):
-    SITE_URL = 'http://blaggregator.herokuapp.com/'
+    SITE_URL = 'http://blaggregator.herokuapp.com'
+
+    # S3
+
+    AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
+    AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
+    AWS_STORAGE_BUCKET_NAME = 'tb-blaggregatory'
+
+    STATIC_URL = 'http://' + AWS_STORAGE_BUCKET_NAME + '.s3.amazonaws.com/'
+    STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+
 else:
     SITE_URL = 'http://127.0.0.1:8000'
+    STATIC_URL = '/static/'
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
@@ -69,18 +81,13 @@ MEDIA_URL = ''
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/var/www/example.com/static/"
-STATIC_ROOT = ''
-
-# URL prefix for static files.
-# Example: "http://example.com/static/", "http://static.example.com/"
-STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(SITE_ROOT, 'static-collected')
 
 # Additional locations of static files
 STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    os.path.join(SITE_ROOT, 'static'),
 )
 
 # List of finder classes that know how to find static files in
@@ -182,14 +189,4 @@ if bool(os.environ.get('HEROKU', '')):
     # Honor the 'X-Forwarded-Proto' header for request.is_secure()
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-# S3
-
-AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
-AWS_STORAGE_BUCKET_NAME = 'blaggregator'
-
-STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-
-STATIC_URL = 'http://' + AWS_STORAGE_BUCKET_NAME + '.s3.amazonaws.com/'
 ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'
