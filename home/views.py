@@ -15,6 +15,8 @@ import re
 import bloggergrabber27
 
 def log_in(request):
+    ''' Log in a user who already has a pre-existing local account. '''
+
     if request.method == 'POST':
 
         email = request.POST['email']
@@ -38,6 +40,8 @@ def log_in(request):
                                    context_instance=RequestContext(request))
 
 def create_account(request):
+    ''' Create a new local user account. '''
+
     if request.method == 'POST':
 
         email = request.POST['email']
@@ -80,6 +84,8 @@ def create_account(request):
 
 @login_required(login_url='/log_in')
 def add_blog(request):
+    ''' Adds a blog to a user's profile as part of the create_account process. '''
+
     if request.method == 'POST':
         if request.POST['feed_url']:
 
@@ -129,6 +135,8 @@ def add_blog(request):
 
 @login_required(login_url='/log_in')
 def profile(request, user_id):
+    ''' A user's profile. Not currently tied to a template - needs work. '''
+
     try:
         current_user = User.objects.get(id=user_id)
         template = loader.get_template('home/index.html')
@@ -141,6 +149,7 @@ def profile(request, user_id):
 
 @login_required(login_url='/log_in')
 def new(request):
+    ''' Newest blog posts - main app view. '''
 
     postList = list(Post.objects.order_by('?')[:20])
 
@@ -159,6 +168,7 @@ def new(request):
 
 @login_required(login_url='/log_in')
 def feed(request):
+    ''' Atom feed of all new posts. '''
 
     postList = list(Post.objects.all().order_by('-date_updated'))
 
