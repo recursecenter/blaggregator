@@ -12,24 +12,11 @@ Want to practice working on web apps? Check out [Contribute.md](CONTRIBUTE.md) f
 
 `pip install -r requirements.txt`
 
-- Static assets are hosted on S3. Make a new S3 bucket and grab your security credentials. Put your keys in your environmental variables: 
-
-```
-export AWS_ACCESS_KEY_ID=''
-export AWS_SECRET_ACCESS_KEY=''
-```
-
-And in `settings.py` update `AWS_STORAGE_BUCKET_NAME` to be the bucket name you picked.
-
-Then run `collectstatic` to grab all your static assets and send them to S3 where your app can access them. You'll need to run this again each time you change your static assets. 
-
-`python manage.py collectstatic`
-
-- Set up your database. Open a Postgres shell: 
+- Set up your database. Install Postgres (it's easy on OSX with [postgres.app](http://postgresapp.com/)) and open a Postgres shell: 
 
 `python manage.py dbshell`
 
-and create your database: 
+Create your database: 
 
 `CREATE DATABASE blaggregator_dev;`
 
@@ -47,7 +34,7 @@ connections on Unix domain socket "/var/pgsql_socket/.s.PGSQL.5432"?
 
 Then open `settings.py` and under `HOST:` add `/tmp`. 
 
-- Optional but helpful: turn on debugging in your environment:
+- Turn on debugging in your environment:
 
 `export DJANGO_DEBUG=True`
 

@@ -5,3 +5,5 @@ bin/
 lib/
 include/
 .Python
+*.sqlite3
+blaggregator/static-collected
