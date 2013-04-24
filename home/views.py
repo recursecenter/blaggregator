@@ -154,9 +154,10 @@ def new(request):
     postList = list(Post.objects.order_by('?')[:20])
 
     for post in postList:
-        user = User.objects.get(blog__id__exact=post.blog_id)
-        post.author = user.first_name + " " + user.last_name
-        post.avatar = Hacker.objects.get(user=user.id).avatar_url
+        user            = User.objects.get(blog__id__exact=post.blog_id)
+        post.author     = user.first_name + " " + user.last_name
+        post.authorid   = user.id
+        post.avatar     = Hacker.objects.get(user=user.id).avatar_url
 
     context = Context({
         "postList": postList,
