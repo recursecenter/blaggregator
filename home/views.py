@@ -12,7 +12,7 @@ from django.conf import settings
 import requests
 import datetime
 import re
-import bloggergrabber27
+import feedergrabber27
 
 def log_in(request):
     ''' Log in a user who already has a pre-existing local account. '''
@@ -113,19 +113,19 @@ def add_blog(request):
                                        )
             blog.save()
 
-            crawled, _ = bloggergrabber27.bloggergrabber(feed_url)
+            # Feedergrabber returns ( [(link, title, date)], [errors])
+            # We're ignoring the errors returned for right now
+            crawled, _ = feedergrabber27.feedergrabber(feed_url)
 
             for post in crawled:
-                post_url, post_title = post
+                post_url, post_title, post_date = post
                 newpost = Post.objects.create(
                                               blog=Blog.objects.get(user=request.user.id),
                                               url=post_url,
                                               title=post_title,
                                               content="",
-                                              date_updated=datetime.datetime.now(),
+                                              date_updated=post_date,
                                               )
-
-
 
             return HttpResponseRedirect('/new')
         else:

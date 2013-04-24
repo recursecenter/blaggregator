@@ -3,7 +3,6 @@
 # 20130421, works.
 # David Prager Branner
 
-from __future__ import print_function
 import re
 import urllib2
 import urlparse

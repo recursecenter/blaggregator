@@ -1,12 +1,13 @@
 GRABBER UPDATE
-- [ ] import the new script
-- [ ] how is it actually getting the date? how does that date change if they change the title of the post?
+- [x] import the new script
+- [x] how is it actually getting the date? how does that date change if they change the title of the post?
+- [x] pull the date field in the view
+- [ ] set the script to be run periodically (see the posts branch for more on this)
 - [ ] refactor add_all_posts into its own function in views.py
 - [ ] deploy this new function to be called in various other places around the app: when blogs are added in the admin view, when blogs are added in the profile edit view.
-- [ ] pull the date field in the view
 - [ ] write a wrapper script to be run one time to update my database retroactively. Test itttt with the default list of posts.
 - [ ] rewrite /new view to display the newest posts (and a random post button/feed)
-- [ ] set the script to be run periodically (see the posts branch for more on this)
+
 
 
 
