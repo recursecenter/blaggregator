@@ -60,7 +60,7 @@ class Command(NoArgsCommand):
                         post.save()
 
         else:
-            log.exception(errors)
+            log.debug(str(errors))
 
 
     @transaction.commit_manually
