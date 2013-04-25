@@ -5,8 +5,13 @@ from optparse import make_option
 from home.models import Blog, Post
 from home import feedergrabber27
 import logging
+import requests
+import os
 
 log = logging.getLogger("blaggregator")
+
+key = os.environ.get('HUMBUG_KEY')
+email = os.environ.get('HUMBUG_EMAIL')
 
 class Command(NoArgsCommand):
     help = 'Periodically crawls all blogs for new posts.'
@@ -43,7 +48,9 @@ class Command(NoArgsCommand):
                     }
                 )
 
-                if created: print "Created", title
+                if created:
+                    print "Created", title
+                    send_message_hb(user=blog.user, link=link, title=title)
 
                 # if new info, update the posts
                 if not created:
@@ -77,3 +84,14 @@ class Command(NoArgsCommand):
             print "\nDON'T FORGET TO RUN THIS FOR REAL\n"
         else:
             transaction.commit()
+
+def send_message_hb(user, link, title):
+
+    data = {"type": "stream",
+            "to": "announce",
+            "subject": "new blog post",
+            "content": "**%s** has a new blog post: [%s](%s)" % (user.first_name, title, link)
+        }
+
+    r = requests.post('https://humbughq.com/api/v1/messages', data=data, auth=(email, key))
+
