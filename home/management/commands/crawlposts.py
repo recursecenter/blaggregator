@@ -6,7 +6,7 @@ from home.models import Blog, Post
 from home import feedergrabber27
 import logging
 
-log = logging.getLogger(__name__)
+log = logging.getLogger("blaggregator")
 
 class Command(NoArgsCommand):
     help = 'Periodically crawls all blogs for new posts.'
