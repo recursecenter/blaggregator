@@ -21,6 +21,8 @@ class Command(NoArgsCommand):
 
         for blog in Blog.objects.all():
 
+            print "CRAWLING", blog.feed_url
+
             # Feedergrabber returns ( [(link, title, date)], [errors])
             # We're ignoring the errors returned for right now
             crawled, _ = feedergrabber27.feedergrabber(blog.feed_url)
