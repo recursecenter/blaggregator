@@ -15,7 +15,6 @@ GRABBER UPDATE
 
 
 
-
 - add profile links to the hacker school site
 - write script that crawls the posts once an hour
 - update blog post titles if they've changed
