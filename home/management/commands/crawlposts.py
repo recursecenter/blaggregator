@@ -25,7 +25,7 @@ class Command(NoArgsCommand):
 
         # Feedergrabber returns ( [(link, title, date)], [errors])
         # We're ignoring the errors returned for right now
-        crawled, _ = feedergrabber27.feedergrabber(blog.feed_url)
+        crawled, errors = feedergrabber27.feedergrabber(blog.feed_url)
 
         if crawled:
 
@@ -58,6 +58,9 @@ class Command(NoArgsCommand):
                     if updated:
                         print "Updated", title
                         post.save()
+
+        else:
+            log.exception(errors)
 
 
     @transaction.commit_manually
