@@ -7,6 +7,7 @@ from home import feedergrabber27
 import logging
 import requests
 import os
+import datetime
 
 log = logging.getLogger("blaggregator")
 
@@ -37,6 +38,7 @@ class Command(NoArgsCommand):
             for link, title, date in crawled:
 
                 date = timezone.make_aware(date, timezone.get_default_timezone())
+                now = timezone.make_aware(datetime.datetime.now(), timezone.get_default_timezone())
 
                 # create the post instance if it doesn't already exist
                 post, created = Post.objects.get_or_create(
@@ -50,7 +52,10 @@ class Command(NoArgsCommand):
 
                 if created:
                     print "Created", title
-                    send_message_hb(user=blog.user, link=link, title=title)
+                    # Only post to humbug if the post was created in the last 2 days
+                    #   so that new accounts don't spam humbug with their entire post list
+                    if (now - date) < datetime.timedelta(days=2):
+                        send_message_humbug(user=blog.user, link=link, title=title)
 
                 # if new info, update the posts
                 if not created:
@@ -85,7 +90,7 @@ class Command(NoArgsCommand):
         else:
             transaction.commit()
 
-def send_message_hb(user, link, title):
+def send_message_humbug(user, link, title):
 
     data = {"type": "stream",
             "to": "announce",
