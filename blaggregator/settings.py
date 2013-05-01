@@ -10,10 +10,9 @@ if bool(os.environ.get('HEROKU', '')):
     SITE_URL = 'http://blaggregator.herokuapp.com'
 
     # S3
-
     AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
     AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
-    AWS_STORAGE_BUCKET_NAME = 'tb-blaggregatory'
+    AWS_STORAGE_BUCKET_NAME = 'blaggregator'
 
     STATIC_URL = 'http://' + AWS_STORAGE_BUCKET_NAME + '.s3.amazonaws.com/'
     STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
