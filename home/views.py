@@ -20,7 +20,10 @@ def log_in(request):
     if request.method == 'POST':
 
         email = request.POST['email']
-        username = User.objects.get(email=email).username
+        try:
+            username = User.objects.get(email=email).username
+        except:
+            return HttpResponse("Bad login. Please check that you're using the correct credentials and try again.")
         password = request.POST['password']
 
         user = authenticate(username=username, password=password)
