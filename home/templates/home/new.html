@@ -5,22 +5,40 @@
 {% block firstName %}{{ user.first_name }}{% endblock %}
 
 {% block title %}
-    20 Random Posts (date ordering coming soon)
+
 {% endblock %}
 
 {% block content %}
 
-{% for post in postList %}
-    <div class="media post">
-      <a class="pull-left" href="#">
-        <img class="media-object" src="{{ post.avatar }}" width="64px" height="64px">
-      </a>
-      <div class="media-body">
-        <h4 class="media-heading"><a href="{{ post.url }}">{{ post.title }}</a></h4>
-        <span class="byline"><a href="http://hackerschool.com/people/{{ post.authorid }}">{{ post.author }}</a></span>
-      </div>
-    </div>
-{% endfor %}
+<div class='postlist'>
+    <h2>Newest Posts</h2>
+    {% for post in newPostList %}
+        <div class="media post">
+          <a class="pull-left" href="#">
+            <img class="media-object" src="{{ post.avatar }}" width="64px" height="64px">
+          </a>
+          <div class="media-body">
+            <h4 class="media-heading"><a href="{{ post.url }}">{{ post.title }}</a></h4>
+            <span class="byline"><a href="http://hackerschool.com/people/{{ post.authorid }}">{{ post.author }}</a></span>
+          </div>
+        </div>
+    {% endfor %}
+</div>
+
+<div class='postlist'>
+    <h2>Random Posts from the Archive</h2>
+    {% for post in randomPostList %}
+        <div class="media post">
+          <a class="pull-left" href="#">
+            <img class="media-object" src="{{ post.avatar }}" width="64px" height="64px">
+          </a>
+          <div class="media-body">
+            <h4 class="media-heading"><a href="{{ post.url }}">{{ post.title }}</a></h4>
+            <span class="byline"><a href="http://hackerschool.com/people/{{ post.authorid }}">{{ post.author }}</a></span>
+          </div>
+        </div>
+    {% endfor %}
+</div>
 
 {% endblock %}
 

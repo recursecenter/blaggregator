@@ -8,3 +8,4 @@ This project is intended to be useful to the Hacker School community. Please fee
 - prettier CSS
 - account management: log out, edit profile
 - viewing profiles of other users
+- a security audit of the app

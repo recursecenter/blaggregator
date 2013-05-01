@@ -151,16 +151,25 @@ def profile(request, user_id):
 def new(request):
     ''' Newest blog posts - main app view. '''
 
-    postList = list(Post.objects.order_by('?')[:20])
+    newPostList = list(Post.objects.order_by('-date_updated')[:5])
+    randomPostList = list(Post.objects.order_by('?')[:5])
 
-    for post in postList:
+    for post in newPostList:
+        user            = User.objects.get(blog__id__exact=post.blog_id)
+        post.author     = user.first_name + " " + user.last_name
+        post.authorid   = user.id
+        post.avatar     = Hacker.objects.get(user=user.id).avatar_url
+
+    for post in randomPostList:
         user            = User.objects.get(blog__id__exact=post.blog_id)
         post.author     = user.first_name + " " + user.last_name
         post.authorid   = user.id
         post.avatar     = Hacker.objects.get(user=user.id).avatar_url
 
     context = Context({
-        "postList": postList,
+        "newPostList": newPostList,
+        "randomPostList": randomPostList,
+
     })
 
     return render_to_response('home/new.html',
