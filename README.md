@@ -73,30 +73,38 @@ Do the following:
 `sudo apt-get install libpq-dev`
 
 If you run into trouble with the Django installation within requirements.txt, install Django via:
+
 `pip install django`
 
 If you recieve:
+
 `No module named psycopg2.extensions:`
 
 Do:
+
 `sudo apt-get build-dep python-psycopg2`
 
 Then:
+
 `pip install psycopg2`
 
 Note: running `pip install -r requirements.txt` might be neccesarry after running any of the above commands.
 
 For postgres installation:
+
 `sudo apt-get install postgresql`
 
 The following creates a super user:
+
 ```sudo -u postgres psql postgres
 \password postgres```
 
 The following creates new database called blaggregator_dev
+
 `sudo -u postgres createdb blaggregator_dev`
 
 To set up other postgres user accounts do:
+
 ```create user <user_name>`
 \password <user_name>```
 
