@@ -12,6 +12,7 @@ Want to practice working on web apps? Check out [Contribute.md](CONTRIBUTE.md) f
 
 `pip install -r requirements.txt`
 
+
 - Static assets are hosted on S3. Make a new S3 bucket and grab your security credentials. Put your keys in your environmental variables: 
 
 ```
@@ -56,3 +57,48 @@ Then open `settings.py` and under `HOST:` add `/tmp`.
 `python manage.py runserver`
 
 You can administer your app through the [handy-dandy admin interface](http://localhost:8000/admin). You can be logged in as the admin or as your user account, but not both at the same time.
+
+###Encountered errors on Ubuntu 12.10:
+
+If you get either of these errors: 
+
+```
+-Error: pg_config executable not found.
+
+-./psycopg/psycopg.h:30:20: fatal error: Python.h: No such file or directory
+```
+
+Do the following:
+
+`sudo apt-get install libpq-dev`
+
+If you run into trouble with the Django installation within requirements.txt, install Django via:
+`pip install django`
+
+If you get:
+```No module named psycopg2.extensions:```
+Do:
+`sudo apt-get build-dep python-psycopg2`
+
+Then:
+`pip install psycopg2`
+
+Note: running `pip install -r requirements.txt' might be neccesarry after running any of the above commands
+
+For postgres:
+`sudo apt-get install postgresql`
+
+The following creates a super user:
+`sudo -u postgres psql postgres`
+`\password postgres`
+
+The following creates new database called blaggregator_dev
+`sudo -u postgres createdb blaggregator_dev`
+
+To set up other postgres user accounts do:
+`create user <user_name>`
+`\password <user_name>`
+
+Then open settings.py and under USER: put the newly created user name, under PASSWORD: put the password of the user
+
+Then run python manage.py dbshell
