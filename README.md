@@ -75,29 +75,30 @@ Do the following:
 If you run into trouble with the Django installation within requirements.txt, install Django via:
 `pip install django`
 
-If you get:
-```No module named psycopg2.extensions:```
+If you recieve:
+`No module named psycopg2.extensions:`
+
 Do:
 `sudo apt-get build-dep python-psycopg2`
 
 Then:
 `pip install psycopg2`
 
-Note: running `pip install -r requirements.txt' might be neccesarry after running any of the above commands
+Note: running `pip install -r requirements.txt` might be neccesarry after running any of the above commands.
 
-For postgres:
+For postgres installation:
 `sudo apt-get install postgresql`
 
 The following creates a super user:
-`sudo -u postgres psql postgres`
-`\password postgres`
+```sudo -u postgres psql postgres
+\password postgres```
 
 The following creates new database called blaggregator_dev
 `sudo -u postgres createdb blaggregator_dev`
 
 To set up other postgres user accounts do:
-`create user <user_name>`
-`\password <user_name>`
+```create user <user_name>`
+\password <user_name>```
 
 Then open settings.py and under USER: put the newly created user name, under PASSWORD: put the password of the user
 
