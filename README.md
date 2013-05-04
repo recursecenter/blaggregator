@@ -90,24 +90,26 @@ Then:
 
 Note: running `pip install -r requirements.txt` might be neccesarry after running any of the above commands.
 
-For postgres installation:
+- For postgres installation:
 
 `sudo apt-get install postgresql`
 
-The following creates a super user:
+- The following creates a super user:
 
 ```sudo -u postgres psql postgres
 \password postgres```
 
-The following creates new database called blaggregator_dev
+- The following creates new database called blaggregator_dev
 
 `sudo -u postgres createdb blaggregator_dev`
 
-To set up other postgres user accounts do:
+- To set up other postgres user accounts do:
 
 ```create user <user_name>`
 \password <user_name>```
 
-Then open settings.py and under USER: put the newly created user name, under PASSWORD: put the password of the user
+- Then open settings.py and under `USER`: put the newly created user name, under `PASSWORD`: put the password of the user
 
-Then run python manage.py dbshell
+- Then run your local server
+
+ `python manage.py dbshell`
