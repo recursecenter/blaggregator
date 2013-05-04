@@ -13,6 +13,7 @@ Want to practice working on web apps? Check out [Contribute.md](Contribute.md) f
 `pip install -r requirements.txt`
 
 - Set up your database. Install Postgres (it's easy on OSX with [postgres.app](http://postgresapp.com/)) and open a Postgres shell:
+
 `python manage.py dbshell`
 
 Create your database: 
@@ -29,13 +30,13 @@ If you get this error:
 OperationalError: could not connect to server: No such file or directory
 Is the server running locally and accepting
 connections on Unix domain socket "/var/pgsql_socket/.s.PGSQL.5432"?
-Then open settings.py and under HOST: add /tmp.
 ```
+
+Then open `settings.py` and under `HOST:` add `/tmp`. 
 
 - Turn on debugging in your environment:
 `export DJANGO_DEBUG=True`
 
-Then open `settings.py` and under `HOST:` add `/tmp`. 
 
 - Then run a local server:
 `python manage.py runserver`
