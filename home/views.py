@@ -6,19 +6,24 @@ from django.template import Context, loader, RequestContext
 from django.core.context_processors import csrf
 from django.core.files import File
 from django.core.files.temp import NamedTemporaryFile
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, render
 from home.models import Hacker, Blog, Post
 from django.conf import settings
 import requests
 import datetime
 import re
-import bloggergrabber27
+import feedergrabber27
 
 def log_in(request):
+    ''' Log in a user who already has a pre-existing local account. '''
+
     if request.method == 'POST':
 
         email = request.POST['email']
-        username = User.objects.get(email=email).username
+        try:
+            username = User.objects.get(email=email).username
+        except:
+            return HttpResponse("Bad login. Please check that you're using the correct credentials and try again.")
         password = request.POST['password']
 
         user = authenticate(username=username, password=password)
@@ -38,6 +43,8 @@ def log_in(request):
                                    context_instance=RequestContext(request))
 
 def create_account(request):
+    ''' Create a new local user account. '''
+
     if request.method == 'POST':
 
         email = request.POST['email']
@@ -80,6 +87,8 @@ def create_account(request):
 
 @login_required(login_url='/log_in')
 def add_blog(request):
+    ''' Adds a blog to a user's profile as part of the create_account process. '''
+
     if request.method == 'POST':
         if request.POST['feed_url']:
 
@@ -107,19 +116,19 @@ def add_blog(request):
                                        )
             blog.save()
 
-            crawled, _ = bloggergrabber27.bloggergrabber(feed_url)
+            # Feedergrabber returns ( [(link, title, date)], [errors])
+            # We're ignoring the errors returned for right now
+            crawled, _ = feedergrabber27.feedergrabber(feed_url)
 
             for post in crawled:
-                post_url, post_title = post
+                post_url, post_title, post_date = post
                 newpost = Post.objects.create(
                                               blog=Blog.objects.get(user=request.user.id),
                                               url=post_url,
                                               title=post_title,
                                               content="",
-                                              date_updated=datetime.datetime.now(),
+                                              date_updated=post_date,
                                               )
-
-
 
             return HttpResponseRedirect('/new')
         else:
@@ -129,6 +138,8 @@ def add_blog(request):
 
 @login_required(login_url='/log_in')
 def profile(request, user_id):
+    ''' A user's profile. Not currently tied to a template - needs work. '''
+
     try:
         current_user = User.objects.get(id=user_id)
         template = loader.get_template('home/index.html')
@@ -141,16 +152,27 @@ def profile(request, user_id):
 
 @login_required(login_url='/log_in')
 def new(request):
+    ''' Newest blog posts - main app view. '''
 
-    postList = list(Post.objects.order_by('?')[:20])
+    newPostList = list(Post.objects.order_by('-date_updated')[:10])
+    randomPostList = list(Post.objects.order_by('?')[:5])
 
-    for post in postList:
-        user = User.objects.get(blog__id__exact=post.blog_id)
-        post.author = user.first_name + " " + user.last_name
-        post.avatar = Hacker.objects.get(user=user.id).avatar_url
+    for post in newPostList:
+        user            = User.objects.get(blog__id__exact=post.blog_id)
+        post.author     = user.first_name + " " + user.last_name
+        post.authorid   = user.id
+        post.avatar     = Hacker.objects.get(user=user.id).avatar_url
+
+    for post in randomPostList:
+        user            = User.objects.get(blog__id__exact=post.blog_id)
+        post.author     = user.first_name + " " + user.last_name
+        post.authorid   = user.id
+        post.avatar     = Hacker.objects.get(user=user.id).avatar_url
 
     context = Context({
-        "postList": postList,
+        "newPostList": newPostList,
+        "randomPostList": randomPostList,
+
     })
 
     return render_to_response('home/new.html',
@@ -159,6 +181,7 @@ def new(request):
 
 @login_required(login_url='/log_in')
 def feed(request):
+    ''' Atom feed of all new posts. '''
 
     postList = list(Post.objects.all().order_by('-date_updated'))
 
@@ -171,6 +194,4 @@ def feed(request):
         "domain": settings.SITE_URL
     })
 
-    return render_to_response('home/atom.xml',
-                              context,
-                              context_instance=RequestContext(request))
+    return render(request, 'home/atom.xml', context, content_type="text/xml")

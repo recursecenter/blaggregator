@@ -5,3 +5,4 @@ bin/
 lib/
 include/
 .Python
+blaggregator/static-collected
