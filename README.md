@@ -97,6 +97,7 @@ Note: running `pip install -r requirements.txt` might be neccesarry after runnin
 - The following creates a super user:
 
 ```sudo -u postgres psql postgres
+
 \password postgres```
 
 - The following creates new database called blaggregator_dev
