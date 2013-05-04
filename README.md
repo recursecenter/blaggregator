@@ -12,7 +12,7 @@ Want to practice working on web apps? Check out [Contribute.md](Contribute.md) f
 
 `pip install -r requirements.txt`
 
-- Set up your database. Install Postgres (it's easy on OSX with postgres.app) and open a Postgres shell:
+- Set up your database. Install Postgres (it's easy on OSX with [postgres.app](http://postgresapp.com/)) and open a Postgres shell:
 `python manage.py dbshell`
 
 Create your database:
