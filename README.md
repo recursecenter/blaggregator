@@ -109,7 +109,6 @@ Note: running `pip install -r requirements.txt` might be neccesarry after runnin
 
 ```
 - create user user_name 
-
 - \password user_name
 ```
 
