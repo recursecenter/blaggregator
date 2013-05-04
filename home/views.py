@@ -1,4 +1,4 @@
-from django.http import HttpResponse, HttpResponseRedirect, Http404
+    from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
@@ -154,7 +154,7 @@ def profile(request, user_id):
 def new(request):
     ''' Newest blog posts - main app view. '''
 
-    newPostList = list(Post.objects.order_by('-date_updated')[:5])
+    newPostList = list(Post.objects.order_by('-date_updated')[:10])
     randomPostList = list(Post.objects.order_by('?')[:5])
 
     for post in newPostList:
