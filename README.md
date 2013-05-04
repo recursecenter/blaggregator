@@ -33,7 +33,7 @@ Then open settings.py and under HOST: add /tmp.
 ```
 
 - Turn on debugging in your environment:
-export DJANGO_DEBUG=True
+`export DJANGO_DEBUG=True`
 
 Then open `settings.py` and under `HOST:` add `/tmp`. 
 
