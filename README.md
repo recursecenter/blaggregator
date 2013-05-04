@@ -60,7 +60,7 @@ You can administer your app through the [handy-dandy admin interface](http://loc
 
 ###Encountered errors on Ubuntu 12.10:
 
-If you get either of these errors: 
+-If you get either of these errors: 
 
 ```
 -Error: pg_config executable not found.
@@ -72,11 +72,11 @@ Do the following:
 
 `sudo apt-get install libpq-dev`
 
-If you run into trouble with the Django installation within requirements.txt, install Django via:
+-If you run into trouble with the Django installation within requirements.txt, install Django via:
 
 `pip install django`
 
-If you recieve:
+-If you recieve:
 
 `No module named psycopg2.extensions:`
 
