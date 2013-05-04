@@ -35,10 +35,12 @@ connections on Unix domain socket "/var/pgsql_socket/.s.PGSQL.5432"?
 Then open `settings.py` and under `HOST:` add `/tmp`. 
 
 - Turn on debugging in your environment:
+
 `export DJANGO_DEBUG=True`
 
 
 - Then run a local server:
+
 `python manage.py runserver`
 
 You can administer your app through the [handy-dandy admin interface](http://localhost:8000/admin). You can be logged in as the admin or as your user account, but not both at the same time.
