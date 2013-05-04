@@ -96,9 +96,7 @@ Note: running `pip install -r requirements.txt` might be neccesarry after runnin
 
 - The following creates a super user:
 
-```sudo -u postgres psql postgres
-
-\password postgres```
+```- sudo -u postgres psql postgres - \password postgres```
 
 - The following creates new database called blaggregator_dev
 
@@ -106,8 +104,9 @@ Note: running `pip install -r requirements.txt` might be neccesarry after runnin
 
 - To set up other postgres user accounts do:
 
-`create user user_name'  '
-\password user_name`
+` - create user user_name 
+
+- \password user_name`
 
 - Then open settings.py and under `USER`: put the newly created user name, under `PASSWORD`: put the password of the user
 
