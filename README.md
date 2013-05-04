@@ -104,9 +104,11 @@ Note: running `pip install -r requirements.txt` might be neccesarry after runnin
 
 - To set up other postgres user accounts do:
 
-` - create user user_name 
+```
+- create user user_name 
 
-- \password user_name`
+- \password user_name
+```
 
 - Then open settings.py and under `USER`: put the newly created user name, under `PASSWORD`: put the password of the user
 
