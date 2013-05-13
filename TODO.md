@@ -1,34 +1,14 @@
-GRABBER UPDATE
-- [x] import the new script
-- [x] how is it actually getting the date? how does that date change if they change the title of the post?
-- [x] pull the date field in the view
-- [x] create a manage.py command that heroku can run periodically to check all scripts (see the posts branch for more on this)
-- [ ] refactor add_all_posts into its own function in views.py
-- [ ] deploy this new function to be called in various other places around the app: when blogs are added in the admin view, when blogs are added in the profile edit view.
-- [x] write a wrapper script to be run one time to update my database retroactively. Test it with the default list of posts.
-- [ ] rewrite /new view to display the newest posts (and a random post button/feed)
-
-
-
-
-
-
-
-
-- add profile links to the hacker school site
-- write script that crawls the posts once an hour
-- update blog post titles if they've changed
-- handle the wrong URL submitted more gracefully with ajax?
-- figure out how to surface error messages from the scraper
-
 ON DECK
-- [ ] handle posts with blank titles gracefully
+- [ ] handle posts with blank titles gracefully. Tumblr
 - [ ] check the submitted blog url to make sure it returns a 200 - use Ajax to display this? (jacob suggested a better method)
 - [ ] stop hotlinking to hacker school and save a copy of the file locally (waiting for new profile pics)
 - [ ] implement South http://south.readthedocs.org/en/latest/tutorial/index.html
 - [ ] migrate form fields to proper data types (e.g. URLField)
 - [ ] redirect /log_in if they're already logged in
 - [ ] strip newlines from blog post titles
+- handle the wrong URL submitted more gracefully with ajax?
+- figure out how to surface error messages from the scraper
+
 
 ON DECK: PROFILES
 - [ ] create profile views /profile/293

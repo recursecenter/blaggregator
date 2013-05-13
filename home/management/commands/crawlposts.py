@@ -15,6 +15,7 @@ key = os.environ.get('HUMBUG_KEY')
 email = os.environ.get('HUMBUG_EMAIL')
 
 class Command(NoArgsCommand):
+
     help = 'Periodically crawls all blogs for new posts.'
 
     option_list = NoArgsCommand.option_list + (
@@ -24,6 +25,7 @@ class Command(NoArgsCommand):
             help = 'Don\'t actually touch the database',
             ),
         )
+
 
     def crawlblog(self, blog):
 
@@ -39,6 +41,8 @@ class Command(NoArgsCommand):
 
                 date = timezone.make_aware(date, timezone.get_default_timezone())
                 now = timezone.make_aware(datetime.datetime.now(), timezone.get_default_timezone())
+
+                title = cleantitle(title)
 
                 # create the post instance if it doesn't already exist
                 post, created = Post.objects.get_or_create(
@@ -89,6 +93,19 @@ class Command(NoArgsCommand):
             print "\nDON'T FORGET TO RUN THIS FOR REAL\n"
         else:
             transaction.commit()
+
+
+def cleantitle(title):
+    ''' Strip the blog title of newlines. '''
+
+    newtitle = ''
+
+    for char in title:
+        if char != '\n':
+            newtitle += char
+
+    return newtitle
+
 
 def send_message_humbug(user, link, title):
 
