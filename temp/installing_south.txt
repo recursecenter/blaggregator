@@ -1,0 +1,3 @@
+May need to run this on heroku: 
+
+http://south.readthedocs.org/en/latest/convertinganapp.html#converting-an-app
