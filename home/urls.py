@@ -12,4 +12,5 @@ urlpatterns = patterns('',
     url(r'^new/$', views.new, name='new'),
     url(r'^add_blog/$', views.add_blog),
     url(r'^atom\.xml/$', views.feed, name='feed'),
+    url(r'^item/(?P<item_id>\w+)/$', views.item, name='item'),
 )

@@ -195,3 +195,29 @@ def feed(request):
     })
 
     return render(request, 'home/atom.xml', context, content_type="text/xml")
+
+
+@login_required(login_url='/log_in')
+def item(request, item_id):
+
+    try:
+        post = Post.objects.get(item_id=item_id)
+
+        user            = User.objects.get(blog__id__exact=post.blog_id)
+        post.author     = user.first_name + " " + user.last_name
+        post.authorid   = user.id
+        post.avatar     = Hacker.objects.get(user=user.id).avatar_url
+    except:
+        return HttpResponse("Sorry, item not found.")
+
+    context = Context({
+        "post": post,
+    })
+
+    return render_to_response('home/item.html', context, context_instance=RequestContext(request))
+
+
+
+
+
+
