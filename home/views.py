@@ -155,7 +155,9 @@ def new(request):
     ''' Newest blog posts - main app view. '''
 
     newPostList = list(Post.objects.order_by('-date_updated')[:10])
-    randomPostList = list(Post.objects.order_by('?')[:5])
+    print Post.objects.extra(select={'u': "select distinct blog_id"}).order_by('?')[:5]
+    
+    randomPostList = list(Post.objects.extra(select={'u': "select distinct blog_id from home_post"}).order_by('?')[:5])#list(Post.objects.distinct('blog')[:5])#list(Post.objects.order_by('?')[:5])
 
     for post in newPostList:
         user            = User.objects.get(blog__id__exact=post.blog_id)
