@@ -1,14 +1,21 @@
+COMMENTS
+- [x] Set up a unique page for each post item
+- [ ] Create comment model that links each comment to a post (include a 'parent' field to leave nesting options open but leave it blank for now)
+- [ ] "add comment" box
+- [ ] display comments on that page with avatars 
+
+
+
+
+
+
+
 ON DECK
 - [ ] handle posts with blank titles gracefully. Tumblr
 - [ ] check the submitted blog url to make sure it returns a 200 - use Ajax to display this? (jacob suggested a better method)
 - [ ] stop hotlinking to hacker school and save a copy of the file locally (waiting for new profile pics)
-- [ ] implement South http://south.readthedocs.org/en/latest/tutorial/index.html
 - [ ] migrate form fields to proper data types (e.g. URLField)
 - [ ] redirect /log_in if they're already logged in
-- [ ] strip newlines from blog post titles
-- handle the wrong URL submitted more gracefully with ajax?
-- figure out how to surface error messages from the scraper
-
 
 ON DECK: PROFILES
 - [ ] create profile views /profile/293
@@ -29,4 +36,6 @@ DONE
 - [T] Link to users' Hacker School profiles
 - [T] Fix 500 error by adding ALLOWED_HOSTS
 - [T] figure out how to handle USER, HOST, AWS_STORAGE_BUCKET_NAME in settings.py
+- [x] implement South http://south.readthedocs.org/en/latest/tutorial/index.html
+- [x] strip newlines from blog post titles
 
