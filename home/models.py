@@ -1,5 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
+import random, string
+
+def generate_random_id():
+    return ''.join(random.choice(string.ascii_uppercase + string.digits + string.ascii_lowercase) for x in range(6))
 
 # extends the User class to hold additional profile info
 # access with u.hacker.github (where u is user object instance)
@@ -31,3 +35,4 @@ class Post(models.Model):
     title        = models.CharField(max_length=200, blank=True)
     content      = models.TextField()
     date_updated = models.DateTimeField('date updated')
+    item_id      = models.CharField(max_length=6, default=generate_random_id())
