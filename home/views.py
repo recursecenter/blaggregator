@@ -154,6 +154,7 @@ def profile(request, user_id):
 def new(request):
     ''' Newest blog posts - main app view. '''
 
+
     newPostList = list(Post.objects.order_by('-date_updated')[:10])
     randomPostList = list(Post.objects.order_by('?')[:5])
 
