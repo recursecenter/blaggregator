@@ -12,11 +12,12 @@ from django.conf import settings
 from django.utils import timezone
 from django.core.validators import URLValidator
 from django.core.exceptions import ValidationError
+from django.db import connection
+import random
 import requests
 import datetime
 import re
 import feedergrabber27
-import sys
 
 def log_in(request):
     ''' Log in a user who already has a pre-existing local account. '''
@@ -159,28 +160,28 @@ def new(request):
     ''' Newest blog posts - main app view. '''
 
 
-    newPostList = list(Post.objects.order_by('-date_updated')[:10])
-    randomPostList = list(Post.objects.order_by('?')[:5])
+    new_posts = list(Post.objects.order_by('-date_updated')[:10])
+    random_posts = list(Post.objects.raw("select distinct on(blog_id) blog_id, id, url, title, date_updated as date \
+                                            from home_post order by blog_id, random()")[:5])
 
-    for post in newPostList:
+    for post in new_posts:
         user            = User.objects.get(blog__id__exact=post.blog_id)
         post.author     = user.first_name + " " + user.last_name
         post.authorid   = user.id
         post.avatar     = Hacker.objects.get(user=user.id).avatar_url
 
-    for post in randomPostList:
+    for post in random_posts:
         user            = User.objects.get(blog__id__exact=post.blog_id)
         post.author     = user.first_name + " " + user.last_name
         post.authorid   = user.id
         post.avatar     = Hacker.objects.get(user=user.id).avatar_url
 
     context = Context({
-        "newPostList": newPostList,
-        "randomPostList": randomPostList,
+        "new_posts": new_posts,
+        "random_posts": random_posts,
     })
 
-    return render_to_response('home/posts.html',
-              context, context_instance=RequestContext(request))
+    return render_to_response('home/posts.html', context, context_instance=RequestContext(request))
 
 @login_required(login_url='/log_in')
 def feed(request):
@@ -229,71 +230,78 @@ def submit_post(request):
 
 @login_required(login_url='/log_in')
 def submitted_posts(request):
-	''' Newest submitted posts - main app view. '''
+    ''' Newest submitted posts - main app view. '''
 
-	newPostList = list(SubmittedPost.objects.order_by('-date_submitted')[:10])
-	randomPostList = list(SubmittedPost.objects.order_by('?')[:5])
+    new_posts = list(SubmittedPost.objects.order_by('-date_submitted')[:10])
+    random_posts = list(SubmittedPost.objects.raw("select distinct on(user_id) user_id, id, url, title, date_submitted as date \
+                                                    from home_submittedpost order by user_id, random()"));
 
-	for post in newPostList:
-		user            = User.objects.get(id=post.user_id)
-		post.author     = user.first_name + " " + user.last_name
-		post.authorid   = user.id
-		post.avatar     = Hacker.objects.get(user=user.id).avatar_url
+    for post in new_posts:
+        user            = User.objects.get(id=post.user_id)
+        post.author     = user.first_name + " " + user.last_name
+        post.authorid   = user.id
+        post.avatar     = Hacker.objects.get(user=user.id).avatar_url
 
-	for post in randomPostList:
-		user            = User.objects.get(id=post.user_id)
-		post.author     = user.first_name + " " + user.last_name
-		post.authorid   = user.id
-		post.avatar     = Hacker.objects.get(user=user.id).avatar_url
+    for post in random_posts:
+        user            = User.objects.get(id=post.user_id)
+        post.author     = user.first_name + " " + user.last_name
+        post.authorid   = user.id
+        post.avatar     = Hacker.objects.get(user=user.id).avatar_url
 
-	context = Context({
-		"newPostList": newPostList,
-		"randomPostList": randomPostList,
+        context = Context({
+            "new_posts": new_posts,
+            "random_posts": random_posts
+        })
+    return render_to_response('home/posts.html', context, context_instance=RequestContext(request))
 
-	})
-	return render_to_response('home/posts.html',
-      context,
-      context_instance=RequestContext(request))
 
 @login_required(login_url='/log_in')
 def all_posts(request):
-	''' All posts - main app view. '''
+    ''' All posts - main app view. '''
+    sql = "select blog_id as id, url, title, 'hacker_school' as type, date_updated as date from home_post union select user_id as id, url, title,\
+          'submitted' as type, date_submitted as date from home_submittedpost order by date desc limit 10;"
+    
+    cursor = connection.cursor()
+    cursor.execute(sql);
+    new_posts = dictfetchall(cursor)
 
-	newPostList = list(Post.objects.order_by('-date_updated')[:5])
-	newSubmittedPostList = list(SubmittedPost.objects.order_by('-date_submitted')[:5])
-	newCombinedPostList = newPostList + newSubmittedPostList
+    #TODO: when there are less than 5 posts returned, what should the query be? or are we ok with just diplaying less than 5?
+    sql = "(select distinct on(blog_id) blog_id as id, url, title, 'hacker_school' as type, date_updated as date from home_post order by blog_id, random() limit 10) \
+            union (select distinct on(user_id) user_id as id, url, title, 'submitted' as type, date_submitted as date from home_submittedpost order by user_id, random() limit 10);"
+    cursor.execute(sql);
+    random_posts = dictfetchall(cursor)[0:5]
+
+    for new_post in new_posts:
+        if new_post['type'] == 'hacker_school':
+            user = User.objects.get(blog__id__exact=new_post['id'])
+        else:
+            user = User.objects.get(id=new_post['id'])
+
+        new_post['author']     = user.first_name + " " + user.last_name
+        new_post['authorid']   = user.id
+        new_post['avatar']     = Hacker.objects.get(user=user.id).avatar_url
+
+    for random_post in random_posts:
+        if random_post['type'] == 'hacker_school':
+            user = User.objects.get(blog__id__exact=random_post['id'])
+        else:
+            user = User.objects.get(id=random_post['id'])
+
+        random_post['author']     = user.first_name + " " + user.last_name
+        random_post['authorid']   = user.id
+        random_post['avatar']     = Hacker.objects.get(user=user.id).avatar_url
+
+    context = Context({
+    "new_posts" : new_posts,
+    "random_posts" : random_posts
+    })
+    return render_to_response('home/posts.html', context, context_instance=RequestContext(request))
 
 
-	randomPostList = list(Post.objects.order_by('?')[:3])
-	randomSubmittedPostList = list(SubmittedPost.objects.order_by('?')[:3])
-	randomCombinedPostList = randomPostList + randomSubmittedPostList
-
-	for post in newCombinedPostList:
-		try:
-			#hacker school post
-			user = User.objects.get(blog__id__exact=post.blog_id)
-		except AttributeError:
-			#submitted post
-			user = User.objects.get(id=post.user_id)
-
-		post.author     = user.first_name + " " + user.last_name
-		post.authorid   = user.id
-		post.avatar     = Hacker.objects.get(user=user.id).avatar_url
-
-	for post in randomCombinedPostList:
-		try:
-			#hacker school post
-			user = User.objects.get(blog__id__exact=post.blog_id)
-		except AttributeError:
-			#submitted post
-			user = User.objects.get(id=post.user_id)
-
-		post.author     = user.first_name + " " + user.last_name
-		post.authorid   = user.id
-		post.avatar     = Hacker.objects.get(user=user.id).avatar_url
-
-	context = Context({
-		"newPostList": newCombinedPostList,
-		"randomPostList": randomCombinedPostList,
-	})
-	return render_to_response('home/posts.html', context, context_instance=RequestContext(request))
+def dictfetchall(cursor):
+    "Returns all rows from a cursor as a dict"
+    desc = cursor.description
+    return [
+        dict(zip([col[0] for col in desc], row))
+        for row in cursor.fetchall()
+    ]

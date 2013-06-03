@@ -19,7 +19,7 @@
 
 <div class='postlist'>
     <h2>Newest Posts</h2>
-    {% for post in newPostList %}
+    {% for post in new_posts %}
         <div class="media post">
           <a class="pull-left" href="#">
             <img class="media-object" src="{{ post.avatar }}" width="64px" height="64px">
@@ -34,7 +34,7 @@
 
 <div class='postlist'>
     <h2>Random Posts from the Archive</h2>
-    {% for post in randomPostList %}
+    {% for post in random_posts %}
         <div class="media post">
           <a class="pull-left" href="#">
             <img class="media-object" src="{{ post.avatar }}" width="64px" height="64px">
