@@ -164,17 +164,9 @@ def new(request):
     random_posts = list(Post.objects.raw("select distinct on(blog_id) blog_id, id, url, title, date_updated as date \
                                             from home_post order by blog_id, random()")[:5])
 
-    for post in new_posts:
-        user            = User.objects.get(blog__id__exact=post.blog_id)
-        post.author     = user.first_name + " " + user.last_name
-        post.authorid   = user.id
-        post.avatar     = Hacker.objects.get(user=user.id).avatar_url
 
-    for post in random_posts:
-        user            = User.objects.get(blog__id__exact=post.blog_id)
-        post.author     = user.first_name + " " + user.last_name
-        post.authorid   = user.id
-        post.avatar     = Hacker.objects.get(user=user.id).avatar_url
+    assignHSCredentialsToPosts(new_posts, 'hacker_school')
+    assignHSCredentialsToPosts(random_posts, 'hacker_school')
 
     context = Context({
         "new_posts": new_posts,
@@ -236,22 +228,13 @@ def submitted_posts(request):
     random_posts = list(SubmittedPost.objects.raw("select distinct on(user_id) user_id, id, url, title, date_submitted as date \
                                                     from home_submittedpost order by user_id, random()"));
 
-    for post in new_posts:
-        user            = User.objects.get(id=post.user_id)
-        post.author     = user.first_name + " " + user.last_name
-        post.authorid   = user.id
-        post.avatar     = Hacker.objects.get(user=user.id).avatar_url
+    assignHSCredentialsToPosts(new_posts, 'submitted')
+    assignHSCredentialsToPosts(random_posts, 'submitted')
 
-    for post in random_posts:
-        user            = User.objects.get(id=post.user_id)
-        post.author     = user.first_name + " " + user.last_name
-        post.authorid   = user.id
-        post.avatar     = Hacker.objects.get(user=user.id).avatar_url
-
-        context = Context({
-            "new_posts": new_posts,
-            "random_posts": random_posts
-        })
+    context = Context({
+        "new_posts": new_posts,
+        "random_posts": random_posts
+    })
     return render_to_response('home/posts.html', context, context_instance=RequestContext(request))
 
 
@@ -271,25 +254,9 @@ def all_posts(request):
     cursor.execute(sql);
     random_posts = dictfetchall(cursor)[0:5]
 
-    for new_post in new_posts:
-        if new_post['type'] == 'hacker_school':
-            user = User.objects.get(blog__id__exact=new_post['id'])
-        else:
-            user = User.objects.get(id=new_post['id'])
+    assignHSCredentialsToPosts(new_posts, 'all')
+    assignHSCredentialsToPosts(random_posts, 'all')
 
-        new_post['author']     = user.first_name + " " + user.last_name
-        new_post['authorid']   = user.id
-        new_post['avatar']     = Hacker.objects.get(user=user.id).avatar_url
-
-    for random_post in random_posts:
-        if random_post['type'] == 'hacker_school':
-            user = User.objects.get(blog__id__exact=random_post['id'])
-        else:
-            user = User.objects.get(id=random_post['id'])
-
-        random_post['author']     = user.first_name + " " + user.last_name
-        random_post['authorid']   = user.id
-        random_post['avatar']     = Hacker.objects.get(user=user.id).avatar_url
 
     context = Context({
     "new_posts" : new_posts,
@@ -305,3 +272,25 @@ def dictfetchall(cursor):
         dict(zip([col[0] for col in desc], row))
         for row in cursor.fetchall()
     ]
+
+def assignHSCredentialsToPosts(posts, post_type):        
+    if post_type == 'all':
+        for post in posts:
+            if post['type'] == 'hacker_school':
+                user = User.objects.get(blog__id__exact=post['id'])
+            elif post['type'] == 'submitted':
+                user = User.objects.get(id=post['id'])
+
+            post['author']     = user.first_name + " " + user.last_name
+            post['authorid']   = user.id
+            post['avatar']     = Hacker.objects.get(user=user.id).avatar_url
+    else:
+        for post in posts:
+            if post_type == 'submitted':
+                user = User.objects.get(id=post.user_id)
+            elif post_type == 'hacker_school':
+                user = User.objects.get(blog__id__exact=post.blog_id)
+
+            post.author     = user.first_name + " " + user.last_name
+            post.authorid   = user.id
+            post.avatar     = Hacker.objects.get(user=user.id).avatar_url
