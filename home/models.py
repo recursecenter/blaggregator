@@ -31,3 +31,13 @@ class Post(models.Model):
     title        = models.CharField(max_length=200, blank=True)
     content      = models.TextField()
     date_updated = models.DateTimeField('date updated')
+
+class SubmittedPost(models.Model):
+
+    def __unicode__(self):
+        return self.title
+
+    user         = models.ForeignKey(User)
+    url          = models.CharField(max_length=400)
+    title        = models.CharField(max_length=200, blank=True)
+    date_submitted = models.DateTimeField('date submitted')

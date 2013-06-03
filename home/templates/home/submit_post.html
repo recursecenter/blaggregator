@@ -1,0 +1,41 @@
+
+{% extends "home/base.html" %}
+
+{% block firstName %}{{ user.first_name }}{% endblock %}
+{% block title %}
+
+{% endblock title %}
+
+
+{% block content %}
+
+<div class="well span6 offset3">
+  <h2 class="text-center" style="margin-bottom:20px">Submit a post</h2>
+
+  <p class="text-center">Please submit a post on behalf of a non Hacker Schooler.</p>
+
+  <form class="form-horizontal" id="createaccount" action="" method="post">
+  {% csrf_token %}
+
+    <div class="control-group">
+      <label class="control-label" for="title">Title</label>
+      <div class="controls">
+        <input type="text" name="title" placeholder="Title">
+      </div>
+    </div>
+    <div class="control-group">
+      <label class="control-label" for="url">URL</label>
+      <div class="controls">
+        <input type="text" name="url" placeholder="URL">
+      </div>
+      <div class="controls">
+        <p>{{ error_message }}</p>
+      </div>
+    </div>
+    <div class="control-group">
+      <div class="controls">
+        <button type="submit" class="btn">Submit Post</button>
+      </div>
+    </div>
+</div>
+{% endblock%}

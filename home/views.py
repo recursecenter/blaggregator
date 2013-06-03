@@ -7,12 +7,16 @@ from django.core.context_processors import csrf
 from django.core.files import File
 from django.core.files.temp import NamedTemporaryFile
 from django.shortcuts import render_to_response, render
-from home.models import Hacker, Blog, Post
+from home.models import Hacker, Blog, Post, SubmittedPost
 from django.conf import settings
+from django.utils import timezone
+from django.core.validators import URLValidator
+from django.core.exceptions import ValidationError
 import requests
 import datetime
 import re
 import feedergrabber27
+import sys
 
 def log_in(request):
     ''' Log in a user who already has a pre-existing local account. '''
@@ -109,11 +113,11 @@ def add_blog(request):
 
             # create new blog record in db
             blog = Blog.objects.create(
-                                        user=User.objects.get(id=request.user.id),
-                                        feed_url=feed_url,
-                                        url=url,
-                                        created=datetime.datetime.now(),
-                                       )
+                user=User.objects.get(id=request.user.id),
+                feed_url=feed_url,
+                url=url,
+                created=datetime.datetime.now(),
+            )
             blog.save()
 
             # Feedergrabber returns ( [(link, title, date)], [errors])
@@ -123,12 +127,12 @@ def add_blog(request):
             for post in crawled:
                 post_url, post_title, post_date = post
                 newpost = Post.objects.create(
-                                              blog=Blog.objects.get(user=request.user.id),
-                                              url=post_url,
-                                              title=post_title,
-                                              content="",
-                                              date_updated=post_date,
-                                              )
+                  blog=Blog.objects.get(user=request.user.id),
+                  url=post_url,
+                  title=post_title,
+                  content="",
+                  date_updated=post_date,
+                )
 
             return HttpResponseRedirect('/new')
         else:
@@ -173,12 +177,10 @@ def new(request):
     context = Context({
         "newPostList": newPostList,
         "randomPostList": randomPostList,
-
     })
 
-    return render_to_response('home/new.html',
-                              context,
-                              context_instance=RequestContext(request))
+    return render_to_response('home/posts.html',
+              context, context_instance=RequestContext(request))
 
 @login_required(login_url='/log_in')
 def feed(request):
@@ -196,3 +198,102 @@ def feed(request):
     })
 
     return render(request, 'home/atom.xml', context, content_type="text/xml")
+
+@login_required(login_url='/log_in')
+def submit_post(request):
+    if request.method == 'POST': 
+    	title = request.POST['title']
+    	url = request.POST['url']
+    	validate = URLValidator()
+
+        try:
+            validate(url)
+            resp = requests.get(url)
+
+            if resp.status_code == requests.codes.ok:
+                date = timezone.make_aware(datetime.datetime.now(), timezone.get_default_timezone())
+                SubmittedPost.objects.create(user=User.objects.get(id=request.user.id),url=url, title=title, date_submitted=date)
+                return HttpResponseRedirect('/submitted_posts')
+            else:
+                context = Context({
+                    "error_message": "URL does not exist. Please try again."
+                })
+        except ValidationError, e:
+            context = Context({
+                "error_message": "Invalid URL! Please enter a valid one."
+            })
+        
+        return render_to_response('home/submit_post.html', context, context_instance=RequestContext(request))
+    else:
+		return render_to_response('home/submit_post.html', {}, context_instance=RequestContext(request))
+
+@login_required(login_url='/log_in')
+def submitted_posts(request):
+	''' Newest submitted posts - main app view. '''
+
+	newPostList = list(SubmittedPost.objects.order_by('-date_submitted')[:10])
+	randomPostList = list(SubmittedPost.objects.order_by('?')[:5])
+
+	for post in newPostList:
+		user            = User.objects.get(id=post.user_id)
+		post.author     = user.first_name + " " + user.last_name
+		post.authorid   = user.id
+		post.avatar     = Hacker.objects.get(user=user.id).avatar_url
+
+	for post in randomPostList:
+		user            = User.objects.get(id=post.user_id)
+		post.author     = user.first_name + " " + user.last_name
+		post.authorid   = user.id
+		post.avatar     = Hacker.objects.get(user=user.id).avatar_url
+
+	context = Context({
+		"newPostList": newPostList,
+		"randomPostList": randomPostList,
+
+	})
+	return render_to_response('home/posts.html',
+      context,
+      context_instance=RequestContext(request))
+
+@login_required(login_url='/log_in')
+def all_posts(request):
+	''' All posts - main app view. '''
+
+	newPostList = list(Post.objects.order_by('-date_updated')[:5])
+	newSubmittedPostList = list(SubmittedPost.objects.order_by('-date_submitted')[:5])
+	newCombinedPostList = newPostList + newSubmittedPostList
+
+
+	randomPostList = list(Post.objects.order_by('?')[:3])
+	randomSubmittedPostList = list(SubmittedPost.objects.order_by('?')[:3])
+	randomCombinedPostList = randomPostList + randomSubmittedPostList
+
+	for post in newCombinedPostList:
+		try:
+			#hacker school post
+			user = User.objects.get(blog__id__exact=post.blog_id)
+		except AttributeError:
+			#submitted post
+			user = User.objects.get(id=post.user_id)
+
+		post.author     = user.first_name + " " + user.last_name
+		post.authorid   = user.id
+		post.avatar     = Hacker.objects.get(user=user.id).avatar_url
+
+	for post in randomCombinedPostList:
+		try:
+			#hacker school post
+			user = User.objects.get(blog__id__exact=post.blog_id)
+		except AttributeError:
+			#submitted post
+			user = User.objects.get(id=post.user_id)
+
+		post.author     = user.first_name + " " + user.last_name
+		post.authorid   = user.id
+		post.avatar     = Hacker.objects.get(user=user.id).avatar_url
+
+	context = Context({
+		"newPostList": newCombinedPostList,
+		"randomPostList": randomCombinedPostList,
+	})
+	return render_to_response('home/posts.html', context, context_instance=RequestContext(request))
