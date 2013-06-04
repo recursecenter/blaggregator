@@ -8,15 +8,27 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding field 'Post.item_id'
-        db.add_column(u'home_post', 'item_id',
-                      self.gf('django.db.models.fields.CharField')(default='aaaaaa', max_length=6),
-                      keep_default=False)
+        # Adding model 'Comment'
+        db.create_table(u'home_comment', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('item_id', self.gf('django.db.models.fields.CharField')(default='AF9Rrk', unique=True, max_length=6)),
+            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
+            ('parent', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['home.Comment'], null=True, blank=True)),
+            ('date_modified', self.gf('django.db.models.fields.DateTimeField')()),
+            ('content', self.gf('django.db.models.fields.TextField')()),
+        ))
+        db.send_create_signal(u'home', ['Comment'])
+
+        # Adding unique constraint on 'Post', fields ['item_id']
+        db.create_unique(u'home_post', ['item_id'])
 
 
     def backwards(self, orm):
-        # Deleting field 'Post.item_id'
-        db.delete_column(u'home_post', 'item_id')
+        # Removing unique constraint on 'Post', fields ['item_id']
+        db.delete_unique(u'home_post', ['item_id'])
+
+        # Deleting model 'Comment'
+        db.delete_table(u'home_comment')
 
 
     models = {
@@ -65,6 +77,15 @@ class Migration(SchemaMigration):
             'url': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"})
         },
+        u'home.comment': {
+            'Meta': {'object_name': 'Comment'},
+            'content': ('django.db.models.fields.TextField', [], {}),
+            'date_modified': ('django.db.models.fields.DateTimeField', [], {}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'item_id': ('django.db.models.fields.CharField', [], {'default': "'AF9Rrk'", 'unique': 'True', 'max_length': '6'}),
+            'parent': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['home.Comment']", 'null': 'True', 'blank': 'True'}),
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"})
+        },
         u'home.hacker': {
             'Meta': {'object_name': 'Hacker'},
             'avatar_url': ('django.db.models.fields.CharField', [], {'max_length': '400', 'blank': 'True'}),
@@ -80,7 +101,7 @@ class Migration(SchemaMigration):
             'content': ('django.db.models.fields.TextField', [], {}),
             'date_updated': ('django.db.models.fields.DateTimeField', [], {}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'item_id': ('django.db.models.fields.CharField', [], {'default': "'Kv2YkY'", 'max_length': '6'}),
+            'item_id': ('django.db.models.fields.CharField', [], {'default': "'VagbpC'", 'unique': 'True', 'max_length': '6'}),
             'title': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
             'url': ('django.db.models.fields.CharField', [], {'max_length': '400'})
         }

@@ -1,9 +1,9 @@
 COMMENTS
 - [x] Set up a unique page for each post item
-- [ ] Create comment model that links each comment to a post (include a 'parent' field to leave nesting options open but leave it blank for now)
-- [ ] "add comment" box
-- [ ] display comments on that page with avatars 
-
+- [x] Create comment model that links each comment to a post (include a 'parent' field to leave nesting options open but leave it blank for now)
+- [ ] display comments on that page with avatars, and in the admin interface
+- [ ] "add comment" submit box to unique page for each post item
+- [ ] don't forget to deploy South on heroku before pushing live
 
 
 

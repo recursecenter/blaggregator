@@ -1,3 +1,12 @@
 May need to run this on heroku: 
 
 http://south.readthedocs.org/en/latest/convertinganapp.html#converting-an-app
+
+on heroku: 
+
+heroku run ./manage.py syncdb (to add south's tables to the db)
+heroku run ./manage.py schemamigration home --initial
+heroku run ./manage.py migrate home 0001 --fake
+run ./manage.py migrate
+
+----------
