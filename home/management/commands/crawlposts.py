@@ -111,8 +111,8 @@ def send_message_humbug(user, link, title):
 
     data = {"type": "stream",
             "to": "announce",
-            "subject": "new blog post",
-            "content": "**%s** has a new blog post: [%s](%s)" % (user.first_name, title, link)
+            "subject": "new blog post: %s" % title,
+            "content": "**%s** has a new blog post: [%s](%s)" % (user.first_name, title, link),
         }
 
     r = requests.post('https://humbughq.com/api/v1/messages', data=data, auth=(email, key))

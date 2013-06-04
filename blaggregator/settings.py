@@ -6,7 +6,8 @@ SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 DEBUG = 'DJANGO_DEBUG' in os.environ
 TEMPLATE_DEBUG = DEBUG
 
-if bool(os.environ.get('HEROKU', '')):
+if bool(os.environ.get('PROD', '')):
+    print "** DETECTED PRODUCTION ENVIRONMENT"
     SITE_URL = 'http://blaggregator.herokuapp.com'
 
     # S3
@@ -18,7 +19,21 @@ if bool(os.environ.get('HEROKU', '')):
     STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 
+elif bool(os.environ.get('STAGING', '')):
+    print "** DETECTED STAGING ENVIRONMENT"
+    SITE_URL = 'http://blaggregator-staging.herokuapp.com'
+
+    # S3
+    AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
+    AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
+    AWS_STORAGE_BUCKET_NAME = 'blaggregator-staging'
+
+    STATIC_URL = 'http://' + AWS_STORAGE_BUCKET_NAME + '.s3.amazonaws.com/'
+    STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+
 else:
+    print "** DETECTED LOCAL ENVIRONMENT"
     SITE_URL = 'http://127.0.0.1:8000'
     STATIC_URL = '/static/'
 
@@ -43,7 +58,7 @@ DATABASES = {
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = ['localhost', 'blaggregator.herokuapp.com']
+ALLOWED_HOSTS = ['localhost', 'blaggregator.herokuapp.com', 'blaggregator-staging.herokuapp.com']
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -187,9 +202,10 @@ LOGGING = {
     }
 }
 
-# Set an environmental variable on heroku:
-# heroku config:add HEROKU=True
-if bool(os.environ.get('HEROKU', '')):
+# This bit uses the module dj_database_url to manage databases based on the
+# url of the database, as configured in environmental variables (which are
+# in turn managed by the Heroku Postgres add-on)
+if bool(os.environ.get('PROD', '')) or bool(os.environ.get('STAGING', '')):
 
     # Parse database configuration from $DATABASE_URL
     import dj_database_url
