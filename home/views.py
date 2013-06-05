@@ -164,6 +164,7 @@ def new(request):
         post.author     = user.first_name + " " + user.last_name
         post.authorid   = user.id
         post.avatar     = Hacker.objects.get(user=user.id).avatar_url
+        post.comments   = list(Comment.objects.filter(post=post))
 
     for post in randomPostList:
         user            = User.objects.get(blog__id__exact=post.blog_id)

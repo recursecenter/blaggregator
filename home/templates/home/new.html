@@ -20,6 +20,11 @@
           <div class="media-body">
             <h4 class="media-heading"><a href="{{ post.url }}">{{ post.title }}</a></h4>
             <span class="byline"><a href="http://hackerschool.com/people/{{ post.authorid }}">{{ post.author }}</a></span>
+            {% if post.comments %}
+                <div><a href="../item/{{ post.item_id }}">{{ post.comments|length }} comments</a></div>
+            {% else %}
+                <div><a href="../item/{{ post.item_id }}">Discuss</a></div>
+            {% endif %}
           </div>
         </div>
     {% endfor %}
