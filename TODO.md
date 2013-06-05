@@ -2,7 +2,13 @@ COMMENTS
 - [x] Set up a unique page for each post item
 - [x] Create comment model that links each comment to a post (include a 'parent' field to leave nesting options open but leave it blank for now)
 - [x] display comments on that page with avatars, and in the admin interface
-- [ ] "add comment" submit box to unique page for each post item
+- [x] "add comment" submit box to unique page for each post item
+- [ ] refactor "item" url system - potentially use different comment IDs and post IDs?
+- [ ] fix permalinks
+- [ ] fix parent links
+- [ ] optional: deploy to winter batch! 
+- [ ] add 'reply' links that let you comment inline
+- [ ] restyle
 - [ ] don't forget to deploy South on heroku before pushing live
 
 

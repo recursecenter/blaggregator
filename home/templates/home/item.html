@@ -32,15 +32,29 @@
           <div class="media-body">
             <span class="byline"><a href="http://hackerschool.com/people/{{ comment.authorid }}">{{ comment.author }}</a> says: </span>
             <span class="comment content">{{ comment.content }}</span>
-            <span class="comment date">{{ comment.date }}</span>
-            {% if comment.parent %}
-                <span class="comment parent"><a href="../../comment/{{ comment.parent.item_id }}/">Parent</a></span>
-            {% endif %}
-            <span class="comment permalink"><a href="item/{{ comment.item_id }}">Permalink</a></span>
+            <div>
+                {% if comment.parent %}
+                    <span class="comment parent"><a href="../../comment/{{ comment.parent.item_id }}/">Parent</a></span>
+                {% endif %}
+                <span class="comment permalink"><a href="item/{{ comment.item_id }}">Permalink</a></span>
+                <span class="comment date">On {{ comment.date_modified }}</span>
+            </div>
           </div>
         </div>
     </div>
 
 {% endfor %}
+
+<div class='well'>
+    <form action="" method="post">
+        {% csrf_token %}
+
+        <fieldset>
+            <legend>Add a comment</legend>
+            <textarea rows="3" type="text" name="content"></textarea>
+            <button type="submit" class="btn">Post comment</button>
+        </fieldset>
+    </form>
+</div>
 
 {% endblock %}
