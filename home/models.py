@@ -44,6 +44,7 @@ class Comment(models.Model):
 
     item_id         = models.CharField(max_length=6, default=generate_random_id(), unique=True)
     user            = models.ForeignKey(User)
+    post            = models.ForeignKey(Post)
     parent          = models.ForeignKey('self', blank=True, null=True)
     date_modified   = models.DateTimeField('date modified')
     content         = models.TextField()

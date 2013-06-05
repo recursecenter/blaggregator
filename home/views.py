@@ -7,7 +7,7 @@ from django.core.context_processors import csrf
 from django.core.files import File
 from django.core.files.temp import NamedTemporaryFile
 from django.shortcuts import render_to_response, render
-from home.models import Hacker, Blog, Post
+from home.models import Hacker, Blog, Post, Comment
 from django.conf import settings
 import requests
 import datetime
@@ -201,24 +201,27 @@ def feed(request):
 @login_required(login_url='/log_in')
 def item(request, item_id):
 
-    try:
-        post = Post.objects.get(item_id=item_id)
+    # try:
+    post = Post.objects.get(item_id=item_id)
 
-        user            = User.objects.get(blog__id__exact=post.blog_id)
-        post.author     = user.first_name + " " + user.last_name
-        post.authorid   = user.id
-        post.avatar     = Hacker.objects.get(user=user.id).avatar_url
-    except:
-        return HttpResponse("Sorry, item not found.")
+    user            = User.objects.get(blog__id__exact=post.blog_id)
+    post.author     = user.first_name + " " + user.last_name
+    post.authorid   = user.id
+    post.avatar     = Hacker.objects.get(user=user.id).avatar_url
+
+    commentList = list(Comment.objects.filter(post=post))
+    for comment in commentList:
+        user            = User.objects.get(comment__item_id__exact=comment.item_id)
+        comment.author  = user.first_name
+        comment.avatar  = Hacker.objects.get(user=comment.user).avatar_url
+        comment.authorid = comment.user.id
+    # except:
+    #     return HttpResponse("Sorry, item not found.")
 
     context = Context({
         "post": post,
+        "commentList": commentList,
     })
 
     return render_to_response('home/item.html', context, context_instance=RequestContext(request))
-
-
-
-
-
 

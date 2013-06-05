@@ -22,4 +22,25 @@
     </div>
 </div>
 
+{% for comment in commentList %}
+
+    <div class='well'>
+        <div class="media comment">
+          <a class="pull-left" href="#">
+            <img class="media-object" src="{{ comment.avatar }}" width="64px" height="64px">
+          </a>
+          <div class="media-body">
+            <span class="byline"><a href="http://hackerschool.com/people/{{ comment.authorid }}">{{ comment.author }}</a> says: </span>
+            <span class="comment content">{{ comment.content }}</span>
+            <span class="comment date">{{ comment.date }}</span>
+            {% if comment.parent %}
+                <span class="comment parent"><a href="../../comment/{{ comment.parent.item_id }}/">Parent</a></span>
+            {% endif %}
+            <span class="comment permalink"><a href="item/{{ comment.item_id }}">Permalink</a></span>
+          </div>
+        </div>
+    </div>
+
+{% endfor %}
+
 {% endblock %}
