@@ -5,7 +5,7 @@ SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 # False: heroku config:unset DJANGO_DEBUG
 DEBUG = 'DJANGO_DEBUG' in os.environ
 TEMPLATE_DEBUG = DEBUG
-"""if bool(os.environ.get('HEROKU', '')):
+if bool(os.environ.get('HEROKU', '')):
     SITE_URL = 'http://blaggregator.herokuapp.com'
 
     # S3
@@ -19,9 +19,9 @@ TEMPLATE_DEBUG = DEBUG
 
 else:
     SITE_URL = 'http://127.0.0.1:8000'
-    STATIC_URL = '/static/'"""
+    STATIC_URL = '/static/'
 
-if bool(os.environ.get('PROD', '')):
+"""if bool(os.environ.get('PROD', '')):
     print "** DETECTED PRODUCTION ENVIRONMENT"
     SITE_URL = 'http://blaggregator.herokuapp.com'
 
@@ -51,7 +51,7 @@ else:
     print "** DETECTED LOCAL ENVIRONMENT"
     SITE_URL = 'http://127.0.0.1:8000'
     STATIC_URL = '/static/'
-
+"""
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
@@ -65,8 +65,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
         'NAME': 'blaggregator_dev',                      # Or path to database file if using sqlite3.
         # The following settings are not used with sqlite3:
-        'USER': 'sasha',
-        'PASSWORD': '',
+        'USER': 'kenya',
+        'PASSWORD': 'p@55w0rd',
         'HOST': '',                      # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
         'PORT': '',                      # Set to empty string for default.
     }
