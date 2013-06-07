@@ -5,7 +5,6 @@ SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 # False: heroku config:unset DJANGO_DEBUG
 DEBUG = 'DJANGO_DEBUG' in os.environ
 TEMPLATE_DEBUG = DEBUG
-
 """if bool(os.environ.get('HEROKU', '')):
     SITE_URL = 'http://blaggregator.herokuapp.com'
 
