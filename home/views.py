@@ -248,7 +248,6 @@ def all_posts(request):
     cursor.execute(sql);
     new_posts = dictfetchall(cursor)
 
-    #TODO: when there are less than 5 posts returned, what should the query be? or are we ok with just diplaying less than 5?
     sql = "(select distinct on(blog_id) blog_id as id, url, title, 'hacker_school' as type, date_updated as date from home_post order by blog_id, random() limit 10) \
             union (select distinct on(user_id) user_id as id, url, title, 'submitted' as type, date_submitted as date from home_submittedpost order by user_id, random() limit 10);"
     cursor.execute(sql);
