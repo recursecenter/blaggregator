@@ -3,12 +3,21 @@ COMMENTS
 - [x] Create comment model that links each comment to a post (include a 'parent' field to leave nesting options open but leave it blank for now)
 - [x] display comments on that page with avatars, and in the admin interface
 - [x] "add comment" submit box to unique page for each post item
-- [ ] refactor "item" url system - potentially use different comment IDs and post IDs?
+- [x] add link to comments in the /new view
+
+MILESTONE: WORKING COMMENTS (no nesting)
+- [ ] rename 'item_id' to 'slug' in the model
+- [ ] add urlconf called 'post' and 'comment' (can i pass two different id's through the URL?)
 - [ ] fix permalinks
+- [ ] pass a dict from the view to the template, not a list
+
+MILESTONE: NESTED COMMENTS
+- [ ] Add 'reply' link to the template so you can comment inline. use jquery to unhide it
 - [ ] fix parent links
-- [ ] optional: deploy to winter batch! 
-- [ ] add 'reply' links that let you comment inline
-- [ ] restyle
+- [ ] display dates as 'x days ago' rather than date & time
+
+Before full deploy: 
+- [ ] change the links that Humbug posts
 - [ ] don't forget to deploy South on heroku before pushing live
 
 
@@ -17,6 +26,7 @@ COMMENTS
 
 
 ON DECK
+- [ ] fix login always forwarding to /new bug. Likely fix: just point / to /new
 - [ ] handle posts with blank titles gracefully. Tumblr
 - [ ] check the submitted blog url to make sure it returns a 200 - use Ajax to display this? (jacob suggested a better method)
 - [ ] stop hotlinking to hacker school and save a copy of the file locally (waiting for new profile pics)
