@@ -5,7 +5,8 @@ SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 # False: heroku config:unset DJANGO_DEBUG
 DEBUG = 'DJANGO_DEBUG' in os.environ
 TEMPLATE_DEBUG = DEBUG
-if bool(os.environ.get('HEROKU', '')):
+
+"""if bool(os.environ.get('HEROKU', '')):
     SITE_URL = 'http://blaggregator.herokuapp.com'
 
     # S3
@@ -19,9 +20,9 @@ if bool(os.environ.get('HEROKU', '')):
 
 else:
     SITE_URL = 'http://127.0.0.1:8000'
-    STATIC_URL = '/static/'
+    STATIC_URL = '/static/'"""
 
-"""if bool(os.environ.get('PROD', '')):
+if bool(os.environ.get('PROD', '')):
     print "** DETECTED PRODUCTION ENVIRONMENT"
     SITE_URL = 'http://blaggregator.herokuapp.com'
 
@@ -51,7 +52,7 @@ else:
     print "** DETECTED LOCAL ENVIRONMENT"
     SITE_URL = 'http://127.0.0.1:8000'
     STATIC_URL = '/static/'
-"""
+
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
@@ -74,7 +75,7 @@ DATABASES = {
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = ['localhost', 'blaggregator.herokuapp.com']
+ALLOWED_HOSTS = ['localhost', 'blaggregator.herokuapp.com', 'blaggregator-staging.herokuapp.com']
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
