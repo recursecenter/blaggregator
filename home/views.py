@@ -161,16 +161,16 @@ def new(request):
 
 
     new_posts = list(Post.objects.order_by('-date_updated')[:10])
-    random_posts = list(Post.objects.raw("select distinct on(blog_id) blog_id, id, url, title, date_updated as date \
-                                            from home_post order by blog_id, random()")[:5])
+    #random_posts = list(Post.objects.raw("select distinct on(blog_id) blog_id, id, url, title, date_updated as date \
+    #                                        from home_post order by blog_id, random()")[:5])
 
 
     assignHSCredentialsToPosts(new_posts, 'hacker_school')
-    assignHSCredentialsToPosts(random_posts, 'hacker_school')
+    #assignHSCredentialsToPosts(random_posts, 'hacker_school')
 
     context = Context({
-        "new_posts": new_posts,
-        "random_posts": random_posts,
+        "new_posts": new_posts
+     #   "random_posts": random_posts,
     })
 
     return render_to_response('home/posts.html', context, context_instance=RequestContext(request))
@@ -221,25 +221,21 @@ def submit_post(request):
 		return render_to_response('home/submit_post.html', {}, context_instance=RequestContext(request))
 
 @login_required(login_url='/log_in')
-def submitted_posts(request):
+def submitted(request):
     ''' Newest submitted posts - main app view. '''
 
     new_posts = list(SubmittedPost.objects.order_by('-date_submitted')[:10])
-    random_posts = list(SubmittedPost.objects.raw("select distinct on(user_id) user_id, id, url, title, date_submitted as date \
-                                                    from home_submittedpost order by user_id, random()"));
-
+   
     assignHSCredentialsToPosts(new_posts, 'submitted')
-    assignHSCredentialsToPosts(random_posts, 'submitted')
 
     context = Context({
-        "new_posts": new_posts,
-        "random_posts": random_posts
+        "new_posts": new_posts
     })
     return render_to_response('home/posts.html', context, context_instance=RequestContext(request))
 
 
 @login_required(login_url='/log_in')
-def all_posts(request):
+def all(request):
     ''' All posts - main app view. '''
     sql = "select blog_id as id, url, title, 'hacker_school' as type, date_updated as date from home_post union select user_id as id, url, title,\
           'submitted' as type, date_submitted as date from home_submittedpost order by date desc limit 10;"
@@ -248,18 +244,11 @@ def all_posts(request):
     cursor.execute(sql);
     new_posts = dictfetchall(cursor)
 
-    sql = "(select distinct on(blog_id) blog_id as id, url, title, 'hacker_school' as type, date_updated as date from home_post order by blog_id, random() limit 10) \
-            union (select distinct on(user_id) user_id as id, url, title, 'submitted' as type, date_submitted as date from home_submittedpost order by user_id, random() limit 10);"
-    cursor.execute(sql);
-    random_posts = dictfetchall(cursor)[0:5]
-
     assignHSCredentialsToPosts(new_posts, 'all')
-    assignHSCredentialsToPosts(random_posts, 'all')
 
 
     context = Context({
-    "new_posts" : new_posts,
-    "random_posts" : random_posts
+    "new_posts" : new_posts
     })
     return render_to_response('home/posts.html', context, context_instance=RequestContext(request))
 
