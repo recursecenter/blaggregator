@@ -206,7 +206,7 @@ def submit_post(request):
             if resp.status_code == requests.codes.ok:
                 date = timezone.make_aware(datetime.datetime.now(), timezone.get_default_timezone())
                 SubmittedPost.objects.create(user=User.objects.get(id=request.user.id),url=url, title=title, date_submitted=date)
-                return HttpResponseRedirect('/submitted_posts')
+                return HttpResponseRedirect('/submitted')
             else:
                 context = Context({
                     "error_message": "URL does not exist. Please try again."
