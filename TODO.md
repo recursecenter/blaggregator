@@ -21,6 +21,7 @@ MILESTONE: NESTED COMMENTS
 
 Before full deploy: 
 - [ ] merge in Kenya's changes
+- [ ] restyle /new
 - [ ] change the links that Humbug posts
 - [ ] don't forget to deploy South on heroku before pushing live
 

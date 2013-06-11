@@ -14,7 +14,13 @@
         <div class="navbar-inner">
             <div class="container">
 
-                <a class="brand" href="/new">HackerSchool.Blaggregator</a>
+                <a class="brand" href="/new">Blaggregator</a>
+
+                <ul class="nav">
+                  <li class="active"><a href="#">All</a></li>
+                  <li><a href="#">by Hacker School</a></li>
+                  <li><a href="#">Submitted (coming soon!)</a></li>
+                </ul>
 
                 <ul class="nav pull-right">
                     <li><a>Welcome{% if user.is_authenticated %} {% block firstName %}{% endblock firstName%}{% endif %}!</a></li>
