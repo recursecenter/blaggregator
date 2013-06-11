@@ -8,16 +8,19 @@ COMMENTS
 MILESTONE: WORKING COMMENTS (no nesting)
 - [x] rename 'item_id' to 'slug' in the model
 - [x] add urlconf called 'post' and 'comment' (can i pass two different id's through the URL?)
-- [ ] pass a dict from the view to the template, not a list
+- [x] pass a dict from the view to the template, not a list (will instead put this on the template)
+- [ ] restyle the submit button
+- [ ] remove parent and permalinks from templates and dates
+- [ ] restyle /new according to note on trello board
 
 MILESTONE: NESTED COMMENTS
 - [ ] Add 'reply' link to the template so you can comment inline. use jquery to unhide it
 - [ ] fix parent links
-- [ ] display dates as 'x days ago' rather than date & time
 - [ ] add URLconf and template (using anchors) for permalinks
 - [ ] fix permalinks
 
 Before full deploy: 
+- [ ] merge in Kenya's changes
 - [ ] change the links that Humbug posts
 - [ ] don't forget to deploy South on heroku before pushing live
 

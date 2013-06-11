@@ -17,7 +17,7 @@
       </a>
       <div class="media-body">
         <h4 class="media-heading"><a href="{{ post.url }}">{{ post.title }}</a></h4>
-        <span class="byline"><a href="http://hackerschool.com/people/{{ post.authorid }}">{{ post.author }}</a></span>
+        <span class="byline">by <a href="http://hackerschool.com/people/{{ post.authorid }}">{{ post.author }}</a></span>
       </div>
     </div>
 </div>
@@ -31,15 +31,15 @@
       </a>
       <div class="media-body">
         <p class="meta">
-          <span class="byline"><a href="http://hackerschool.com/people/{{ comment.authorid }}">{{ comment.author }}</a></span>
-          <span class="date">on {{ comment.date_modified }}</span>
-          &bull; <span class="permalink"><a href="post/{{ comment.slug }}" class="muted">Permalink</a></span>
+          <span class="byline"><a href="http://hackerschool.com/people/{{ comment.authorid }}">{{ comment.author }}</a> says:</span>
+          <!-- <span class="date">on {{ comment.date_modified }}</span>
+          &bull; <span class="permalink"><a href="post/{{ comment.slug }}" class="muted">Permalink</a></span> -->
         </p>
 
         <p class="content">{{ comment.content }}</span>
 
         {% if comment.parent %}
-          <span class="parent"><a href="../../comment/{{ comment.parent.slug }}/">Parent</a></span>
+          <!-- <span class="parent"><a href="../../comment/{{ comment.parent.slug }}/">Parent</a></span> -->
         {% endif %}
 
 
