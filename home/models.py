@@ -35,14 +35,14 @@ class Post(models.Model):
     title        = models.CharField(max_length=200, blank=True)
     content      = models.TextField()
     date_updated = models.DateTimeField('date updated')
-    slug         = models.CharField(max_length=6, default=generate_random_id(), unique=True)
+    slug         = models.CharField(max_length=6, default=generate_random_id, unique=True)
 
 class Comment(models.Model):
 
     def __unicode__(self):
         return self.content[:40]
 
-    slug            = models.CharField(max_length=6, default=generate_random_id(), unique=True)
+    slug            = models.CharField(max_length=6, default=generate_random_id, unique=True)
     user            = models.ForeignKey(User)
     post            = models.ForeignKey(Post)
     parent          = models.ForeignKey('self', blank=True, null=True)

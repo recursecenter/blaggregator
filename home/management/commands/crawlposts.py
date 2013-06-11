@@ -13,7 +13,7 @@ log = logging.getLogger("blaggregator")
 
 ROOT_URL = 'http://blaggregator.herokuapp.com/'
 
-STREAM = 'sasha-testing'
+STREAM = 'announce'
 key = os.environ.get('HUMBUG_KEY')
 email = os.environ.get('HUMBUG_EMAIL')
 
