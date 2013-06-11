@@ -34,9 +34,9 @@
       <div class="media-body">
 
         <p class="meta">
-          <span class="byline"><a href="http://hackerschool.com/people/{{ comment.authorid }}">{{ comment.author }}</a> says:</span>
-          <span class="date">on {{ comment.date_modified | naturaltime }}</span>
-          &bull; <span class="permalink"><a href="post/{{ comment.slug }}" class="muted">Permalink</a></span>
+          <span class="byline"><a href="http://hackerschool.com/people/{{ comment.authorid }}">{{ comment.author }}</a> said,</span>
+          <span class="date">{{ comment.date_modified | naturaltime }}: </span>
+          <!-- &bull; <span class="permalink"><a href="post/{{ comment.slug }}" class="muted">Permalink</a></span> -->
         </p>
 
         <p class="content">{{ comment.content }}</p>
