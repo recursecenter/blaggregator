@@ -21,9 +21,9 @@
             <h4 class="media-heading"><a href="{{ post.url }}">{{ post.title }}</a></h4>
             <span class="byline"><a href="http://hackerschool.com/people/{{ post.authorid }}">{{ post.author }}</a></span>
             {% if post.comments %}
-                <div><a href="../item/{{ post.slug }}">{{ post.comments|length }} comments</a></div>
+                <div><a href="../post/{{ post.slug }}">{{ post.comments|length }} comments</a></div>
             {% else %}
-                <div><a href="../item/{{ post.slug }}">Discuss</a></div>
+                <div><a href="../post/{{ post.slug }}">Discuss</a></div>
             {% endif %}
           </div>
         </div>

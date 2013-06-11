@@ -6,15 +6,16 @@ COMMENTS
 - [x] add link to comments in the /new view
 
 MILESTONE: WORKING COMMENTS (no nesting)
-- [ ] rename 'item_id' to 'slug' in the model
-- [ ] add urlconf called 'post' and 'comment' (can i pass two different id's through the URL?)
-- [ ] fix permalinks
+- [x] rename 'item_id' to 'slug' in the model
+- [x] add urlconf called 'post' and 'comment' (can i pass two different id's through the URL?)
 - [ ] pass a dict from the view to the template, not a list
 
 MILESTONE: NESTED COMMENTS
 - [ ] Add 'reply' link to the template so you can comment inline. use jquery to unhide it
 - [ ] fix parent links
 - [ ] display dates as 'x days ago' rather than date & time
+- [ ] add URLconf and template (using anchors) for permalinks
+- [ ] fix permalinks
 
 Before full deploy: 
 - [ ] change the links that Humbug posts
