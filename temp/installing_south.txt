@@ -4,8 +4,9 @@ http://south.readthedocs.org/en/latest/convertinganapp.html#converting-an-app
 
 on heroku: 
 
+BACK UP THE DATABASE https://devcenter.heroku.com/articles/pgbackups#creating-a-backup
+
 heroku run ./manage.py syncdb (to add south's tables to the db)
-heroku run ./manage.py schemamigration home --initial
 heroku run ./manage.py migrate home 0001 --fake
 run ./manage.py migrate
 
