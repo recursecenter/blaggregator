@@ -11,6 +11,9 @@ import datetime
 
 log = logging.getLogger("blaggregator")
 
+ROOT_URL = 'http://blaggregator.herokuapp.com/'
+
+STREAM = 'sasha-testing'
 key = os.environ.get('HUMBUG_KEY')
 email = os.environ.get('HUMBUG_EMAIL')
 
@@ -29,7 +32,7 @@ class Command(NoArgsCommand):
 
     def crawlblog(self, blog):
 
-        print "** CRAWLING", blog.feed_url
+        print "\n** CRAWLING", blog.feed_url
 
         # Feedergrabber returns ( [(link, title, date)], [errors])
         # We're ignoring the errors returned for right now
@@ -59,12 +62,12 @@ class Command(NoArgsCommand):
                     # Only post to humbug if the post was created in the last 2 days
                     #   so that new accounts don't spam humbug with their entire post list
                     if (now - date) < datetime.timedelta(days=2):
-                        post_page = '/post/' + Post.objects.get(url=link).slug
+                        post_page = ROOT_URL + 'post/' + Post.objects.get(url=link).slug
                         send_message_humbug(user=blog.user, link=post_page, title=title)
 
                 # if new info, update the posts
                 if not created:
-                    print "Retrieved", title
+                    print ".",
                     updated = False
                     if date != post.date_updated:
                         post.date_updated = date
@@ -111,10 +114,11 @@ def cleantitle(title):
 def send_message_humbug(user, link, title):
 
     data = {"type": "stream",
-            "to": "announce",
+            "to": "%s" % STREAM,
             "subject": "new blog post: %s" % title,
             "content": "**%s** has a new blog post: [%s](%s)" % (user.first_name, title, link),
         }
 
+    print data['content']
     r = requests.post('https://humbughq.com/api/v1/messages', data=data, auth=(email, key))
 
