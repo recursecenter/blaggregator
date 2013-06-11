@@ -1,5 +1,5 @@
 '''
-   Assigns every blog post a unique item_id that is randomly generated.
+   Assigns every blog post a unique slug that is randomly generated.
    Only really useful for one-time migration to this new schema.
 '''
 
@@ -14,11 +14,11 @@ class Command(NoArgsCommand):
 
     def handle_noargs(self, **options):
 
-        if 'YES' == raw_input('\nDANGER DANGER DANGER.\nThis will overwrite item_id\'s for all posts in the database. Type YES if you want to continue. '):
+        if 'YES' == raw_input('\nDANGER DANGER DANGER.\nThis will overwrite slugs for all posts in the database. Type YES if you want to continue. '):
             for post in Post.objects.all():
-                post.item_id = generate_random_id()
+                post.slug = generate_random_id()
                 post.save()
-                print "%s: %s" % (post.item_id, post.title)
+                print "%s: %s" % (post.slug, post.title)
 
         else:
             print "OK, quitting without doing anything."

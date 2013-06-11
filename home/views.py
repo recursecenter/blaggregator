@@ -201,21 +201,21 @@ def feed(request):
 
 
 @login_required(login_url='/log_in')
-def item(request, item_id):
+def item(request, slug):
 
     if request.method == 'POST':
         if request.POST['content']:
             comment = Comment.objects.create(
-                item_id         = ''.join(random.choice(string.ascii_uppercase + string.digits + string.ascii_lowercase) for x in range(6)),
+                slug         = ''.join(random.choice(string.ascii_uppercase + string.digits + string.ascii_lowercase) for x in range(6)),
                 user            = request.user,
-                post            = Post.objects.get(item_id=item_id),
+                post            = Post.objects.get(slug=slug),
                 parent          = None,
                 date_modified   = datetime.datetime.now(),
                 content         = request.POST['content'],
             )
             comment.save()
 
-    post = Post.objects.get(item_id=item_id)
+    post = Post.objects.get(slug=slug)
 
     user            = User.objects.get(blog__id__exact=post.blog_id)
     post.author     = user.first_name + " " + user.last_name
@@ -224,7 +224,7 @@ def item(request, item_id):
 
     commentList = list(Comment.objects.filter(post=post))
     for comment in commentList:
-        user            = User.objects.get(comment__item_id__exact=comment.item_id)
+        user            = User.objects.get(comment__slug__exact=comment.slug)
         comment.author  = user.first_name
         comment.avatar  = Hacker.objects.get(user=comment.user).avatar_url
         comment.authorid = comment.user.id

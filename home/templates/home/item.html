@@ -33,13 +33,13 @@
         <p class="meta">
           <span class="byline"><a href="http://hackerschool.com/people/{{ comment.authorid }}">{{ comment.author }}</a></span>
           <span class="date">on {{ comment.date_modified }}</span>
-          &bull; <span class="permalink"><a href="item/{{ comment.item_id }}" class="muted">Permalink</a></span>
+          &bull; <span class="permalink"><a href="item/{{ comment.slug }}" class="muted">Permalink</a></span>
         </p>
 
         <p class="content">{{ comment.content }}</span>
 
         {% if comment.parent %}
-          <span class="parent"><a href="../../comment/{{ comment.parent.item_id }}/">Parent</a></span>
+          <span class="parent"><a href="../../comment/{{ comment.parent.slug }}/">Parent</a></span>
         {% endif %}
 
 
