@@ -59,7 +59,8 @@ class Command(NoArgsCommand):
                     # Only post to humbug if the post was created in the last 2 days
                     #   so that new accounts don't spam humbug with their entire post list
                     if (now - date) < datetime.timedelta(days=2):
-                        send_message_humbug(user=blog.user, link=link, title=title)
+                        post_page = '/post/' + Post.objects.get(url=link).slug
+                        send_message_humbug(user=blog.user, link=post_page, title=title)
 
                 # if new info, update the posts
                 if not created:
