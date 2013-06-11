@@ -222,7 +222,7 @@ def item(request, slug):
     post.authorid   = user.id
     post.avatar     = Hacker.objects.get(user=user.id).avatar_url
 
-    commentList = list(Comment.objects.filter(post=post))
+    commentList = list(Comment.objects.filter(post=post).order_by('date_modified'))
     for comment in commentList:
         user            = User.objects.get(comment__slug__exact=comment.slug)
         comment.author  = user.first_name

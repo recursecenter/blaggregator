@@ -1,5 +1,7 @@
 {% extends "home/base.html" %}
 
+{% load humanize %}
+
 {% block pagetitle %}Blaggregator{% endblock %}
 
 {% block firstName %}{{ user.first_name }}{% endblock %}
@@ -30,18 +32,14 @@
         <img src="{{ comment.avatar }}" width="80px" height="80px">
       </a>
       <div class="media-body">
+
         <p class="meta">
           <span class="byline"><a href="http://hackerschool.com/people/{{ comment.authorid }}">{{ comment.author }}</a> says:</span>
-          <!-- <span class="date">on {{ comment.date_modified }}</span>
-          &bull; <span class="permalink"><a href="post/{{ comment.slug }}" class="muted">Permalink</a></span> -->
+          <span class="date">on {{ comment.date_modified | naturaltime }}</span>
+          &bull; <span class="permalink"><a href="post/{{ comment.slug }}" class="muted">Permalink</a></span>
         </p>
 
-        <p class="content">{{ comment.content }}</span>
-
-        {% if comment.parent %}
-          <!-- <span class="parent"><a href="../../comment/{{ comment.parent.slug }}/">Parent</a></span> -->
-        {% endif %}
-
+        <p class="content">{{ comment.content }}</p>
 
       </div>
     </div>

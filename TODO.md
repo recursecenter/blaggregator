@@ -9,9 +9,9 @@ MILESTONE: WORKING COMMENTS (no nesting)
 - [x] rename 'item_id' to 'slug' in the model
 - [x] add urlconf called 'post' and 'comment' (can i pass two different id's through the URL?)
 - [x] pass a dict from the view to the template, not a list (will instead put this on the template)
-- [ ] restyle the submit button
-- [ ] remove parent and permalinks from templates and dates
-- [ ] restyle /new according to note on trello board
+- [x] restyle the submit button
+- [x] remove parent and permalinks from templates and dates
+- [ ] deploy to prod. send email to winter batch
 
 MILESTONE: NESTED COMMENTS
 - [ ] Add 'reply' link to the template so you can comment inline. use jquery to unhide it

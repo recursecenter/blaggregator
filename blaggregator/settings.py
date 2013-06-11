@@ -162,6 +162,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'storages',
     'south',
+    'django.contrib.humanize',
 )
 
 # A sample logging configuration. The only tangible logging
