@@ -90,7 +90,7 @@ class Migration(SchemaMigration):
             'content': ('django.db.models.fields.TextField', [], {}),
             'date_updated': ('django.db.models.fields.DateTimeField', [], {}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'item_id': ('django.db.models.fields.CharField', [], {'default': "'C9F69U'", 'unique': 'True', 'max_length': '6'}),
+            'item_id': ('django.db.models.fields.CharField', [], {'default': "'C9F69U'", 'max_length': '6'}),
             'title': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
             'url': ('django.db.models.fields.CharField', [], {'max_length': '400'})
         }
