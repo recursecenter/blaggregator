@@ -67,7 +67,7 @@ def create_account(request):
             user.last_name = r['last_name']
             user.hacker.github = r['github']
             user.hacker.twitter = r['twitter']
-            user.hacker.irc = r['irc']
+            user.hacker.irc = ""
             user.hacker.avatar_url = r['image']
             user.save()
             user.hacker.save()
