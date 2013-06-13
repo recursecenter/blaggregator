@@ -9,3 +9,4 @@ gunicorn==0.17.2
 psycopg2==2.4.6
 requests==1.2.0
 wsgiref==0.1.2
+django-cumulus
