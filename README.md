@@ -1,5 +1,7 @@
 ##Blog post aggregator for the Hacker School community.
 
+Live site [here](http://blaggregator.us). Hacker School login required.
+
 ###Contribute
 
 Want to practice working on web apps? Check out [Contribute.md](Contribute.md) for some feature ideas.
