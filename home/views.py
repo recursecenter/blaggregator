@@ -2,6 +2,7 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.core.urlresolvers import reverse
 from django.template import Context, loader, RequestContext
 from django.core.context_processors import csrf
 from django.core.files import File
@@ -76,14 +77,11 @@ def create_account(request):
             current_user = authenticate(username=username, password=password)
             login(request, current_user)
 
-            #return HttpResponse("Just created user %s with id %s" % (r['first_name'], r['hs_id']))
-            template = loader.get_template('home/add_blog.html')
-            context = RequestContext(request, {
-                'current_user': current_user,
-            })
-            return HttpResponse(template.render(context))
+            return HttpResponseRedirect(reverse('home.views.add_blog'))
         else:
             return HttpResponse("Auth Failed! (%s). Please hit 'back' and try again." % resp.status_code)
+
+    # if GET request
     return render_to_response('home/create_account.html', {}, context_instance=RequestContext(request))
 
 @login_required(login_url='/log_in')
@@ -118,7 +116,7 @@ def add_blog(request):
             blog.save()
 
             # Feedergrabber returns ( [(link, title, date)], [errors])
-            # We're ignoring the errors returned for right now
+            # We're not handling the errors returned for right now
             crawled, _ = feedergrabber27.feedergrabber(feed_url)
 
             for post in crawled:
@@ -135,7 +133,7 @@ def add_blog(request):
         else:
             return HttpResponse("I didn't get your feed URL. Please go back and try again.")
     else:
-        return HttpResponseRedirect('/new')
+        return render_to_response('home/add_blog.html', {}, context_instance=RequestContext(request))
 
 @login_required(login_url='/log_in')
 def profile(request, user_id):
