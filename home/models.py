@@ -12,7 +12,6 @@ class Hacker(models.Model):
     avatar_url  = models.CharField(max_length=400, blank=True)
     github      = models.CharField(max_length=200, blank=True)
     twitter     = models.CharField(max_length=200, blank=True)
-    irc         = models.CharField(max_length=200, blank=True)
 
 class Blog(models.Model):
 
