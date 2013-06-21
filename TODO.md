@@ -1,34 +1,12 @@
-COMMENTS
-- [x] Set up a unique page for each post item
-- [x] Create comment model that links each comment to a post (include a 'parent' field to leave nesting options open but leave it blank for now)
-- [x] display comments on that page with avatars, and in the admin interface
-- [x] "add comment" submit box to unique page for each post item
-- [x] add link to comments in the /new view
+DROPDOWN NAVIGATION
+- [ ] add dropdown with dummy items in bootstrap styles
+- [ ] add logout link
+- [ ] remove checking logic from 'add_blog' view & link to from dropdown as stopover
+- [ ] Add "about" page
 
-MILESTONE: WORKING COMMENTS (no nesting)
-- [x] rename 'item_id' to 'slug' in the model
-- [x] add urlconf called 'post' and 'comment' (can i pass two different id's through the URL?)
-- [x] pass a dict from the view to the template, not a list (will instead put this on the template)
-- [x] restyle the submit button
-- [x] remove parent and permalinks from templates and dates
-- [ ] deploy to prod. send email to winter batch
-
-MILESTONE: NESTED COMMENTS
-- [ ] Add 'reply' link to the template so you can comment inline. use jquery to unhide it
-- [ ] fix parent links
-- [ ] add URLconf and template (using anchors) for permalinks
-- [ ] fix permalinks
-
-Before full deploy: 
+SUBMIT ARTICLES FEATURE
 - [ ] merge in Kenya's changes
 - [ ] restyle /new
-- [x] change the links that Humbug posts
-- [ ] don't forget to deploy South on heroku before pushing live
-
-
-
-
-
 
 ON DECK
 - [ ] fix login always forwarding to /new bug. Likely fix: just point / to /new
@@ -37,6 +15,7 @@ ON DECK
 - [ ] stop hotlinking to hacker school and save a copy of the file locally (waiting for new profile pics)
 - [ ] migrate form fields to proper data types (e.g. URLField)
 - [ ] redirect /log_in if they're already logged in
+- [ ] add blank=True to content field on Post instance
 
 ON DECK: PROFILES
 - [ ] create profile views /profile/293
@@ -59,4 +38,19 @@ DONE
 - [T] figure out how to handle USER, HOST, AWS_STORAGE_BUCKET_NAME in settings.py
 - [x] implement South http://south.readthedocs.org/en/latest/tutorial/index.html
 - [x] strip newlines from blog post titles
+
+Comments
+- [x] Set up a unique page for each post item
+- [x] Create comment model that links each comment to a post (include a 'parent' field to leave nesting options open but leave it blank for now)
+- [x] display comments on that page with avatars, and in the admin interface
+- [x] "add comment" submit box to unique page for each post item
+- [x] add link to comments in the /new view
+- [x] rename 'item_id' to 'slug' in the model
+- [x] add urlconf called 'post' and 'comment' (can i pass two different id's through the URL?)
+- [x] pass a dict from the view to the template, not a list (will instead put this on the template)
+- [x] restyle the submit button
+- [x] remove parent and permalinks from templates and dates
+- [x] deploy to prod. send email to winter batch
+- [x] change the links that Humbug posts
+- [x] don't forget to deploy South on heroku before pushing live
 
