@@ -16,6 +16,7 @@ ON DECK
 - [ ] migrate form fields to proper data types (e.g. URLField)
 - [ ] redirect /log_in if they're already logged in
 - [ ] add blank=True to content field on Post instance
+- [ ] accept blog url from user and pull feed from markup
 
 ON DECK: PROFILES
 - [ ] create profile views /profile/293

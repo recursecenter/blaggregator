@@ -10,7 +10,6 @@ Please feel free to contribute features if you'd like practice working on web ap
 - allow users to add their blog feed URL from inside the app
 
 ### Would also be awesome:
-- pagination of the main page (so users can look back through the archives)
 - a bookmarklet so people can submit articles right from their browser
 - voting on posts (this might be used someday to determine which articles should publicly represent Hacker School)
 - a security audit of the app
@@ -25,3 +24,4 @@ Please feel free to contribute features if you'd like practice working on web ap
 - comments on posts (@sursh)
 - scraper script to check blogs for updates (thanks, @brannerchinese)
 - an atom feed (thanks, @santialbo)
+- pagination of the main page (so users can look back through the archives) (thanks, @santialbo)
