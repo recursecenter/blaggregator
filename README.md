@@ -1,10 +1,19 @@
 ##Blog post aggregator for the Hacker School community.
 
-Live site [here](http://blaggregator.us). Hacker School login required.
+Hacker Schoolers are writing awesome blog posts all over the internet. This brings them together and provides a place where alums from every batch can discuss technical news.
+
+The live site is [here](http://blaggregator.us). Hacker School login required.
+
+###Add your blog
+You will be prompted to add your blog when you create an account. You can also [add it later](http://blaggregator.us/add_blog).
+
+Once your blog is added, Blaggregator will crawl it hourly for new posts.
 
 ###Contribute
 
-Want to practice working on web apps? Check out [CONTRIBUTE.md](CONTRIBUTE.md) for some feature ideas.
+Want to contribute a feature or bugfix? Blaggregator is a straightforward Django app with a Twitter Bootstrap frontend. It's deployed on Heroku and uses their Postgres and Scheduler add-ons. C
+
+Check out [CONTRIBUTE.md](CONTRIBUTE.md) for ideas for what to build.
 
 ###Installation:
 
