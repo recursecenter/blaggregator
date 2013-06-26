@@ -2,6 +2,9 @@
 
 Live site [here](http://blaggregator.us). Hacker School login required.
 
+###Add your blog
+Add your blog when you create an account, or go to [add blog](blaggregator.herokuapp.com/add_blog) anytime later.
+
 ###Contribute
 
 Want to practice working on web apps? Check out [Contribute.md](Contribute.md) for some feature ideas.
