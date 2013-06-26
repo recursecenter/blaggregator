@@ -1,4 +1,5 @@
 {% extends "home/base.html" %}
+{% load customtags %}
 
 {% block pagetitle %}Blaggregator{% endblock %}
 
@@ -34,6 +35,17 @@
           </div>
         </div>
     {% endfor %}
+    {% if pages > 1 %}
+        <div class="pagination pagination-centered">
+            <ul>
+                <li{% if page == 1 %} class="disabled"{% endif %}><a href="/new/{{ page|add:-1 }}">Prev</a></li>
+                {% for i in pages|pagination:page %}
+                    <li {% if page == i %} class="active"{% endif %}><a href="/new/{{ i }}/">{{ i }}</a></li>
+                {% endfor %}
+                <li{% if page == pages %} class="disabled"{% endif %}><a href="/new/{{ page|add:1}}">Next</a></li>
+            </ul>
+        </div>
+    {% endif %}
 </div>
 
 {% endblock %}
