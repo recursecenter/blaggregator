@@ -9,9 +9,9 @@ def generate_random_id():
 # access with u.hacker.github (where u is user object instance)
 class Hacker(models.Model):
     user = models.OneToOneField(User)
-    avatar_url  = models.CharField(max_length=400, blank=True)
-    github      = models.CharField(max_length=200, blank=True)
-    twitter     = models.CharField(max_length=200, blank=True)
+    avatar_url  = models.TextField(blank=True)
+    github      = models.TextField(blank=True)
+    twitter     = models.TextField(blank=True)
 
 class Blog(models.Model):
 
@@ -19,8 +19,8 @@ class Blog(models.Model):
         return self.feed_url
 
     user         = models.ForeignKey(User)
-    url          = models.CharField(max_length=200)
-    feed_url     = models.CharField(max_length=200)
+    url          = models.TextField()
+    feed_url     = models.TextField()
     last_crawled = models.DateTimeField('last crawled', blank=True, null=True)
     created      = models.DateTimeField('date created')
 
@@ -30,8 +30,8 @@ class Post(models.Model):
         return self.title
 
     blog         = models.ForeignKey(Blog)
-    url          = models.CharField(max_length=400)
-    title        = models.CharField(max_length=200, blank=True)
+    url          = models.TextField()
+    title        = models.TextField(blank=True)
     content      = models.TextField()
     date_updated = models.DateTimeField('date updated')
     slug         = models.CharField(max_length=6, default=generate_random_id, unique=True)
