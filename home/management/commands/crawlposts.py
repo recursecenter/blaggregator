@@ -63,7 +63,7 @@ class Command(NoArgsCommand):
                     #   so that new accounts don't spam humbug with their entire post list
                     if (now - date) < datetime.timedelta(days=2):
                         post_page = ROOT_URL + 'post/' + Post.objects.get(url=link).slug
-                        send_message_humbug(user=blog.user, link=post_page, title=title)
+                        send_message_humbug(user=blog.user, link=link, title=title)
 
                 # if new info, update the posts
                 if not created:
