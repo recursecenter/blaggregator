@@ -6,7 +6,7 @@ SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 DEBUG = 'DJANGO_DEBUG' in os.environ
 TEMPLATE_DEBUG = DEBUG
 
-if bool(os.environ.get('PROD', '')):
+if os.environ.get('PROD', None):
     print "** DETECTED PRODUCTION ENVIRONMENT"
     SITE_URL = 'http://blaggregator.herokuapp.com'
 
@@ -19,7 +19,7 @@ if bool(os.environ.get('PROD', '')):
     STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 
-elif bool(os.environ.get('STAGING', '')):
+elif os.environ.get('STAGING', None):
     print "** DETECTED STAGING ENVIRONMENT"
     SITE_URL = 'http://blaggregator-staging.herokuapp.com'
 
@@ -114,7 +114,7 @@ STATICFILES_FINDERS = (
 )
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = '%dut3)!1f(nm0x8bm@tuj!*!2oe=+3+bsw2lf0)%(4l8d2^z8s'
+SECRET_KEY = os.environ.get('BLAGGERATOR_SECRET_KEY', '%dut3)!1f(nm0x8bm@tuj!*!2oe=+3+bsw2lf0)%(4l8d2^z8s')
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
