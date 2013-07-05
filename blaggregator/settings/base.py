@@ -1,44 +1,15 @@
 import os
-SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
+from os.path import join, dirname, realpath
+
+
+SITE_ROOT = realpath(join(dirname((__file__)), '..'))
 
 # True: heroku config:set DJANGO_DEBUG=True
 # False: heroku config:unset DJANGO_DEBUG
 DEBUG = 'DJANGO_DEBUG' in os.environ
 TEMPLATE_DEBUG = DEBUG
 
-if bool(os.environ.get('PROD', '')):
-    print "** DETECTED PRODUCTION ENVIRONMENT"
-    SITE_URL = 'http://blaggregator.herokuapp.com'
-
-    # S3
-    AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
-    AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
-    AWS_STORAGE_BUCKET_NAME = 'blaggregator'
-
-    STATIC_URL = 'http://' + AWS_STORAGE_BUCKET_NAME + '.s3.amazonaws.com/'
-    STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-
-elif bool(os.environ.get('STAGING', '')):
-    print "** DETECTED STAGING ENVIRONMENT"
-    SITE_URL = 'http://blaggregator-staging.herokuapp.com'
-
-    # S3
-    AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
-    AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
-    AWS_STORAGE_BUCKET_NAME = 'blaggregator-staging'
-
-    STATIC_URL = 'http://' + AWS_STORAGE_BUCKET_NAME + '.s3.amazonaws.com/'
-    STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-
-else:
-    print "** DETECTED LOCAL ENVIRONMENT"
-    SITE_URL = 'http://127.0.0.1:8000'
-    STATIC_URL = '/static/'
-
 ADMINS = (
-    # ('Your Name', 'your_email@example.com'),
     ('Sasha Laundy', 'sasha.laundy@gmail.com'),
 )
 
@@ -46,19 +17,18 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'blaggregator_dev',                      # Or path to database file if using sqlite3.
-        # The following settings are not used with sqlite3:
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'blaggregator_dev',
         'USER': 'sasha',
         'PASSWORD': '',
-        'HOST': '',                      # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
-        'PORT': '',                      # Set to empty string for default.
+        'HOST': '',
+        'PORT': '',
     }
 }
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = ['localhost', 'blaggregator.herokuapp.com', 'blaggregator-staging.herokuapp.com', 'www.blaggregator.us']
+ALLOWED_HOSTS = list()
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -92,11 +62,14 @@ MEDIA_ROOT = ''
 # Examples: "http://example.com/media/", "http://media.example.com/"
 MEDIA_URL = ''
 
+SITE_URL = 'http://127.0.0.1:8000'
+STATIC_URL = '/static/'
+
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/var/www/example.com/static/"
-STATIC_ROOT = os.path.join(SITE_ROOT, 'static-collected')
+STATIC_ROOT = join(SITE_ROOT, 'static-collected')
 
 # Additional locations of static files
 STATICFILES_DIRS = (
@@ -110,17 +83,19 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    # 'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = '%dut3)!1f(nm0x8bm@tuj!*!2oe=+3+bsw2lf0)%(4l8d2^z8s'
+SECRET_KEY = os.environ.get(
+    'BLAGGREGATOR_SECRET_KEY',
+    '%dut3)!1f(nm0x8bm@tuj!*!2oe=+3+bsw2lf0)%(4l8d2^z8s')
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
+    # 'django.template.loaders.eggs.Loader',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -141,14 +116,10 @@ WSGI_APPLICATION = 'blaggregator.wsgi.application'
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.messages.context_processors.messages',
     'django.contrib.auth.context_processors.auth',
-    'django.core.context_processors.static',
-    )
+    'django.core.context_processors.static', )
 
 TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-    os.path.join(SITE_ROOT, 'templates'),
+    join(SITE_ROOT, 'templates'),
 )
 
 INSTALLED_APPS = (
@@ -202,17 +173,5 @@ LOGGING = {
         }
     }
 }
-
-# This bit uses the module dj_database_url to manage databases based on the
-# url of the database, as configured in environmental variables (which are
-# in turn managed by the Heroku Postgres add-on)
-if bool(os.environ.get('PROD', '')) or bool(os.environ.get('STAGING', '')):
-
-    # Parse database configuration from $DATABASE_URL
-    import dj_database_url
-    DATABASES['default'] = dj_database_url.config()
-
-    # Honor the 'X-Forwarded-Proto' header for request.is_secure()
-    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'
