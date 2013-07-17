@@ -1,5 +1,5 @@
 from django.http import HttpResponse, HttpResponseRedirect, Http404
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
@@ -82,6 +82,13 @@ def create_account(request):
 
     # if GET request
     return render_to_response('home/create_account.html', {}, context_instance=RequestContext(request))
+
+@login_required(login_url="/log_in")
+def log_out(request):
+    '''Log out a logged in user.'''
+    logout(request)
+    return HttpResponseRedirect('/')
+
 
 @login_required(login_url='/log_in')
 def add_blog(request):
@@ -223,4 +230,3 @@ def item(request, slug):
     })
 
     return render_to_response('home/item.html', context, context_instance=RequestContext(request))
-
