@@ -25,3 +25,4 @@ Please feel free to contribute features if you'd like practice working on web ap
 - scraper script to check blogs for updates (thanks, @brannerchinese)
 - an atom feed (thanks, @santialbo)
 - pagination of the main page (so users can look back through the archives) (thanks, @santialbo)
+- dropdown navigation menu (thanks, @porterjamesj)
