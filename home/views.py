@@ -15,6 +15,7 @@ import datetime
 import re
 import feedergrabber27
 import random, string
+import math
 
 def log_in(request):
     ''' Log in a user who already has a pre-existing local account. '''
@@ -149,11 +150,17 @@ def profile(request, user_id):
     return HttpResponse(template.render(context))
 
 @login_required(login_url='/log_in')
-def new(request):
+def new(request, page=1):
     ''' Newest blog posts - main app view. '''
 
-
-    newPostList = list(Post.objects.order_by('-date_updated')[:10])
+    items_per_page = 10
+    if page is None or int(page) <= 0:
+        start = 0
+    else:
+        start = (int(page) - 1)*items_per_page
+    end = start + items_per_page
+    newPostList = Post.objects.order_by('-date_updated')[start:end]
+    pages = int(math.ceil(Post.objects.count()/float(items_per_page)))
 
     for post in newPostList:
         user            = User.objects.get(blog__id__exact=post.blog_id)
@@ -164,6 +171,8 @@ def new(request):
 
     context = Context({
         "newPostList": newPostList,
+        "page": int(page),
+        "pages": pages,
     })
 
     return render_to_response('home/new.html',
