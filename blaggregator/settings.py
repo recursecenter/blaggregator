@@ -114,7 +114,7 @@ STATICFILES_FINDERS = (
 )
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = os.environ.get('BLAGGERATOR_SECRET_KEY', '%dut3)!1f(nm0x8bm@tuj!*!2oe=+3+bsw2lf0)%(4l8d2^z8s')
+SECRET_KEY = os.environ.get('BLAGGREGATOR_SECRET_KEY', '%dut3)!1f(nm0x8bm@tuj!*!2oe=+3+bsw2lf0)%(4l8d2^z8s')
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -206,7 +206,7 @@ LOGGING = {
 # This bit uses the module dj_database_url to manage databases based on the
 # url of the database, as configured in environmental variables (which are
 # in turn managed by the Heroku Postgres add-on)
-if bool(os.environ.get('PROD', '')) or bool(os.environ.get('STAGING', '')):
+if os.environ.get('PROD', '') or os.environ.get('STAGING', ''):
 
     # Parse database configuration from $DATABASE_URL
     import dj_database_url
