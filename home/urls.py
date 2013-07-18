@@ -14,4 +14,6 @@ urlpatterns = patterns('',
     url(r'^add_blog/$', views.add_blog, name='add_blog'),
     url(r'^atom\.xml/$', views.feed, name='feed'),
     url(r'^post/(?P<slug>\w+)/', views.item, name='post'),
+    url(r'^logout/$', views.log_out),
+    url(r'^log_out/$', views.log_out, name='log_out')
 )
