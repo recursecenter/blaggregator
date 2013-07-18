@@ -15,21 +15,15 @@
 
                 <a class="brand" href="/new">Blaggregator</a>
 
-     <!--            <ul class="nav">
-                  <li id="all"><a href="/new">All</a></li>
-                  <li id="hs"><a href="#">by Hacker School</a></li>
-                  <li id="submitted"><a href="#">Submitted (coming soon!)</a></li>
-                </ul> -->
-
                 <ul class="nav pull-right">
                   {% if user.is_authenticated %}
-                    <li><a> Welcome {% block firstName %}{% endblock firstName%}!</a></li>
+                    <li></li>
                     <li class="dropdown">
-                      <a id="navdropdown" href="#" class="dropdown-toggle" data-toggle="dropdown" > Menu </a>
+                      <a id="navdropdown" href="#" class="dropdown-toggle" data-toggle="dropdown" > Welcome, {% block firstName %}{% endblock firstName%}! <b class="caret"></b> </a>
                       <ul class="dropdown-menu" aria-labeledby="navdropdown">
                         {# <li><a href="/profile/{{user.id}}">Profile</a></li> #}
                         <li><a href="/add_blog">Add your blog</a></li>
-                        <li><a href="/logout">Logout</a></li>
+                        <li><a href="/logout">Log out</a></li>
                       </ul>
                     </li>
                   {% endif %}
