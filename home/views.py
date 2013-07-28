@@ -22,7 +22,7 @@ def log_in(request):
 
     if request.method == 'POST':
 
-        email = request.POST['email']
+        email = request.POST['email'].lower()
         try:
             username = User.objects.get(email=email).username
         except:
@@ -50,7 +50,7 @@ def create_account(request):
 
     if request.method == 'POST':
 
-        email = request.POST['email']
+        email = request.POST['email'].lower()
         password = request.POST['password']
 
         if User.objects.filter(email=email).count() > 0:
