@@ -113,6 +113,12 @@ def add_blog(request):
             else:
                 url = feed_url
 
+            # janky short circuit if they've already added this url
+            for blog in Blog.objects.filter(user = request.user.id):
+                if url == blog.url:
+                    print "FOUND %s which matches %s" % (blog.url, url)
+                    return HttpResponseRedirect('/new')
+
             # create new blog record in db
             blog = Blog.objects.create(
                                         user=User.objects.get(id=request.user.id),
