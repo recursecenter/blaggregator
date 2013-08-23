@@ -93,7 +93,7 @@ def log_out(request):
 
 @login_required(login_url='/log_in')
 def add_blog(request):
-    ''' Adds a blog to a user's profile as part of the create_account process. '''
+    ''' Adds a new blog to a user's profile. '''
 
     if request.method == 'POST':
         if request.POST['feed_url']:
@@ -126,15 +126,19 @@ def add_blog(request):
             # We're not handling the errors returned for right now
             crawled, _ = feedergrabber27.feedergrabber(feed_url)
 
-            for post in crawled:
-                post_url, post_title, post_date = post
-                newpost = Post.objects.create(
-                                              blog=Blog.objects.get(user=request.user.id),
-                                              url=post_url,
-                                              title=post_title,
-                                              content="",
-                                              date_updated=post_date,
-                                              )
+            # this try/except is a janky bugfix. This should be done with celery
+            try:
+                for post in crawled:
+                    post_url, post_title, post_date = post
+                    newpost = Post.objects.create(
+                                                  blog=Blog.objects.get(user=request.user.id),
+                                                  url=post_url,
+                                                  title=post_title,
+                                                  content="",
+                                                  date_updated=post_date,
+                                                  )
+            except:
+                pass
 
             return HttpResponseRedirect('/new')
         else:
