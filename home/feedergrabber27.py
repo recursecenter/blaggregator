@@ -1,6 +1,6 @@
 #!/usr/bin/python2,7
 # feedergrabber27.py
-# 20130615, works. See long comment about postprocess; needs fixing with
+# 20130929, works. See long comment about postprocess; needs fixing with
 #    link = u'http://organicdonut.com/?p=224'
 # as test.
 # David Prager Branner
@@ -12,6 +12,7 @@ import urlparse
 import bs4
 import feedparser
 import time
+import sys
 import datetime
 '''Retrieves the links and titles of recent posts from blog feeds.'''
 
@@ -101,3 +102,24 @@ def feedergrabber(url=None):
         post_links_and_titles = None
         errors.append([url + ': Parsing methods not successful.'])
     return post_links_and_titles, errors
+
+def try_url(url=None):
+    '''Input: URL; prints blog-post titles to STDOUT or error message.'''
+    try:
+        results, error = feedergrabber(url)
+    except Exception as e:
+        print(url, e)
+        raise e
+    if error:
+        print('\nError on {0} with error report:\n{1}\n'.
+                format(url, error[0]))
+    elif not results:
+        print('\nEmpty result on {0} with error report:\n{1}\n'.
+                format(url, error[0]))
+        sys.exit(0)
+    else:
+        print('\nBlog-post titles returned:\n')
+        for i in results:
+            print('   ', i[1], '\n')
+        sys.stdout.flush()
+
