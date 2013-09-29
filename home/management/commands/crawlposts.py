@@ -8,7 +8,6 @@ import logging
 import requests
 import os
 import datetime
-import HTMLParser
 
 log = logging.getLogger("blaggregator")
 
@@ -42,10 +41,6 @@ class Command(NoArgsCommand):
         if crawled:
 
             for link, title, date in crawled:
-                
-                # Unescaping HTML entities
-                h = HTMLParser.HTMLParser()
-                title = h.unescape(title)
 
                 date = timezone.make_aware(date, timezone.get_default_timezone())
                 now = timezone.make_aware(datetime.datetime.now(), timezone.get_default_timezone())
