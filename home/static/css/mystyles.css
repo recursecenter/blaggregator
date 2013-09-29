@@ -56,3 +56,7 @@ a.muted {
 .add_comment h4 {
   margin-bottom: 1em;
 }
+
+.subbrand {
+    color: #ccc;
+}
