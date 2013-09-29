@@ -43,7 +43,7 @@ Is the server running locally and accepting
 connections on Unix domain socket "/var/pgsql_socket/.s.PGSQL.5432"?
 ```
 
-Then open `settings.py` and under `HOST:` add `/tmp`. 
+Then open `blaggregator/settings.py` and under `HOST:` add `/tmp`. 
 
 - Turn on debugging in your environment:
 
