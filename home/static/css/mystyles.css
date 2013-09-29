@@ -60,3 +60,12 @@ a.muted {
 .subbrand {
     color: #ccc;
 }
+
+.about li {
+    list-style-type: 'circle';
+}
+
+.question {
+    font-weight: 'bold';
+    color:'red';
+}

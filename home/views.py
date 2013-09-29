@@ -249,3 +249,8 @@ def item(request, slug):
     })
 
     return render_to_response('home/item.html', context, context_instance=RequestContext(request))
+
+# login NOT required
+def about(request):
+
+    return render(request, 'home/about.html')
