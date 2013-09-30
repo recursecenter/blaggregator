@@ -13,7 +13,7 @@
         <div class="navbar-inner">
             <div class="container">
 
-                <a class="brand" href="/new">Blaggregator</a>
+                <a class="brand" href="/new">Blaggregator<span class="subbrand">.HackerSchool</span></a>
 
                 <ul class="nav pull-right">
                   {% if user.is_authenticated %}
@@ -23,6 +23,7 @@
                       <ul class="dropdown-menu" aria-labeledby="navdropdown">
                         {# <li><a href="/profile/{{user.id}}">Profile</a></li> #}
                         <li><a href="/add_blog">Add your blog</a></li>
+                        <li><a href="/about">About Blaggregator</a></li>
                         <li><a href="/logout">Log out</a></li>
                       </ul>
                     </li>

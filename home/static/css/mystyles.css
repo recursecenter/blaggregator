@@ -56,3 +56,16 @@ a.muted {
 .add_comment h4 {
   margin-bottom: 1em;
 }
+
+.subbrand {
+  color: #ccc;
+}
+
+.question {
+  font-weight: bold;
+  font-size: 1.3em;
+  margin-top: 0.8em;
+}
+
+.answer {
+}
