@@ -26,7 +26,7 @@ def log_in(request):
         try:
             username = User.objects.get(email=email).username
         except:
-            return HttpResponse("Bad login. Please check that you're using the correct credentials and try again.\n\nYou may be seeing this because you have not yet <a href='/create_account'>created an account</a>.")
+            return HttpResponse("Sorry, your credentials were not correct. <a href='/log_in'>Please try again.</a><p> If this is your first time, you may need to <a href='/create_account'>create an account</a>.")
         password = request.POST['password']
 
         user = authenticate(username=username, password=password)
