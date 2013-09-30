@@ -84,14 +84,14 @@ def feedergrabber(url=None):
 #        link = postprocess(link)
         # Title
         try:
-            _ = i.title
+            title = i.title
         except AttributeError as e:
             errors.append([url +
                     ':A title was unexpectedly not returned by feedparse.'])
             continue
         # Un-escape HTML entities
         h = HTMLParser.HTMLParser()
-        i.title = h.unescape(i.title)
+        title = h.unescape(title)
         # Date
         if i.updated_parsed:
             post_date = i.updated_parsed
@@ -102,7 +102,7 @@ def feedergrabber(url=None):
         else:
             post_date = datetime.datetime.now()
         # Append
-        post_links_and_titles.append((link, i.title, post_date))
+        post_links_and_titles.append((link, title, post_date))
     if not post_links_and_titles:
         post_links_and_titles = None
         errors.append([url + ': Parsing methods not successful.'])
