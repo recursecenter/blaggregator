@@ -9,6 +9,7 @@ from __future__ import print_function
 import re
 import urllib2
 import urlparse
+import HTMLParser
 import bs4
 import feedparser
 import time
@@ -83,10 +84,14 @@ def feedergrabber(url=None):
 #        link = postprocess(link)
         # Title
         try:
-            title = i.title
+            _ = i.title
         except AttributeError as e:
             errors.append([url +
                     ':A title was unexpectedly not returned by feedparse.'])
+            continue
+        # Un-escape HTML entities
+        h = HTMLParser.HTMLParser()
+        i.title = h.unescape(i.title)
         # Date
         if i.updated_parsed:
             post_date = i.updated_parsed
