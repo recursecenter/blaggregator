@@ -58,14 +58,14 @@ a.muted {
 }
 
 .subbrand {
-    color: #ccc;
-}
-
-.about li {
-    list-style-type: 'circle';
+  color: #ccc;
 }
 
 .question {
-    font-weight: 'bold';
-    color:'red';
+  font-weight: bold;
+  font-size: 1.3em;
+  margin-top: 0.8em;
+}
+
+.answer {
 }

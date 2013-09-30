@@ -8,48 +8,54 @@
 
 {% block content %}
 
-    <div class="well span8 offset2">
+    <div class="span10 offset1">
 
-        <h2 class="text-center" style="margin-bottom:20px">About Blaggregator</h2>
+        <h2 style="margin-bottom:30px">About Blaggregator</h2>
         
         <div class="about">
             
-            <p class="question">What is this?</p>
+            <div class="well">
+                <p class="question">What is this?</p>
 
-            <p class="answer">It's a blog aggregator and technical discussion tool for the entire Hacker School community. </p>
+                <p class="answer">It's a blog aggregator and technical discussion tool for the entire Hacker School community. </p>
 
-            <p class="answer">In the winter session in 2013, Sasha noticed that her peers were all blogging about their work at Hacker School on their individual blogs. It was really cool to see what they were working on and thinking about. </p>
+                <p class="answer">During her batch, Sasha (W '13) noticed that her peers were all blogging about their work at Hacker School on their individual blogs. It was really cool to see what they were working on and thinking about. </p>
 
-            <p class="answer">Some folks would post about their new posts in Zulip, some on Twitter, and some wouldn't spread the word at all. There was all this great work going on, but hard to find it. </p>
+                <p class="answer">Some folks would post about their new posts in Zulip, some on Twitter, and some wouldn't spread the word at all. There was all this great work going on, but it was scattered across the internet. </p>
 
-            <p class="answer">Blaggregator puts all this awesome content in one place. This has the nice side effect of providing a friendly audience for those who may have just launched their blog. </p>
+                <p class="answer">Blaggregator puts all this awesome content in one place. This has the nice side effect of providing a friendly audience for those who may have just launched their blog. </p>
 
-            <p class="answer">And as more features like comments and article submission are added, it may serve as what Hacker News should have been—a place for technical folks to discuss technical news and work. </p>
+                <p class="answer">And as more features like comments and article submission are added, it may serve as what Hacker News should have been—a place for technical folks to discuss technical news and work. </p>
+            </div>
 
             <p class="question">Who's behind it?</p>
 
-            <p class="answer">Sasha (W '13) is the primary maintainer. [Ten other Hacker Schooler]() (and counting!) have contributed. [You are encouraged to contribute as well](). </p>
+            <p class="answer"><a href="http://github.com/sursh">Sasha</a> is the primary maintainer. <a href="https://github.com/sursh/blaggregator/graphs/contributors">Ten other Hacker Schoolers</a> (and counting!) have contributed. You are welcome to contribute as well (see below). </p>
 
             <p class="question">Why do I have to log in?</p>
             
-            <p class="answer">Hacker School staff have requested the list of people attending Hacker School be kept private. This may change in the future. If that ever changes (for instance, to surface the best posts that are coming out of Hacker School to show off what we're working on) you will be given lots and lots of warning to decide how you want to participate. </p>
+            <p class="answer">Hacker School staff have requested the list of people attending Hacker School be kept private, so we ask that you authenticate with your Hacker School credentials to prove that you are a member of the community.</p>
+                
+            <p class="answer">If that ever changes (for instance, to surface the best posts that are coming out of Hacker School to show off what we're working on) you will be given lots and lots of warning to decide how you want to participate. </p>
 
 
             <p class="question">How does it work?</p>
 
-            <p class="answer">Once an hour, it checks all registered blogs for new posts ("new" is defined as having a new URL, so you can tweak the title and change the timestamp to your heart's content). New posts are displayed on the [main page]() and a message is sent to Zulip. The rest of the app provides the web interface. </p>
+            <p class="answer">Once an hour, the crawler checks all registered blogs for new posts ("new" is defined as having a new URL, so you can tweak the title and change the timestamp to your heart's content). New posts are displayed on the <a href="/new">main page</a> and a message is sent to Zulip. The rest of the app provides the web interface. </p>
 
             <p class="question">What's the stack?</p>
 
-            <p class="answer">It's a Django app and therefore written in Python. Celery with a Redis backend handles all the asynchronous work. It's deployed on Heroku using their version of PostGreSQL. Check out the code  [here]().</p>
+            <p class="answer">It's a Django app and therefore written in Python. Celery with a Redis backend handles all the asynchronous work. It's deployed on Heroku using their version of PostgreSQL. Check out the code <a href="https://github.com/sursh/blaggregator">here</a>.</p>
 
             <p class="question">I found a bug</p>
 
-            <p class="answer">Great/sorry! Please [open an issue]() or contribute a patch.</p>
+            <p class="answer">Great/sorry! Please <a href="https://github.com/sursh/blaggregator/issues">open an issue</a> or contribute a patch.</p>
 
             <p class="question">Can I contribute?</p>
 
-            <p class="answer">Yes, that would be great! There's a list of [suggested contributions] and [open issues] if you're looking for an idea. Before starting a major contribution, it's wise to get in touch with Sasha to make sure it will fit with the rest of the roadmap. </p>
+            <p class="answer">Yes, that would be great! This is a project by the community and for the Hacker School community. Help making it more awesome would be much appreciated. </p>
+            
+            <p class="answer">There's a list of <a href="https://github.com/sursh/blaggregator/blob/master/CONTRIBUTE.md">suggested contributions</a> and <a href="https://github.com/sursh/blaggregator/issues">open issues</a> if you're looking for an idea. Before implementing a major contribution, it's wise to get in touch with Sasha to make sure it will fit with the rest of the roadmap. </p>
 
             <p class="question">Can I lurk?</p>
             
@@ -62,17 +68,17 @@
                 <li>It gives prospective employers insight into the way you think. </li>
                 <li>If you do a project that doesn't go as planned, you can still 'finish' the project and explain what you learned, even if you don't want to put the code on Github.</li>
                 <li>It helps more people hear about and respect Hacker School, which in turn means more people will want to work with you.</li>
-                <li>Writing helps you practice communicating, which is critical if you plan on working on teams of more than 1 person.</li>
+                <li>Writing helps you practice communicating, which is critical if you plan on working on a team of more than one person.</li>
                 <li>It helps the developer community at large. </li>
             </ul>
             
             <p class="question">But blogging takes too long!</p>
 
-            <p class="answer">Don't let the perfect be the enemy of the good. Your posts don't have to be long, groundbreaking, perfect, proofread, or full of citations. Short, imperfect, and <em>published</em> always beats unpublished. It's important, make time for it. </p>
+            <p class="answer">Don't let the perfect be the enemy of the good. Your posts don't have to be long, groundbreaking, perfect, or full of citations. Short, imperfect, and <em>published</em> always beats unpublished. </p>
 
             <p class="question">But I haven't found the perfect blogging tool</p>
 
-            <p class="answer">Don't let the perfect be the enemy of the good. Just get something up and resist the urge to fiddle with it. Use tumblr if you have to. Just start writing. </p>
+            <p class="answer">Don't let the perfect be the enemy of the good. Just get something up and resist the urge to fiddle with it. Use Tumblr if you have to. Just start writing. </p>
         </div>
     </div>
 
