@@ -32,8 +32,6 @@ class Command(NoArgsCommand):
 
     def crawlblog(self, blog):
 
-        print "\n** CRAWLING", blog.feed_url
-
         # Feedergrabber returns ( [(link, title, date)], [errors])
         # We're ignoring the errors returned for right now
         crawled, errors = feedergrabber27.feedergrabber(blog.feed_url)
@@ -58,7 +56,7 @@ class Command(NoArgsCommand):
                 )
 
                 if created:
-                    print "Created", title
+                    print "Created '%s' from blog '%s'" % (title, blog.feed_url)
                     # Only post to humbug if the post was created in the last 2 days
                     #   so that new accounts don't spam humbug with their entire post list
                     if (now - date) < datetime.timedelta(days=2):
@@ -67,7 +65,7 @@ class Command(NoArgsCommand):
 
                 # if new info, update the posts
                 if not created:
-                    print ".",
+                    # print ".",
                     updated = False
                     if date != post.date_updated:
                         post.date_updated = date
@@ -76,7 +74,7 @@ class Command(NoArgsCommand):
                         post.title = title
                         updated = True
                     if updated:
-                        print "Updated", title
+                        print "Updated %s in %s." % (title, blog.feed_url)
                         post.save()
 
         else:
