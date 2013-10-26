@@ -19,7 +19,8 @@ import math
 
 def log_in(request):
     ''' Log in a user who already has a pre-existing local account. '''
-
+    
+    next = request.GET.get('next')
     if request.method == 'POST':
 
         email = request.POST['email'].lower()
@@ -35,7 +36,8 @@ def log_in(request):
             # if user exists locally:
             if user.is_active:
                 login(request, user)
-                return HttpResponseRedirect('/new')
+                redirect = next or '/new'
+                return HttpResponseRedirect(redirect)
             else:
                 return HttpResponse("Your account is disabled. Please contact administrator for help.")
 
