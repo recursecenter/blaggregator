@@ -23,17 +23,23 @@ Check out [CONTRIBUTE.md](CONTRIBUTE.md) for ideas for what to build.
 
 `pip install -r requirements.txt`
 
-- Set up your database. Install Postgres (it's easy on OSX with [postgres.app](http://postgresapp.com/)) and open a Postgres shell:
+- Install Postgres (it's easy on OSX with [postgres.app](http://postgresapp.com/)) and `pip install psycopg2`. Open the app to start your database server running locally. Open a Postgres shell:
 
-`python manage.py dbshell`
+`psql`
 
 Create your database: 
 
 `CREATE DATABASE blaggregator_dev;`
 
-The semicolon is critical. Then go back to bash and populate the database from the app's models. IMPORTANT: when you are creating your admin account, *don't* use the same email address as your Hacker School account or you won't be able to create a user account for yourself. Do username+root@example.com or something.
+The semicolon is critical. IMPORTANT: when you are creating your admin account on the db, *don't* use the same email address as your Hacker School account or you won't be able to create a user account for yourself. Do username+root@example.com or something.
 
-`python manage.py syncdb`
+Set up initial tables: 
+
+`$ python manage.py syncdb`
+
+and then bring them up to date with the latest South migrations:
+
+`$ python manage.py migrate`
 
 If you get this error:
 
@@ -42,13 +48,11 @@ OperationalError: could not connect to server: No such file or directory
 Is the server running locally and accepting
 connections on Unix domain socket "/var/pgsql_socket/.s.PGSQL.5432"?
 ```
+then your server isn't running. You don't need to go catch it. 
 
-Then open `settings.py` and under `HOST:` add `/tmp`. 
-
-- Turn on debugging in your environment:
+- Turn on debugging in your environment so you can get useful error messages:
 
 `export DJANGO_DEBUG=True`
-
 
 - Then run a local server:
 
