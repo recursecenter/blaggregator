@@ -17,21 +17,35 @@ import feedergrabber27
 import random, string
 import math
 
-def grab_post_info(slug):
+def get_post_info(slug):
+    """ Gets the post object at a given slug. """
     post = Post.objects.get(slug=slug)
     user            = User.objects.get(blog__id__exact=post.blog_id)
     post.author     = user.first_name + " " + user.last_name
     post.authorid   = user.id
     post.avatar     = Hacker.objects.get(user=user.id).avatar_url
+    post.slug       = slug
     return post
+    
+    
+def get_comment_list(post):
+    """ Gets the list of comment objects for a given post instance. """
+    commentList = list(Comment.objects.filter(post=post).order_by('date_modified'))
+    for comment in commentList:
+        user            = User.objects.get(comment__slug__exact=comment.slug)
+        comment.author  = user.first_name
+        comment.avatar  = Hacker.objects.get(user=comment.user).avatar_url
+        comment.authorid = comment.user.id
+    return commentList
+
 
 def framed(request, slug):
     ''' Display the article in an iframe with a navigation header back to blaggregator. '''
 
-    post = grab_post_info(slug)
-    
-    # s = slug+post.author+post.avatar+str(post.authorid)+post.url
-    
+    post = get_post_info(slug)
+    commentList = get_comment_list(post)
+    post.commentcount = len(commentList)
+        
     context = Context({
         "post": post,
     })
@@ -255,14 +269,9 @@ def item(request, slug):
             )
             comment.save()
 
-    post = grab_post_info(slug)
+    post = get_post_info(slug)
 
-    commentList = list(Comment.objects.filter(post=post).order_by('date_modified'))
-    for comment in commentList:
-        user            = User.objects.get(comment__slug__exact=comment.slug)
-        comment.author  = user.first_name
-        comment.avatar  = Hacker.objects.get(user=comment.user).avatar_url
-        comment.authorid = comment.user.id
+    commentList = get_comment_list(post)
 
     context = Context({
         "post": post,
