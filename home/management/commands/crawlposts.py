@@ -11,7 +11,7 @@ import datetime
 
 log = logging.getLogger("blaggregator")
 
-ROOT_URL = 'http://blaggregator.us/'
+ROOT_URL = 'http://www.blaggregator.us/'
 
 STREAM = 'announce'
 key = os.environ.get('HUMBUG_KEY')
@@ -113,12 +113,14 @@ def send_message_humbug(user, link, title):
 
     subject = "new blog post: %s" % title
     subject = subject[:57] + "..."
-
+    
+    # add a trailing slash if it's not already there (jankily)
+    if link[-1] != '/': link = link + '/'
+    url = link + "view"
     data = {"type": "stream",
             "to": "%s" % STREAM,
             "subject": subject,
-            "content": "**%s** has a new blog post: [%s](%s)" % (user.first_name, title, link),
+            "content": "**%s** has a new blog post: [%s](%s)" % (user.first_name, title, url),
         }
-
     print data['content']
     r = requests.post('https://humbughq-com-y3ee336dh1kn.runscope.net/api/v1/messages', data=data, auth=(email, key))
