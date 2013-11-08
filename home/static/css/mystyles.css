@@ -1,3 +1,6 @@
+html {
+  height:100%; /* fuck you firefox */
+}
 body {
     padding: 60px;
 }
@@ -91,11 +94,12 @@ a.muted {
 body.framed {
   margin: 0px;
   padding: 0px;
+  height: 100%; /* fuck you firefox */
+  overflow: hidden;
 }
 .everything {
   background:#efefef;
   height: 100%;
-  overflow: hidden;
 }
 img.framed {
   vertical-align: top;
