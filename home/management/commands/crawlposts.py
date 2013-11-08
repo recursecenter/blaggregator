@@ -11,7 +11,7 @@ import datetime
 
 log = logging.getLogger("blaggregator")
 
-ROOT_URL = 'http://blaggregator.herokuapp.com/'
+ROOT_URL = 'http://blaggregator.us/'
 
 STREAM = 'announce'
 key = os.environ.get('HUMBUG_KEY')
