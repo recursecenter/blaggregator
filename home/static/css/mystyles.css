@@ -16,17 +16,16 @@ form {
 .media-heading {
   font-size: 1.4em;
 }
-.media-heading a { color: #333; }
-.media-heading a:visited { color: #ccc; }
+.listing-title a { color: #333; }
+.listing-title a:visited { color: #ccc; }
 
 /* comments link for each post listing */
 .media-body {
   font-size: 1.1em;
 }
-.media-body a { color: #333; }
-.media-body a:visited { color: #333; }
-/* todo make this color scheme less harsh and namespaced to just this template,
-it's fucking up the individual thread pages */
+a.listing-comments { color: #333; }
+a.listing-comments { color: #333; }
+/* todo make this color scheme less harsh */
 
 span.byline {
     color:#cccccc;
