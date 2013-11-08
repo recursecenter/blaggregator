@@ -2,15 +2,31 @@ body {
     padding: 60px;
 }
 
-
-
 form {
     padding-top: 20px;
 }
 
+/* 
+    New posts page - main view 
+*/
 .media .post {
     margin-top:25px;
 }
+/* title of each post listing */
+.media-heading {
+  font-size: 1.4em;
+}
+.media-heading a { color: #333; }
+.media-heading a:visited { color: #ccc; }
+
+/* comments link for each post listing */
+.media-body {
+  font-size: 1.1em;
+}
+.media-body a { color: #333; }
+.media-body a:visited { color: #333; }
+/* todo make this color scheme less harsh and namespaced to just this template,
+it's fucking up the individual thread pages */
 
 span.byline {
     color:#cccccc;
