@@ -5,15 +5,20 @@ This project is for the whole Hacker School community. Right now, we don't have 
 Please feel free to contribute features if you'd like practice working on web applications. Here are some ideas for potential projects. Reach out to Sasha if you have any other project ideas or questions. 
 
 ### High priority:
-- a "submit" function so people can add outside articles for discussion, like on Hacker News. Then, the new blog posts by Hacker Schoolers will be considered "auto-submitted" (@kenyavs is working on this)
-- Email subscription: allow people to sign up to get emailed when there are new posts
+- Celery backend so everything works more better
+- a "submit" function so people can add outside articles for discussion, like on Hacker News. Then, the new blog posts by Hacker Schoolers will be considered "auto-submitted"
+- Email subscription: allow people to sign up to get emailed when there are new posts (dependency: celery backend)
+
+### Second priority: 
+- tracking link clicks
+- voting on posts (this might be used someday to determine which articles should publicly represent Hacker School)
+- allow users to edit their profiles (avatar, displayed name, social media links, and most importantly, edit the blogs they've added)
 
 ### Would also be awesome:
-- a bookmarklet so people can submit articles right from their browser (needs 'submit' feature above first)
-- voting on posts (this might be used someday to determine which articles should publicly represent Hacker School)
+- a natural language parser that autotags posts by content ('python', 'bash', etc)
+- a bookmarklet so people can submit articles right from their browser (dependency: 'submit' feature above)
 - a security audit of the app
-- a profile for each user within Blaggregator (right now we just link to their HS page)
-- allow users to edit their profiles (avatar, displayed name, social media links, and most importantly the blogs they've added)
+- a profile for each user within Blaggregator (right now we just link to their HS page) that collates their posts and comments
 - host avatars in the app instead of hotlinking them 
 - [there are some nice bugs to tackle](https://github.com/sursh/blaggregator/issues?page=1&state=open), mostly around encoding
 
