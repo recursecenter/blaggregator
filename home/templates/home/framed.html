@@ -1,3 +1,45 @@
+{% load static from staticfiles %}
 
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+      <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet" media="screen">
+      <link href="{% static "css/mystyles.css" %}" rel="stylesheet" media="screen">
+      <title>{% block pagetitle %}{% endblock %}</title>
+  </head>
 
-hi
+  <body class="framed">
+    <div class="everything">
+      
+      <div class="bar">
+        <div class="bar-container">
+          
+          <a href="http://hackerschool.com/people/{{ post.authorid }}"><img src="{{ post.avatar }}" class="framed" /></a>
+          
+          <div class="words">
+            <div class="post-title">{{ post.title }}</div>
+            <div class="post-comments">
+              <div><a href="/post/{{ post.slug }}">
+                {% if post.commentcount == 1 %}
+                    Join the discussion on Blaggregator
+                {% elif post.commentcount %}
+                    View {{ post.commentcount }} comments on Blaggregator
+                {% else %}
+                    Be the first to comment
+                {% endif %}
+              </a></div>
+            </div> 
+          </div>
+          
+          <div class="close-frame"><a href="{{ post.url }}">close frame ×</a></div>
+        </div>
+        
+        
+        
+      </div>        
+   
+    
+      <iframe frameborder="0" height="100%" marginheight="0" marginwidth="0" src="{{ post.url }}" width="100%" padding="0"></iframe>
+    </div>
+  </body>
+</html>

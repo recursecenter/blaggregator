@@ -2,6 +2,8 @@ body {
     padding: 60px;
 }
 
+
+
 form {
     padding-top: 20px;
 }
@@ -68,4 +70,66 @@ a.muted {
 }
 
 .answer {
+}
+
+/* iframe post view */
+body.framed {
+  margin: 0px;
+  padding: 0px;
+}
+.everything {
+  background:#efefef;
+  height: 100%;
+  overflow: hidden;
+}
+img.framed {
+  vertical-align: top;
+  border-radius: 3px;
+  float: left;
+  display: inline-block;
+  width: 60px;
+  height: 60px;
+}
+div.bar {
+  height: 80px;
+  width: 100%;
+  border-bottom: 1px solid gray;
+  text-decoration: none;
+}
+div.bar a {
+  text-decoration: none;
+}
+div.bar-container {
+  float:left;
+  padding-left: 10px;
+  padding-top: 10px;
+  height: 30px;
+  display: block;
+}
+.words {
+  padding-left: 70px;
+  padding-top: 5px;
+  display: block;
+}
+.post-title {
+  display: block;
+  color: #333;
+  font-weight: bold;
+  font-size: 1.5em;
+  padding-bottom: 5px;
+}
+.post-comments {
+  display: block;
+}
+.close-frame {
+  position: absolute;
+  right: 10px;
+}
+.close-frame a:link {
+  text-decoration: none;
+  color:gray; 
+}
+.close-frame a:visited {
+  text-decoration: none;
+  color:gray;
 }
