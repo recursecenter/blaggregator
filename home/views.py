@@ -79,7 +79,7 @@ def log_in(request):
                 return HttpResponse("Your account is disabled. Please contact administrator for help.")
 
         else:
-            return HttpResponse("Auth Failed! Please hit 'back' and try again.")
+            return HttpResponse("Auth fail! Are you sure you're entering your HS email and password?")
     else:
         return render_to_response('home/log_in.html', {},
                                    context_instance=RequestContext(request))
