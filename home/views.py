@@ -17,6 +17,31 @@ import feedergrabber27
 import random, string
 import math
 
+def grab_post_info(slug):
+    post = Post.objects.get(slug=slug)
+    user            = User.objects.get(blog__id__exact=post.blog_id)
+    post.author     = user.first_name + " " + user.last_name
+    post.authorid   = user.id
+    post.avatar     = Hacker.objects.get(user=user.id).avatar_url
+    return post
+
+def framed(request, slug):
+    ''' Display the article in an iframe with a navigation header back to blaggregator. '''
+
+    post = grab_post_info(slug)
+    
+    # s = slug+post.author+post.avatar+str(post.authorid)+post.url
+    
+    context = Context({
+        "post": post,
+    })
+
+    return render_to_response(
+        'home/framed.html', 
+        context, 
+        context_instance=RequestContext(request)
+    )
+    
 def log_in(request):
     ''' Log in a user who already has a pre-existing local account. '''
 
@@ -170,15 +195,16 @@ def profile(request, user_id):
 def new(request, page=1):
     ''' Newest blog posts - main app view. '''
 
+    # pagination handling
     items_per_page = 10
     if page is None or int(page) <= 0:
         start = 0
     else:
         start = (int(page) - 1)*items_per_page
     end = start + items_per_page
-    newPostList = Post.objects.order_by('-date_updated')[start:end]
     pages = int(math.ceil(Post.objects.count()/float(items_per_page)))
 
+    newPostList = Post.objects.order_by('-date_updated')[start:end]
     for post in newPostList:
         user            = User.objects.get(blog__id__exact=post.blog_id)
         post.author     = user.first_name + " " + user.last_name
@@ -229,12 +255,7 @@ def item(request, slug):
             )
             comment.save()
 
-    post = Post.objects.get(slug=slug)
-
-    user            = User.objects.get(blog__id__exact=post.blog_id)
-    post.author     = user.first_name + " " + user.last_name
-    post.authorid   = user.id
-    post.avatar     = Hacker.objects.get(user=user.id).avatar_url
+    post = grab_post_info(slug)
 
     commentList = list(Comment.objects.filter(post=post).order_by('date_modified'))
     for comment in commentList:
@@ -252,5 +273,5 @@ def item(request, slug):
 
 # login NOT required
 def about(request):
-
+    """ About page with more info on Blaggregator. """
     return render(request, 'home/about.html')
