@@ -120,7 +120,7 @@ def send_message_humbug(user, link, title):
     data = {"type": "stream",
             "to": "%s" % STREAM,
             "subject": subject,
-            "content": "**%s** has a new blog post: [%s](%s)" % (user.first_name, title, url),
+            "content": "**%s %s** has a new blog post: [%s](%s)" % (user.first_name, user.last_name, title, url),
         }
     print data['content']
     r = requests.post('https://humbughq-com-y3ee336dh1kn.runscope.net/api/v1/messages', data=data, auth=(email, key))
