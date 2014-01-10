@@ -7,11 +7,18 @@ The live site is [here](http://blaggregator.us). Hacker School login required.
 ###Add your blog
 You will be prompted to add your blog when you create an account. You can also [add it later](http://blaggregator.us/add_blog).
 
-Once your blog is added, Blaggregator will crawl it hourly for new posts.
+Once your blog is added, Blaggregator will crawl it periodically for new posts.
 
 ###Contribute
 
-Want to contribute a feature or bugfix? Blaggregator is a straightforward Django app with a Twitter Bootstrap frontend. It's deployed on Heroku and uses their Postgres and Scheduler add-ons. C
+Want to contribute a feature or bugfix? Blaggregator is a straightforward Django app with a Twitter Bootstrap frontend. It's deployed on Heroku and uses their Postgres and Scheduler add-ons. 
+
+Key files: 
+- blaggregator/settings.py: app settings
+- home/management/commands/crawlposts.py: background crawler script
+- home/feedergrabber27.py: feed parser contributed by dpb
+- home/templates/home: all templates
+- home/views.py: all of the views ("controllers" if you're coming from Ruby)
 
 Check out [CONTRIBUTE.md](CONTRIBUTE.md) for ideas for what to build.
 
@@ -48,7 +55,7 @@ OperationalError: could not connect to server: No such file or directory
 Is the server running locally and accepting
 connections on Unix domain socket "/var/pgsql_socket/.s.PGSQL.5432"?
 ```
-then your server isn't running. You don't need to go catch it. 
+then your server isn't running. Go fiddle with Postgres.app. 
 
 - Turn on debugging in your environment so you can get useful error messages:
 
@@ -60,62 +67,4 @@ then your server isn't running. You don't need to go catch it.
 
 You can administer your app through the [handy-dandy admin interface](http://localhost:8000/admin). You can be logged in as the admin or as your user account, but not both at the same time.
 
-###Encountered errors on Ubuntu 12.10:
-
-- If you get either of these errors: 
-
-```
-- Error: pg_config executable not found.
-
-- ./psycopg/psycopg.h:30:20: fatal error: Python.h: No such file or directory
-```
-
-Do the following:
-
-`sudo apt-get install libpq-dev`
-
-- If you run into trouble with the Django installation within requirements.txt, install Django via:
-
-`pip install django`
-
-- If you recieve:
-
-`No module named psycopg2.extensions:`
-
-Do:
-
-`sudo apt-get build-dep python-psycopg2`
-
-Then:
-
-`pip install psycopg2`
-
-Note: running `pip install -r requirements.txt` might be neccesarry after running any of the above commands.
-
-- For postgres installation:
-
-`sudo apt-get install postgresql`
-
-- The following creates a super user:
-
-```
-- sudo -u postgres psql postgres 
-- \password postgres
-```
-
-- The following creates new database called blaggregator_dev
-
-`sudo -u postgres createdb blaggregator_dev`
-
-- To set up other postgres user accounts do:
-
-```
-- create user user_name 
-- \password user_name
-```
-
-- Then open settings.py and under `USER`: put the newly created user name, under `PASSWORD`: put the password of the user
-
-- Then run your local server
-
- `python manage.py dbshell`
+This installation can be a bit fiddly but once it's set up, it's smooth sailing. 
