@@ -26,8 +26,8 @@ def get_post_info(slug):
     post.avatar     = Hacker.objects.get(user=user.id).avatar_url
     post.slug       = slug
     return post
-    
-    
+
+
 def get_comment_list(post):
     """ Gets the list of comment objects for a given post instance. """
     commentList = list(Comment.objects.filter(post=post).order_by('date_modified'))
@@ -45,17 +45,17 @@ def framed(request, slug):
     post = get_post_info(slug)
     commentList = get_comment_list(post)
     post.commentcount = len(commentList)
-        
+
     context = Context({
         "post": post,
     })
 
     return render_to_response(
-        'home/framed.html', 
-        context, 
+        'home/framed.html',
+        context,
         context_instance=RequestContext(request)
     )
-    
+
 def log_in(request):
     ''' Log in a user who already has a pre-existing local account. '''
 
@@ -79,7 +79,9 @@ def log_in(request):
                 return HttpResponse("Your account is disabled. Please contact administrator for help.")
 
         else:
-            return HttpResponse("Auth fail! Are you sure you're entering your HS email and password?")
+            return HttpResponse("Auth fail! Are you sure you're entering your HS email and password? "
+                                 "If you've changed your HS password you can <a href='password_change'>"
+                                 "reauthenticate</a>.")
     else:
         return render_to_response('home/log_in.html', {},
                                    context_instance=RequestContext(request))
@@ -97,6 +99,7 @@ def create_account(request):
 
         # auth against hacker school and create a new local account
         resp = requests.get('https://www.hackerschool.com/auth', params={'email':email, 'password':password})
+
         if resp.status_code == requests.codes.ok:
             r = resp.json()
 
@@ -122,6 +125,40 @@ def create_account(request):
 
     # if GET request
     return render_to_response('home/create_account.html', {}, context_instance=RequestContext(request))
+
+def password_change(request):
+    ''' Update password by reconfirming with Hacker School. '''
+
+    if request.method == 'POST':
+
+        email = request.POST['email'].lower()
+        password = request.POST['password']
+
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return HttpResponse("This email is not associated with and account. "
+                                "Please click 'back' and create an account. ")
+        resp = requests.get('https://www.hackerschool.com/auth',
+                            params={'email':email, 'password':password})
+
+        if not resp.status_code == requests.codes.ok:
+            return HttpResponse("Auth Failed! (%s). Please hit 'back'"
+                                "and try again." % resp.status_code)
+
+        user.set_password(password)
+        user.save()
+
+        # auth and log in locally
+        current_user = authenticate(username=user.username, password=password)
+        login(request, current_user)
+
+        return HttpResponseRedirect('/new')
+
+    else: #GET request
+        return render_to_response('home/password_change.html', context_instance=RequestContext(request))
+
+
 
 @login_required(login_url="/log_in")
 def log_out(request):
