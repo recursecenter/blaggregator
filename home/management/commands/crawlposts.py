@@ -12,10 +12,14 @@ import datetime
 log = logging.getLogger("blaggregator")
 
 ROOT_URL = 'http://www.blaggregator.us/'
+max_zulip_age = datetime.timedelta(days=2)
+
 
 STREAM = 'announce'
 key = os.environ.get('HUMBUG_KEY')
 email = os.environ.get('HUMBUG_EMAIL')
+rs_bucket = os.environ.get('RUNSCOPE_BUCKET')
+rs_url = 'https://humbughq-com-{0}.runscope.net/api/v1/messages'.format(rs_bucket)
 
 class Command(NoArgsCommand):
 
@@ -59,7 +63,7 @@ class Command(NoArgsCommand):
                     print "Created '%s' from blog '%s'" % (title, blog.feed_url)
                     # Only post to humbug if the post was created in the last 2 days
                     #   so that new accounts don't spam humbug with their entire post list
-                    if (now - date) < datetime.timedelta(days=2):
+                    if (now - date) < max_zulip_age:
                         post_page = ROOT_URL + 'post/' + Post.objects.get(url=link).slug
                         send_message_humbug(user=blog.user, link=post_page, title=title)
 
@@ -123,4 +127,4 @@ def send_message_humbug(user, link, title):
             "content": "**%s** has a new blog post: [%s](%s)" % (user.first_name, title, url),
         }
     print data['content']
-    r = requests.post('https://humbughq-com-y3ee336dh1kn.runscope.net/api/v1/messages', data=data, auth=(email, key))
+    r = requests.post(rs_url, data=data, auth=(email, key))
