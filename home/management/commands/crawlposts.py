@@ -13,7 +13,9 @@ log = logging.getLogger("blaggregator")
 
 ROOT_URL = 'http://www.blaggregator.us/'
 
-STREAM = 'announce'
+STREAM = 'blogging'
+
+# am too lazy to change these variable names from humbug to zulip. sorry, jessica! 
 key = os.environ.get('HUMBUG_KEY')
 email = os.environ.get('HUMBUG_EMAIL')
 
@@ -57,11 +59,17 @@ class Command(NoArgsCommand):
 
                 if created:
                     print "Created '%s' from blog '%s'" % (title, blog.feed_url)
-                    # Only post to humbug if the post was created in the last 2 days
-                    #   so that new accounts don't spam humbug with their entire post list
+                    # Only post to zulip if the post was created in the last 2 days
+                    #   so that new accounts don't spam zulip with their entire post list
                     if (now - date) < datetime.timedelta(days=2):
                         post_page = ROOT_URL + 'post/' + Post.objects.get(url=link).slug
-                        send_message_humbug(user=blog.user, link=post_page, title=title)
+                        send_message_zulip(user=blog.user, link=post_page, title=title)
+                        
+                    # subscribe the author to comment updates
+                    subscription, created = Comment_Subscription.objects.get_or_create(
+                        user = blog.user,
+                        post = post,
+                    )
 
                 # if new info, update the posts
                 if not created:
@@ -84,12 +92,11 @@ class Command(NoArgsCommand):
     @transaction.commit_manually
     def handle_noargs(self, **options):
 
-        for blog in Blog.objects.all():
+        for blog in Blog.objects.all():     
             try:
                 self.crawlblog(blog)
             except Exception as e:
                 log.exception(e)
-
         if options['dry_run']:
             transaction.rollback()
             print "\nDON'T FORGET TO RUN THIS FOR REAL\n"
@@ -109,7 +116,7 @@ def cleantitle(title):
     return newtitle
 
 
-def send_message_humbug(user, link, title):
+def send_message_zulip(user, link, title):
 
     subject = "new blog post: %s" % title
     subject = subject[:57] + "..."
@@ -123,4 +130,4 @@ def send_message_humbug(user, link, title):
             "content": "**%s** has a new blog post: [%s](%s)" % (user.first_name, title, url),
         }
     print data['content']
-    r = requests.post('https://humbughq-com-y3ee336dh1kn.runscope.net/api/v1/messages', data=data, auth=(email, key))
+    r = requests.post('https://api-zulip-com-y3ee336dh1kn.runscope.net/api/v1/messages', data=data, auth=(email, key))
