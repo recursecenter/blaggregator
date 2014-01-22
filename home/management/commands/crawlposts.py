@@ -16,6 +16,8 @@ ROOT_URL = 'http://www.blaggregator.us/'
 STREAM = 'announce'
 key = os.environ.get('HUMBUG_KEY')
 email = os.environ.get('HUMBUG_EMAIL')
+rs_bucket = os.environ.get('RUNSCOPE_BUCKET')
+rs_url = 'https://humbughq-com-{0}.runscope.net/api/v1/messages'.format(rs_bucket)
 
 class Command(NoArgsCommand):
 
@@ -123,4 +125,4 @@ def send_message_humbug(user, link, title):
             "content": "**%s** has a new blog post: [%s](%s)" % (user.first_name, title, url),
         }
     print data['content']
-    r = requests.post('https://humbughq-com-y3ee336dh1kn.runscope.net/api/v1/messages', data=data, auth=(email, key))
+    r = requests.post(rs_url, data=data, auth=(email, key))
