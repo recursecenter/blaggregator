@@ -13,7 +13,7 @@ log = logging.getLogger("blaggregator")
 
 ROOT_URL = 'http://www.blaggregator.us/'
 
-STREAM = 'announce'
+STREAM = 'blogging'
 key = os.environ.get('HUMBUG_KEY')
 email = os.environ.get('HUMBUG_EMAIL')
 
