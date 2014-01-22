@@ -12,6 +12,8 @@ import datetime
 log = logging.getLogger("blaggregator")
 
 ROOT_URL = 'http://www.blaggregator.us/'
+max_zulip_age = datetime.timedelta(days=2)
+
 
 STREAM = 'announce'
 key = os.environ.get('HUMBUG_KEY')
@@ -61,7 +63,7 @@ class Command(NoArgsCommand):
                     print "Created '%s' from blog '%s'" % (title, blog.feed_url)
                     # Only post to humbug if the post was created in the last 2 days
                     #   so that new accounts don't spam humbug with their entire post list
-                    if (now - date) < datetime.timedelta(days=2):
+                    if (now - date) < max_zulip_age:
                         post_page = ROOT_URL + 'post/' + Post.objects.get(url=link).slug
                         send_message_humbug(user=blog.user, link=post_page, title=title)
 
