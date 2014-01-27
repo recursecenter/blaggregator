@@ -118,8 +118,9 @@ def cleantitle(title):
 
 def send_message_zulip(user, link, title):
 
-    subject = "new blog post: %s" % title
-    subject = subject[:57] + "..."
+    subject = title
+    if len(subject) > 60:
+        subject = subject[:57] + "..."
     
     # add a trailing slash if it's not already there (jankily)
     if link[-1] != '/': link = link + '/'
