@@ -61,11 +61,8 @@ class Command(NoArgsCommand):
 
                 if created:
                     print "Created '%s' from blog '%s'" % (title, blog.feed_url)
-                    # Only post to zulip if the post was created in the last 2 days
+                    # Only post to zulip if the post was created recently
                     #   so that new accounts don't spam zulip with their entire post list
-                    if (now - date) < datetime.timedelta(days=2):
-                    # Only post to humbug if the post was created in the last 2 days
-                    #   so that new accounts don't spam humbug with their entire post list
                     if (now - date) < max_zulip_age:
                         post_page = ROOT_URL + 'post/' + Post.objects.get(url=link).slug
                         send_message_zulip(user=blog.user, link=post_page, title=title)
