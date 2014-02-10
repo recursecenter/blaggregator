@@ -19,6 +19,5 @@ urlpatterns = patterns('',
     url(r'^logout/$', views.log_out),
     url(r'^log_out/$', views.log_out, name='log_out'),
     url(r'^about/$', views.about, name='about'),
-    url(r'^complete/hackerschool/$', views.complete),
     url('', include('social.apps.django_app.urls', namespace='social')),
 )
