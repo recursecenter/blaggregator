@@ -142,6 +142,9 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.messages.context_processors.messages',
     'django.contrib.auth.context_processors.auth',
     'django.core.context_processors.static',
+    # for python-social-auth
+    'social.apps.django_app.context_processors.backends',
+    'social.apps.django_app.context_processors.login_redirect',
     )
 
 TEMPLATE_DIRS = (
@@ -163,7 +166,19 @@ INSTALLED_APPS = (
     'storages',
     'south',
     'django.contrib.humanize',
+    'social.apps.django_app.default',
 )
+
+AUTHENTICATION_BACKENDS = (
+    'home.oauth.HackerSchoolOAuth2', 
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+SOCIAL_AUTH_HACKERSCHOOL_KEY = os.environ.get('SOCIAL_AUTH_HS_KEY', None)
+SOCIAL_AUTH_HACKERSCHOOL_SECRET = os.environ.get('SOCIAL_AUTH_HS_SECRET', None)
+SOCIAL_AUTH_HACKERSCHOOL_LOGIN_URL = '/login'
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/complete/hackerschool/'
+# SOCIAL_AUTH_LOGIN_ERROR_URL = '/login-error/'
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
