@@ -5,7 +5,7 @@ class HackerSchoolOAuth2(BaseOAuth2):
     name = 'hackerschool'
     AUTHORIZATION_URL = 'https://www.hackerschool.com/oauth/authorize'
     ACCESS_TOKEN_URL = 'https://www.hackerschool.com/oauth/token'
-    REDIRECT_URL = 'http://localhost:4000/complete/hackerschool/'
+    REDIRECT_URL = 'http://localhost:4000/complete/hackerschool/' #todo prodify
     # REDIRECT_URL = 'urn:ietf:wg:oauth:2.0:oob'
     REFRESH_TOKEN_URL = ACCESS_TOKEN_URL
     SCOPE_SEPARATOR = ','
@@ -26,10 +26,15 @@ class HackerSchoolOAuth2(BaseOAuth2):
                 'twitter':      response.get('twitter') or '',
                 'github':       response.get('github') or '',
             }
+    
+    def get_user_id(self, details, response):
+        """Return a unique ID for the current user, by default from server
+        response."""
+        return response.get('id')
 
     def user_data(self, access_token, *args, **kwargs):
         """Loads user data."""
-        url = 'https://api.hackerschool.com/api/v1/people/me.json' + urlencode({
+        url = 'http://www.hackerschool.com/api/v1/people/me.json' + urlencode({
             'access_token': access_token
         })
         try:
