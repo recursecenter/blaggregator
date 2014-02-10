@@ -61,7 +61,10 @@ def framed(request, slug):
     )
     
 def log_in_oauth(request):
-    return HttpResponse("<a href='/login/hackerschool/'>Log in with Hacker School</a>")
+    if request.user.is_authenticated():
+        return HttpResponseRedirect('/new')
+    else: 
+        return HttpResponse("<a href='/login/hackerschool/'>Log in with Hacker School</a>")
     
 def log_in(request):
     ''' Log in a user who already has a pre-existing local account. '''
@@ -130,14 +133,14 @@ def create_account(request):
     # if GET request
     return render_to_response('home/create_account.html', {}, context_instance=RequestContext(request))
 
-@login_required(login_url="/log_in")
+@login_required
 def log_out(request):
     '''Log out a logged in user.'''
     logout(request)
     return HttpResponseRedirect('/')
 
 
-@login_required(login_url='/log_in')
+@login_required
 def add_blog(request):
     ''' Adds a new blog to a user's profile. '''
 
@@ -198,7 +201,7 @@ def add_blog(request):
     else:
         return render_to_response('home/add_blog.html', {}, context_instance=RequestContext(request))
 
-@login_required(login_url='/log_in')
+@login_required
 def profile(request, user_id):
     ''' A user's profile. Not currently tied to a template - needs work. '''
 
@@ -212,7 +215,7 @@ def profile(request, user_id):
         raise Http404
     return HttpResponse(template.render(context))
 
-@login_required(login_url='/log_in')
+@login_required
 def new(request, page=1):
     ''' Newest blog posts - main app view. '''
 
@@ -243,7 +246,7 @@ def new(request, page=1):
                               context,
                               context_instance=RequestContext(request))
 
-@login_required(login_url='/log_in')
+@login_required
 def feed(request):
     ''' Atom feed of all new posts. '''
 
@@ -261,7 +264,7 @@ def feed(request):
     return render(request, 'home/atom.xml', context, content_type="text/xml")
 
 
-@login_required(login_url='/log_in')
+@login_required
 def item(request, slug):
 
     if request.method == 'POST':
