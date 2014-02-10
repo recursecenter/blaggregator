@@ -18,7 +18,7 @@ import random, string
 import math
 
 def complete(request):
-    print "wht's up"
+    print type(request), request
     return HttpResponse("hi")
     
 def get_post_info(slug):
@@ -59,6 +59,9 @@ def framed(request, slug):
         context, 
         context_instance=RequestContext(request)
     )
+    
+def log_in_oauth(request):
+    return HttpResponse("<a href='/login/hackerschool/'>Log in with Hacker School</a>")
     
 def log_in(request):
     ''' Log in a user who already has a pre-existing local account. '''
