@@ -1,10 +1,14 @@
 from social.backends.oauth import BaseOAuth2
+from urllib import urlencode
+import json
+import sys
             
 class HackerSchoolOAuth2(BaseOAuth2):
     """HackerSchool.com OAuth2 authentication backend"""
     name = 'hackerschool'
     AUTHORIZATION_URL = 'https://www.hackerschool.com/oauth/authorize'
     ACCESS_TOKEN_URL = 'https://www.hackerschool.com/oauth/token'
+    ACCESS_TOKEN_METHOD = 'POST'
     REDIRECT_URL = 'http://localhost:4000/complete/hackerschool/' #todo prodify
     # REDIRECT_URL = 'urn:ietf:wg:oauth:2.0:oob'
     REFRESH_TOKEN_URL = ACCESS_TOKEN_URL
@@ -34,10 +38,13 @@ class HackerSchoolOAuth2(BaseOAuth2):
 
     def user_data(self, access_token, *args, **kwargs):
         """Loads user data."""
-        url = 'http://www.hackerschool.com/api/v1/people/me.json' + urlencode({
-            'access_token': access_token
-        })
+        url = 'http://www.hackerschool.com/api/v1/people/me.json'
         try:
-            return json.load(self.urlopen(url))
+            request = self.request(url,
+                                    headers={ 'Authorization': access_token },
+                                    
+                                    method='GET')
+            return request.json()
+            # return json.load(self.urlopen(url))
         except ValueError:
             return None
