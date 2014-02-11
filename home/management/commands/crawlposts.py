@@ -68,10 +68,10 @@ class Command(NoArgsCommand):
                         send_message_zulip(user=blog.user, link=post_page, title=title)
                         
                     # subscribe the author to comment updates
-                    subscription, created = Comment_Subscription.objects.get_or_create(
-                        user = blog.user,
-                        post = post,
-                    )
+                    # subscription, created = Comment_Subscription.objects.get_or_create(
+                    #     user = blog.user,
+                    #     post = post,
+                    # )
 
                 # if new info, update the posts
                 if not created:
