@@ -20,12 +20,15 @@ class HackerSchoolOAuth2(BaseOAuth2):
 
     def get_user_details(self, response):
         """Return user details."""
+        first_name = response.get('first_name') or ''
+        last_name = response.get('last_name') or ''
+        username = first_name + last_name
         return {
                 'id':           response.get('id'),
                 'email':        response.get('email'),
-                'first_name':   response.get('first_name') or '',
-                'last_name':    response.get('last_name') or '',
-                'username':     first_name + last_name,
+                'first_name':   first_name,
+                'last_name':    last_name,
+                'username':     username,
                 'avatar_url':   response.get('image'),
                 'twitter':      response.get('twitter') or '',
                 'github':       response.get('github') or '',
@@ -38,13 +41,11 @@ class HackerSchoolOAuth2(BaseOAuth2):
 
     def user_data(self, access_token, *args, **kwargs):
         """Loads user data."""
-        url = 'http://www.hackerschool.com/api/v1/people/me.json'
+        url = 'http://www.hackerschool.com/api/v1/people/me.json?' + urlencode({
+             'access_token': access_token
+        })
         try:
-            request = self.request(url,
-                                    headers={ 'Authorization': access_token },
-                                    
-                                    method='GET')
-            return request.json()
-            # return json.load(self.urlopen(url))
+            request = self.request(url, method='GET')
+            return request.json() 
         except ValueError:
             return None
