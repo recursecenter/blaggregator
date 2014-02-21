@@ -19,7 +19,7 @@ STREAM = 'blogging'
 key = os.environ.get('HUMBUG_KEY')
 email = os.environ.get('HUMBUG_EMAIL')
 rs_bucket = os.environ.get('RUNSCOPE_BUCKET')
-rs_url = 'https://humbughq-com-{0}.runscope.net/api/v1/messages'.format(rs_bucket)
+rs_url = 'https://api-zulip-com-{0}.runscope.net/v1/messages'.format(rs_bucket)
 
 class Command(NoArgsCommand):
 
@@ -68,10 +68,10 @@ class Command(NoArgsCommand):
                         send_message_zulip(user=blog.user, link=post_page, title=title)
                         
                     # subscribe the author to comment updates
-                    subscription, created = Comment_Subscription.objects.get_or_create(
-                        user = blog.user,
-                        post = post,
-                    )
+                    # subscription, created = Comment_Subscription.objects.get_or_create(
+                    #     user = blog.user,
+                    #     post = post,
+                    # )
 
                 # if new info, update the posts
                 if not created:
