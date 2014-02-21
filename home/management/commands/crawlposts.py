@@ -19,7 +19,7 @@ STREAM = 'blogging'
 key = os.environ.get('HUMBUG_KEY')
 email = os.environ.get('HUMBUG_EMAIL')
 rs_bucket = os.environ.get('RUNSCOPE_BUCKET')
-rs_url = 'https://humbughq-com-{0}.runscope.net/api/v1/messages'.format(rs_bucket)
+rs_url = 'https://api-zulip-com-{0}.runscope.net/v1/messages'.format(rs_bucket)
 
 class Command(NoArgsCommand):
 
