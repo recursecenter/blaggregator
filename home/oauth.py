@@ -2,16 +2,33 @@ from social.backends.oauth import BaseOAuth2
 from urllib import urlencode
 import json
 import sys
-            
+
+from models import User
+
+def find_legacy_user(strategy, uid, details, user=None, social=None, *args, **kwargs):
+    if user or social:
+        return None
+
+    users = User.objects.filter(email=details['email'])
+
+    if users:
+        return {'user': users[0]}
+
+    users = User.objects.filter(username=details['username'])
+
+    if users:
+        return {'user': users[0]}
+
+    return None
+
+
 class HackerSchoolOAuth2(BaseOAuth2):
     """HackerSchool.com OAuth2 authentication backend"""
     name = 'hackerschool'
-    HACKERSCHOOL_ROOT = 'https://www.hackerschool.com'
-    AUTHORIZATION_URL = HACKERSCHOOL_ROOT + '/oauth/authorize'
-    ACCESS_TOKEN_URL = HACKERSCHOOL_ROOT + '/oauth/token'
+    HACKER_SCHOOL_ROOT = 'https://www.hackerschool.com'
+    AUTHORIZATION_URL = HACKER_SCHOOL_ROOT + '/oauth/authorize'
+    ACCESS_TOKEN_URL = HACKER_SCHOOL_ROOT + '/oauth/token'
     ACCESS_TOKEN_METHOD = 'POST'
-    REDIRECT_URL = 'http://localhost:4000/complete/hackerschool/' #todo prodify
-    # REDIRECT_URL = 'urn:ietf:wg:oauth:2.0:oob'
     REFRESH_TOKEN_URL = ACCESS_TOKEN_URL
     SCOPE_SEPARATOR = ','
     EXTRA_DATA = [
@@ -34,7 +51,7 @@ class HackerSchoolOAuth2(BaseOAuth2):
                 'twitter':      response.get('twitter') or '',
                 'github':       response.get('github') or '',
             }
-    
+
     def get_user_id(self, details, response):
         """Return a unique ID for the current user, by default from server
         response."""
@@ -42,11 +59,11 @@ class HackerSchoolOAuth2(BaseOAuth2):
 
     def user_data(self, access_token, *args, **kwargs):
         """Loads user data."""
-        url = self.HACKERSCHOOL_ROOT + '/api/v1/people/me.json?' + urlencode({
+        url = self.HACKER_SCHOOL_ROOT + '/api/v1/people/me.json?' + urlencode({
              'access_token': access_token
         })
         try:
             request = self.request(url, method='GET')
-            return request.json() 
+            return request.json()
         except ValueError:
             return None
