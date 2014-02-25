@@ -171,8 +171,7 @@ INSTALLED_APPS = (
 )
 
 AUTHENTICATION_BACKENDS = (
-    'home.oauth.HackerSchoolOAuth2', 
-    'django.contrib.auth.backends.ModelBackend',
+    'home.oauth.HackerSchoolOAuth2',
 )
 
 LOGIN_URL='/login'
