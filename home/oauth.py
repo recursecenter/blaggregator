@@ -32,6 +32,8 @@ def find_legacy_user(strategy, uid, details, user=None, social=None, *args, **kw
     if users:
         return {'user': users[0]}
 
+    # If we get down here, we're almost certainly dealing with a new uesr.
+    # Social.pipeline.user.create_user will make a new user shortly after this.
     return None
 
 
