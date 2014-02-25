@@ -290,6 +290,10 @@ def item(request, slug):
 
     return render_to_response('home/item.html', context, context_instance=RequestContext(request))
 
+def login_error(request):
+    """OAuth error page"""
+    return render(request, 'home/login_error.html')
+
 # login NOT required
 def about(request):
     """ About page with more info on Blaggregator. """
