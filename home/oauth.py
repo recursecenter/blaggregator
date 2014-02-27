@@ -2,15 +2,69 @@ from social.backends.oauth import BaseOAuth2
 from urllib import urlencode
 import json
 import sys
-            
+
+from models import User, Hacker
+
+HACKER_ATTRIBUTES = ('avatar_url', 'twitter', 'github')
+
+def find_legacy_user(strategy, uid, details, user=None, social=None, *args, **kwargs):
+    # user is present if we're currently logged in (very unlikely given there's no
+    # link to /login/hackerschool when you are logged in).
+    #
+    # social is present if we've already oauthed with hackerschool.com before.
+    # If this is the case, we don't need to find the legacy user.
+    # Social.pipeline.social_auth.social_user sets user from social.
+    if user or social:
+        return None
+
+    # first try finding a legacy account by matching the email returned from
+    # the API. This won't always work because people can change their emails on
+    # hackerschool.com.
+    users = User.objects.filter(email=details['email'])
+
+    if users:
+        return {'user': users[0]}
+
+    # Fall back on matching by username. People can't change thier names on
+    # hackerschool.com. We tried email first because email addresses are
+    # globally unique, while it's possible that two people might have the same
+    # name and thus username.
+    users = User.objects.filter(username=details['username'])
+
+    if users:
+        return {'user': users[0]}
+
+    # If we get down here, we're almost certainly dealing with a new uesr.
+    # Social.pipeline.user.create_user will make a new user shortly after this.
+    return None
+
+def create_or_update_hacker(strategy, details, response, user, *args, **kwargs):
+    if hasattr(user, 'hacker'):
+        # If there's a hacker already, this is an existing user, and we'll
+        # update the hacker.
+        hacker = user.hacker
+    else:
+        # If there's no hacker, that means this is a new user. Let's make the
+        # hacker.
+        hacker = Hacker(user=user)
+
+    changed = False
+
+    for name, value in details.items():
+        if name in HACKER_ATTRIBUTES:
+            setattr(hacker, name, value)
+            changed = True
+
+    if changed:
+        hacker.save()
+
 class HackerSchoolOAuth2(BaseOAuth2):
     """HackerSchool.com OAuth2 authentication backend"""
     name = 'hackerschool'
-    AUTHORIZATION_URL = 'https://www.hackerschool.com/oauth/authorize'
-    ACCESS_TOKEN_URL = 'https://www.hackerschool.com/oauth/token'
+    HACKER_SCHOOL_ROOT = 'https://www.hackerschool.com'
+    AUTHORIZATION_URL = HACKER_SCHOOL_ROOT + '/oauth/authorize'
+    ACCESS_TOKEN_URL = HACKER_SCHOOL_ROOT + '/oauth/token'
     ACCESS_TOKEN_METHOD = 'POST'
-    REDIRECT_URL = 'http://localhost:4000/complete/hackerschool/' #todo prodify
-    # REDIRECT_URL = 'urn:ietf:wg:oauth:2.0:oob'
     REFRESH_TOKEN_URL = ACCESS_TOKEN_URL
     SCOPE_SEPARATOR = ','
     EXTRA_DATA = [
@@ -33,7 +87,7 @@ class HackerSchoolOAuth2(BaseOAuth2):
                 'twitter':      response.get('twitter') or '',
                 'github':       response.get('github') or '',
             }
-    
+
     def get_user_id(self, details, response):
         """Return a unique ID for the current user, by default from server
         response."""
@@ -41,11 +95,11 @@ class HackerSchoolOAuth2(BaseOAuth2):
 
     def user_data(self, access_token, *args, **kwargs):
         """Loads user data."""
-        url = 'http://www.hackerschool.com/api/v1/people/me.json?' + urlencode({
+        url = self.HACKER_SCHOOL_ROOT + '/api/v1/people/me.json?' + urlencode({
              'access_token': access_token
         })
         try:
             request = self.request(url, method='GET')
-            return request.json() 
+            return request.json()
         except ValueError:
             return None
