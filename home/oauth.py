@@ -3,7 +3,9 @@ from urllib import urlencode
 import json
 import sys
 
-from models import User
+from models import User, Hacker
+
+HACKER_ATTRIBUTES = ('avatar_url', 'twitter', 'github')
 
 def find_legacy_user(strategy, uid, details, user=None, social=None, *args, **kwargs):
     # user is present if we're currently logged in (very unlikely given there's no
@@ -36,6 +38,25 @@ def find_legacy_user(strategy, uid, details, user=None, social=None, *args, **kw
     # Social.pipeline.user.create_user will make a new user shortly after this.
     return None
 
+def create_or_update_hacker(strategy, details, response, user, *args, **kwargs):
+    if hasattr(user, 'hacker'):
+        # If there's a hacker already, this is an existing user, and we'll
+        # update the hacker.
+        hacker = user.hacker
+    else:
+        # If there's no hacker, that means this is a new user. Let's make the
+        # hacker.
+        hacker = Hacker(user=user)
+
+    changed = False
+
+    for name, value in details.items():
+        if name in HACKER_ATTRIBUTES:
+            setattr(hacker, name, value)
+            changed = True
+
+    if changed:
+        hacker.save()
 
 class HackerSchoolOAuth2(BaseOAuth2):
     """HackerSchool.com OAuth2 authentication backend"""
