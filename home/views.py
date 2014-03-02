@@ -16,10 +16,6 @@ import re
 import feedergrabber27
 import random, string
 import math
-
-def complete(request):
-    print type(request), request
-    return HttpResponse("hi")
     
 def get_post_info(slug):
     """ Gets the post object at a given slug. """
