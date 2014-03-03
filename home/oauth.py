@@ -6,6 +6,7 @@ import sys
 from models import User, Hacker
 
 HACKER_ATTRIBUTES = ('avatar_url', 'twitter', 'github')
+USER_FIELDS = ['username', 'email']
 
 def find_legacy_user(strategy, uid, details, user=None, social=None, *args, **kwargs):
     # user is present if we're currently logged in (very unlikely given there's no
@@ -37,6 +38,24 @@ def find_legacy_user(strategy, uid, details, user=None, social=None, *args, **kw
     # If we get down here, we're almost certainly dealing with a new uesr.
     # Social.pipeline.user.create_user will make a new user shortly after this.
     return None
+    
+def create_user(strategy, details, response, uid, user=None, *args, **kwargs):
+    if user:
+        return
+
+    fields = dict((name, kwargs.get(name) or details.get(name))  
+                        for name in strategy.setting('USER_FIELDS',
+                                                      USER_FIELDS))
+    # The new user ID should be the same as their ID on hackerschool.com
+    fields['id'] = details.get("id")
+    
+    if not fields:
+        return
+
+    return {
+        'is_new': True,
+        'user': strategy.create_user(**fields)
+    }
 
 def create_or_update_hacker(strategy, details, response, user, *args, **kwargs):
     if hasattr(user, 'hacker'):
