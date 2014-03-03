@@ -1,5 +1,5 @@
 from django.http import HttpResponse, HttpResponseRedirect, Http404
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
@@ -16,7 +16,7 @@ import re
 import feedergrabber27
 import random, string
 import math
-
+    
 def get_post_info(slug):
     """ Gets the post object at a given slug. """
     post = Post.objects.get(slug=slug)
@@ -55,82 +55,21 @@ def framed(request, slug):
         context, 
         context_instance=RequestContext(request)
     )
-    
-def log_in(request):
-    ''' Log in a user who already has a pre-existing local account. '''
 
-    if request.method == 'POST':
-
-        email = request.POST['email'].lower()
-        try:
-            username = User.objects.get(email=email).username
-        except:
-            return HttpResponse("Sorry, your credentials were not correct. <a href='/log_in'>Please try again.</a><p> If this is your first time, you may need to <a href='/create_account'>create an account</a>.")
-        password = request.POST['password']
-
-        user = authenticate(username=username, password=password)
-
-        if user is not None:
-            # if user exists locally:
-            if user.is_active:
-                login(request, user)
-                return HttpResponseRedirect('/new')
-            else:
-                return HttpResponse("Your account is disabled. Please contact administrator for help.")
-
-        else:
-            return HttpResponse("Auth fail! Are you sure you're entering your HS email and password?")
+def log_in_oauth(request):
+    if request.user.is_authenticated():
+        return HttpResponseRedirect('/new')
     else:
-        return render_to_response('home/log_in.html', {},
-                                   context_instance=RequestContext(request))
+        return render(request, 'home/log_in_oauth.html')
 
-def create_account(request):
-    ''' Create a new local user account. '''
-
-    if request.method == 'POST':
-
-        email = request.POST['email'].lower()
-        password = request.POST['password']
-
-        if User.objects.filter(email=email).count() > 0:
-            return HttpResponse("You already have an account. Please <a href='/log_in'>log in</a> instead.")
-
-        # auth against hacker school and create a new local account
-        resp = requests.get('https://www.hackerschool.com/auth', params={'email':email, 'password':password})
-        if resp.status_code == requests.codes.ok:
-            r = resp.json()
-
-            # construct new local account
-            username = r['first_name']+r['last_name']
-            user = User.objects.create_user(username, email, password, id=r['hs_id'])
-            Hacker.objects.create(user=User.objects.get(id=r['hs_id']))
-            user.first_name = r['first_name']
-            user.last_name = r['last_name']
-            user.hacker.github = r['github']
-            user.hacker.twitter = r['twitter']
-            user.hacker.avatar_url = r['image']
-            user.save()
-            user.hacker.save()
-
-            # auth and log in locally
-            current_user = authenticate(username=username, password=password)
-            login(request, current_user)
-
-            return HttpResponseRedirect(reverse('home.views.add_blog'))
-        else:
-            return HttpResponse("Auth Failed! (%s). Please hit 'back' and try again." % resp.status_code)
-
-    # if GET request
-    return render_to_response('home/create_account.html', {}, context_instance=RequestContext(request))
-
-@login_required(login_url="/log_in")
+@login_required
 def log_out(request):
     '''Log out a logged in user.'''
     logout(request)
     return HttpResponseRedirect('/')
 
 
-@login_required(login_url='/log_in')
+@login_required
 def add_blog(request):
     ''' Adds a new blog to a user's profile. '''
 
@@ -191,7 +130,7 @@ def add_blog(request):
     else:
         return render_to_response('home/add_blog.html', {}, context_instance=RequestContext(request))
 
-@login_required(login_url='/log_in')
+@login_required
 def profile(request, user_id):
     ''' A user's profile. Not currently tied to a template - needs work. '''
 
@@ -205,7 +144,7 @@ def profile(request, user_id):
         raise Http404
     return HttpResponse(template.render(context))
 
-@login_required(login_url='/log_in')
+@login_required
 def new(request, page=1):
     ''' Newest blog posts - main app view. '''
 
@@ -236,7 +175,7 @@ def new(request, page=1):
                               context,
                               context_instance=RequestContext(request))
 
-@login_required(login_url='/log_in')
+@login_required
 def feed(request):
     ''' Atom feed of all new posts. '''
 
@@ -254,7 +193,7 @@ def feed(request):
     return render(request, 'home/atom.xml', context, content_type="text/xml")
 
 
-@login_required(login_url='/log_in')
+@login_required
 def item(request, slug):
 
     if request.method == 'POST':
@@ -279,6 +218,10 @@ def item(request, slug):
     })
 
     return render_to_response('home/item.html', context, context_instance=RequestContext(request))
+
+def login_error(request):
+    """OAuth error page"""
+    return render(request, 'home/login_error.html')
 
 # login NOT required
 def about(request):

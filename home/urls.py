@@ -1,13 +1,11 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import include, patterns, url
 from django.http import HttpResponseRedirect
 
 from home import views
 
 urlpatterns = patterns('',
     url(r'^$', lambda x: HttpResponseRedirect('/new')),
-    url(r'^login/$', views.log_in),
-    url(r'^log_in/$', views.log_in, name='log_in'),
-    url(r'^create_account/$', views.create_account, name='create_account'),
+    url(r'^login/$', views.log_in_oauth),
     url(r'^profile/(?P<user_id>\d+)/$', views.profile, name='profile'),
     url(r'^new/$', views.new, name='new'),
     url(r'^new/(?P<page>\d+)/$', views.new),
@@ -17,5 +15,7 @@ urlpatterns = patterns('',
     url(r'^post/(?P<slug>\w+)/', views.item, name='post'),
     url(r'^logout/$', views.log_out),
     url(r'^log_out/$', views.log_out, name='log_out'),
+    url(r'^login-error/$', views.login_error, name='login_error'),
     url(r'^about/$', views.about, name='about'),
+    url('', include('social.apps.django_app.urls', namespace='social')),
 )
