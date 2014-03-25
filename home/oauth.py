@@ -114,7 +114,7 @@ class HackerSchoolOAuth2(BaseOAuth2):
 
     def user_data(self, access_token, *args, **kwargs):
         """Loads user data."""
-        url = self.HACKER_SCHOOL_ROOT + '/api/v1/people/me.json?' + urlencode({
+        url = self.HACKER_SCHOOL_ROOT + '/api/v1/people/me?' + urlencode({
              'access_token': access_token
         })
         try:
