@@ -4,6 +4,7 @@ from django.utils import timezone
 from optparse import make_option
 from home.models import Blog, Post
 from home import feedergrabber27
+from collections import deque
 import logging
 import requests
 import os
@@ -33,6 +34,9 @@ class Command(NoArgsCommand):
             ),
         )
 
+    # Queue up the messages for Zulip so they aren't sent until after the 
+    #   blog post instance is created in the database
+    zulip_queue = deque()
 
     def crawlblog(self, blog):
 
@@ -65,17 +69,10 @@ class Command(NoArgsCommand):
                     #   so that new accounts don't spam zulip with their entire post list
                     if (now - date) < max_zulip_age:
                         post_page = ROOT_URL + 'post/' + Post.objects.get(url=link).slug
-                        send_message_zulip(user=blog.user, link=post_page, title=title)
+                        self.enqueue_zulip(self.zulip_queue, blog.user, post_page, title)
                         
-                    # subscribe the author to comment updates
-                    # subscription, created = Comment_Subscription.objects.get_or_create(
-                    #     user = blog.user,
-                    #     post = post,
-                    # )
-
                 # if new info, update the posts
                 if not created:
-                    # print ".",
                     updated = False
                     if date != post.date_updated:
                         post.date_updated = date
@@ -93,7 +90,6 @@ class Command(NoArgsCommand):
 
     @transaction.commit_manually
     def handle_noargs(self, **options):
-
         for blog in Blog.objects.all():
             try:
                 self.crawlblog(blog)
@@ -103,9 +99,15 @@ class Command(NoArgsCommand):
             transaction.rollback()
             print "\nDON'T FORGET TO RUN THIS FOR REAL\n"
         else:
+            for message in self.zulip_queue: 
+                user, link, title = message
+                send_message_zulip(user, link, title)
             transaction.commit()
 
-
+    def enqueue_zulip(self, queue, user, link, title):
+        self.zulip_queue.append((user, link, title))
+        
+        
 def cleantitle(title):
     ''' Strip the blog title of newlines. '''
 
@@ -115,7 +117,7 @@ def cleantitle(title):
         if char != '\n':
             newtitle += char
 
-    return newtitle
+    return newtitle        
 
 
 def send_message_zulip(user, link, title):
