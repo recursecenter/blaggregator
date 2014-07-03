@@ -23,6 +23,7 @@ class Blog(models.Model):
     feed_url     = models.TextField()
     last_crawled = models.DateTimeField('last crawled', blank=True, null=True)
     created      = models.DateTimeField('date created')
+    stream       = models.TextField(default='blogging')
 
 class Post(models.Model):
 
