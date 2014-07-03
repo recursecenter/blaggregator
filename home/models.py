@@ -5,6 +5,11 @@ import random, string
 def generate_random_id():
     return ''.join(random.choice(string.ascii_uppercase + string.digits + string.ascii_lowercase) for x in range(6))
 
+STREAM_CHOICES = (
+    ('BLOGGING', 'blogging'),
+    ('LOGS', 'Daily Logs'),
+)
+
 # extends the User class to hold additional profile info
 # access with u.hacker.github (where u is user object instance)
 class Hacker(models.Model):
@@ -19,11 +24,11 @@ class Blog(models.Model):
         return self.feed_url
 
     user         = models.ForeignKey(User)
-    url          = models.TextField()
-    feed_url     = models.TextField()
+    url          = models.URLField()
+    feed_url     = models.URLField()
     last_crawled = models.DateTimeField('last crawled', blank=True, null=True)
     created      = models.DateTimeField('date created')
-    stream       = models.TextField(default='blogging')
+    stream       = models.CharField(max_length=100, default=STREAM_CHOICES[0][0], choices=STREAM_CHOICES)
 
 class Post(models.Model):
 
