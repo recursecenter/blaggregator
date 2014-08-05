@@ -61,6 +61,8 @@ then your server isn't running. Go fiddle with Postgres.app.
 
 `export DJANGO_DEBUG=True`
 
+- Blaggregator uses oauth2 to log in users against hackerschool.com. Go to [your settings on hackerschool.com](https://www.hackerschool.com/settings), make a new app. Name it something like "blaggregator-local" and the url should be http://localhost:4000/complete/hackerschool/ (WITH trailing slash). Grab the keys and store them in your environment as SOCIAL_AUTH_HS_KEY and SOCIAL_AUTH_HS_SECRET.  
+
 - Then run a local server:
 
 `python manage.py runserver`

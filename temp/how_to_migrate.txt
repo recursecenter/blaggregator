@@ -1,0 +1,3 @@
+
+python manage.py schemamigration home --auto
+python manage.py migrate home
