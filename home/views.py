@@ -137,17 +137,19 @@ def profile(request, user_id):
     """ A user's profile. Not currently tied to a template - needs work. """
 
     try:
-        current_user = User.objects.get(id=user_id)
+        hacker = Hacker.objects.get(user=user_id)
 
     except User.DoesNotExist:
         raise Http404
 
     else:
-        added_blogs = Blog.objects.filter(user=request.user.id)
+        added_blogs = Blog.objects.filter(user=user_id)
+        owner = True if int(user_id) == request.user.id else False
 
         context = Context({
-            'current_user': current_user,
+            'hacker': hacker,
             'blogs': added_blogs,
+            'owner': owner,
         })
 
         response = render_to_response(

@@ -1,4 +1,6 @@
 from django.template import Library
+from home.models import STREAM_CHOICES
+
 
 register = Library()
 
@@ -13,3 +15,7 @@ def pagination(pages, page):
         end = pages
         start = end - max_items + 1
     return range(start,end + 1)
+
+@register.filter
+def stream_name(stream_id):
+    return dict(STREAM_CHOICES).get(stream_id, 'Unknown')
