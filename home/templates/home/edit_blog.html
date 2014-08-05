@@ -1,0 +1,32 @@
+{% extends "home/base.html" %}
+
+{% block pagetitle %}Blaggregator{% endblock %}
+
+{% block title %}
+    Edit your blogs!
+{% endblock %}
+
+{% block content %}
+
+    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+    <form action="" method="POST">
+      {% csrf_token %}
+      {% for field in form %}
+      <div id="{{ field.auto_id }}_container">
+	{{ field.help_text }}
+	<div>
+	  {{ field.label_tag }} {{ field }}
+	</div>
+	<div id="{{ field.auto_id }}_errors">
+	  {{ field.errors }}
+	</div>
+      </div>
+      {% endfor %}
+      <div class="input-append">
+        <button class="btn" type="button submit">Save</button>
+      </div>
+      <a href="{% url "delete_blog" blog_id=blog.id %}">Delete</a>
+    </form>
+
+{% endblock %}

@@ -185,7 +185,7 @@ def edit_blog(request, blog_id):
     })
 
     response = render_to_response(
-        'home/add_blog.html',
+        'home/edit_blog.html',
         context,
         context_instance=RequestContext(request)
     )
