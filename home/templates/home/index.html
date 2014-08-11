@@ -1,0 +1,40 @@
+{% extends "home/base.html" %}
+{% load customtags %}
+{% block pagetitle %}Blaggregator{% endblock %}
+
+{% block title %}
+{% if owner %}
+Your
+{% else %}
+<a class="avatar media-object pull-left" href="#">
+  <img src="{{ hacker.avatar_url }}" width="80px" height="80px">
+</a>
+{{ hacker.first_name }} {{ hacker.last_name }}'s
+{% endif %}
+blogs
+</p>
+{% endblock %}
+
+{% block content %}
+
+    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+
+    <table>
+      <tr>
+	<th>Feed URL</th> <th>Stream</th>
+      </tr>
+    {% for blog in blogs %}
+    <tr>
+      <td><a href="{{blog.url}}" target="_blank">{{blog.feed_url}}</a></td>
+      <td><a href="https://zulip.com/#narrow/stream/{{blog.stream|stream_name}}" target="_blank">{{blog.stream|stream_name}}</a></td>
+      {% if owner %}
+      <td><a href="{% url "edit_blog" blog_id=blog.id %}">Edit</a></td>
+      {% endif %}
+    </tr>
+    {% endfor %}
+    </table>
+
+
+
+{% endblock %}
