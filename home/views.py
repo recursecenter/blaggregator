@@ -153,7 +153,7 @@ def profile(request, user_id):
         })
 
         response = render_to_response(
-            'home/index.html',
+            'home/profile.html',
             context,
             context_instance=RequestContext(request)
         )
