@@ -9,6 +9,7 @@ from django.core.files import File
 from django.core.files.temp import NamedTemporaryFile
 from django.core.urlresolvers import reverse
 from django.shortcuts import render_to_response, render
+from django.forms import TextInput
 from django.forms.models import modelform_factory
 from home.models import Hacker, Blog, Post, Comment
 from django.conf import settings
@@ -169,7 +170,11 @@ def edit_blog(request, blog_id):
     except Blog.DoesNotExist:
         raise Http404
 
-    BlogForm = modelform_factory(Blog, fields=("feed_url", "stream"))
+    BlogForm = modelform_factory(
+        Blog,
+        fields=("feed_url", "stream"),
+        widgets={'feed_url': TextInput(attrs={'class': 'span6', 'type': 'url'})}
+    )
 
     if request.method == 'POST':
         form = BlogForm(request.POST, instance=blog)
