@@ -139,7 +139,7 @@ def profile(request, user_id):
     try:
         hacker = Hacker.objects.get(user=user_id)
 
-    except User.DoesNotExist:
+    except Hacker.DoesNotExist:
         raise Http404
 
     else:
