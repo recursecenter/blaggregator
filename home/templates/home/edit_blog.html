@@ -25,8 +25,19 @@
       {% endfor %}
       <div class="input-append">
         <button class="btn" type="button submit">Save</button>
+        <a id="delete-button" href="#" class="btn btn-warning">Delete</a>
+        <a id="confirm-button" class="btn btn-danger"
+           href="{% url "delete_blog" blog_id=blog.id %}"
+           style="display: none;">
+          Are you sure?
+        </a>
       </div>
-      <a href="{% url "delete_blog" blog_id=blog.id %}">Delete</a>
     </form>
 
 {% endblock %}
+
+    {% block scripts %}
+    {% load static from staticfiles %}
+    {{ block.super }}
+    <script src="{% static "js/confirmation.js" %}"></script>
+    {% endblock %}
