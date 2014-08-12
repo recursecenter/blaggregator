@@ -3,23 +3,18 @@ from django.contrib.auth import logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
-from django.template import Context, loader, RequestContext
-from django.core.context_processors import csrf
-from django.core.files import File
-from django.core.files.temp import NamedTemporaryFile
-from django.core.urlresolvers import reverse
+from django.template import Context, RequestContext
 from django.shortcuts import render_to_response, render
 from django.forms import TextInput
 from django.forms.models import modelform_factory
 from home.models import Hacker, Blog, Post, Comment
 from django.conf import settings
-import requests
 import datetime
 import re
 import feedergrabber27
 import random, string
 import math
-    
+
 def get_post_info(slug):
     """ Gets the post object at a given slug. """
     post = Post.objects.get(slug=slug)
