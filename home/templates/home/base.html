@@ -30,9 +30,10 @@
                     <li class="dropdown">
                       <a id="navdropdown" href="#" class="dropdown-toggle" data-toggle="dropdown" > Welcome, {{ user.first_name }}! <b class="caret"></b> </a>
                       <ul class="dropdown-menu" aria-labeledby="navdropdown">
-                        {# <li><a href="/profile/{{user.id}}">Profile</a></li> #}
                         <li><a href="/add_blog">Add your blog</a></li>
+                        <li><a href="/profile/{{user.id}}">Settings</a></li>
                         <li><a href="/about">About Blaggregator</a></li>
+                        <li><a href="https://github.com/sursh/blaggregator/blob/master/CONTRIBUTE.md">Contribute</a></li>                      
                         <li><a href="/logout">Log out</a></li>
                       </ul>
                     </li>
@@ -56,8 +57,10 @@
     </div>
 
 
+    {% block scripts %}
     <script src="//code.jquery.com/jquery.js"></script>
     <script src="{% static "js/bootstrap.min.js" %}"></script>
+    {% endblock %}
 
 </body>
 </html>

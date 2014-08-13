@@ -3,20 +3,18 @@ from django.contrib.auth import logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
-from django.template import Context, loader, RequestContext
-from django.core.context_processors import csrf
-from django.core.files import File
-from django.core.files.temp import NamedTemporaryFile
+from django.template import Context, RequestContext
 from django.shortcuts import render_to_response, render
+from django.forms import TextInput
+from django.forms.models import modelform_factory
 from home.models import Hacker, Blog, Post, Comment
 from django.conf import settings
-import requests
 import datetime
 import re
 import feedergrabber27
 import random, string
 import math
-    
+
 def get_post_info(slug):
     """ Gets the post object at a given slug. """
     post = Post.objects.get(slug=slug)
@@ -132,17 +130,81 @@ def add_blog(request):
 
 @login_required
 def profile(request, user_id):
-    ''' A user's profile. Not currently tied to a template - needs work. '''
+    """ A user's profile. Not currently tied to a template - needs work. """
 
     try:
-        current_user = User.objects.get(id=user_id)
-        template = loader.get_template('home/index.html')
-        context = Context({
-            'current_user': current_user,
-        })
-    except User.DoesNotExist:
+        hacker = Hacker.objects.get(user=user_id)
+
+    except Hacker.DoesNotExist:
         raise Http404
-    return HttpResponse(template.render(context))
+
+    else:
+        added_blogs = Blog.objects.filter(user=user_id)
+        owner = True if int(user_id) == request.user.id else False
+
+        context = Context({
+            'hacker': hacker,
+            'blogs': added_blogs,
+            'owner': owner,
+        })
+
+        response = render_to_response(
+            'home/profile.html',
+            context,
+            context_instance=RequestContext(request)
+        )
+
+        return response
+
+@login_required
+def edit_blog(request, blog_id):
+
+    try:
+        user = request.user
+        blog = Blog.objects.get(id=blog_id, user=user)
+    except Blog.DoesNotExist:
+        raise Http404
+
+    BlogForm = modelform_factory(
+        Blog,
+        fields=("feed_url", "stream"),
+        widgets={'feed_url': TextInput(attrs={'class': 'span6', 'type': 'url'})}
+    )
+
+    if request.method == 'POST':
+        form = BlogForm(request.POST, instance=blog)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('profile', kwargs={'user_id': user.id}))
+
+    form = BlogForm(instance=blog)
+
+    context = Context({
+        'blog': blog,
+        'form': form
+    })
+
+    response = render_to_response(
+        'home/edit_blog.html',
+        context,
+        context_instance=RequestContext(request)
+    )
+
+    return response
+
+@login_required
+def delete_blog(request, blog_id):
+
+    try:
+        user = request.user
+        blog = Blog.objects.get(id=blog_id, user=user)
+    except Blog.DoesNotExist:
+        raise Http404
+
+    blog.delete()
+
+    return HttpResponseRedirect(reverse('profile', kwargs={'user_id': user.id}))
+
 
 @login_required
 def new(request, page=1):

@@ -69,8 +69,8 @@ class Command(NoArgsCommand):
                     #   so that new accounts don't spam zulip with their entire post list
                     if (now - date) < max_zulip_age:
                         post_page = ROOT_URL + 'post/' + Post.objects.get(url=link).slug
-                        self.enqueue_zulip(self.zulip_queue, blog.user, post_page, title)
-                        
+                        self.enqueue_zulip(self.zulip_queue, blog.user, post_page, title, blog.stream)
+
                 # if new info, update the posts
                 if not created:
                     updated = False
@@ -99,15 +99,15 @@ class Command(NoArgsCommand):
             transaction.rollback()
             print "\nDON'T FORGET TO RUN THIS FOR REAL\n"
         else:
-            for message in self.zulip_queue: 
-                user, link, title = message
-                send_message_zulip(user, link, title)
+            for message in self.zulip_queue:
+                user, link, title, stream = message
+                send_message_zulip(user, link, title, stream)
             transaction.commit()
 
-    def enqueue_zulip(self, queue, user, link, title):
-        self.zulip_queue.append((user, link, title))
-        
-        
+    def enqueue_zulip(self, queue, user, link, title, stream=STREAM):
+        self.zulip_queue.append((user, link, title, stream))
+
+
 def cleantitle(title):
     ''' Strip the blog title of newlines. '''
 
@@ -117,20 +117,20 @@ def cleantitle(title):
         if char != '\n':
             newtitle += char
 
-    return newtitle        
+    return newtitle
 
 
-def send_message_zulip(user, link, title):
+def send_message_zulip(user, link, title, stream=STREAM):
 
     subject = title
     if len(subject) > 60:
         subject = subject[:57] + "..."
-    
+
     # add a trailing slash if it's not already there (jankily)
     if link[-1] != '/': link = link + '/'
     url = link + "view"
     data = {"type": "stream",
-            "to": "%s" % STREAM,
+            "to": "%s" % stream,
             "subject": subject,
             "content": "**%s %s** has a new blog post: [%s](%s)" % (user.first_name, user.last_name, title, url),
         }
