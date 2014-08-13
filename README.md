@@ -1,8 +1,8 @@
 ##Blog post aggregator for the Hacker School community.
 
-Hacker Schoolers are writing awesome blog posts all over the internet. This brings them together and provides a place where alums from every batch can discuss technical news.
+Hacker Schoolers are writing awesome blog posts all over the internet. This brings them together and provides a place where alums from every batch can discuss technical news and be an amazing audience for each other. 
 
-The live site is [here](http://blaggregator.us). Hacker School login required.
+The live site is [HERE](http://blaggregator.us). Hacker School login required.
 
 ###Add your blog
 You will be prompted to add your blog when you create an account. You can also [add it later](http://blaggregator.us/add_blog).
@@ -11,16 +11,16 @@ Once your blog is added, Blaggregator will crawl it periodically for new posts.
 
 ###Contribute
 
-Want to contribute a feature or bugfix? Blaggregator is a straightforward Django app with a Twitter Bootstrap frontend. It's deployed on Heroku and uses their Postgres and Scheduler add-ons. 
+Want to contribute a feature or bugfix? Blaggregator is a straightforward Django app with a simple Bootstrap frontend. It's deployed on Heroku and uses their Postgres and Scheduler add-ons. 
 
 Key files: 
+- home/views.py: the heart of the app. all of the views ("controllers" if you're coming from Ruby)
 - blaggregator/settings.py: app settings
 - home/management/commands/crawlposts.py: background crawler script
 - home/feedergrabber27.py: feed parser contributed by dpb
-- home/templates/home: all templates
-- home/views.py: all of the views ("controllers" if you're coming from Ruby)
+- home/templates/home: all templates live here
 
-Check out [CONTRIBUTE.md](CONTRIBUTE.md) for ideas for what to build.
+Check out [CONTRIBUTE.md](CONTRIBUTE.md) for contribution ideas.
 
 ###Installation:
 
@@ -65,6 +65,14 @@ then your server isn't running. Go fiddle with Postgres.app.
 
 `python manage.py runserver`
 
-You can administer your app through the [handy-dandy admin interface](http://localhost:8000/admin). You can be logged in as the admin or as your user account, but not both at the same time.
+You can administer your app through the [handy-dandy admin interface](http://localhost:8000/admin). To see this page, you'll need to give your user account superuser privileges: 
+
+1. go to http://localhost:8000/ and auth in through HS's oauth
+2. `$ python manage.py shell` to open Django's shell and use its ORM
+3. `>>> from django.contrib.auth.models import User` import the User model (should you need the other models defined in `models.py`, import from `home.models`. User uses Django's built-in User model)
+4. 	`>>> u = User.objects.get(first_name="Sasha")` or whatever your first name is. Grab your user object from the db.
+5. 	`>>> u.is_superuser = True` make your account a superuser so you can access the admin
+6. 	`>>> u.save()` Save these changes to the db.
+7. 	You should now be able to access localhost:8000/admin while logged in!
 
 This installation can be a bit fiddly but once it's set up, it's smooth sailing. 
