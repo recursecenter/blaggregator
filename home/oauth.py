@@ -1,4 +1,6 @@
 from social.backends.oauth import BaseOAuth2
+from social.storage.django_orm import DjangoUserMixin
+from social.strategies.django_strategy import DjangoStrategy
 from urllib import urlencode
 import json
 import sys
@@ -77,6 +79,26 @@ def create_or_update_hacker(strategy, details, response, user, *args, **kwargs):
     if changed:
         hacker.save()
 
+
+def update_user_details(hacker_id, user):
+    social_auth = DjangoUserMixin.get_social_auth_for_user(user)[0]
+    backend = social_auth.get_backend_instance()
+    social_auth.refresh_token(DjangoStrategy())
+    url = backend.HACKER_SCHOOL_ROOT + '/api/v1/people/%s?' % hacker_id + urlencode({
+        'access_token': social_auth.extra_data['access_token']
+    })
+
+    try:
+        response = backend.request(url, method='GET')
+        hacker_data = response.json()
+        create_or_update_hacker(None, hacker_data, None, User.objects.get(id=hacker_id))
+
+    except Exception:
+        # It's not very bad, if we are not able to update the userdata... we
+        # silently ignore it.
+        pass
+
+
 class HackerSchoolOAuth2(BaseOAuth2):
     """HackerSchool.com OAuth2 authentication backend"""
     name = 'hackerschool'
@@ -88,7 +110,8 @@ class HackerSchoolOAuth2(BaseOAuth2):
     SCOPE_SEPARATOR = ','
     EXTRA_DATA = [
         ('id', 'id'),
-        ('expires', 'expires')
+        ('expires_in', 'expires_in'),
+        ('refresh_token', 'refresh_token')
     ]
 
     def get_user_details(self, response):

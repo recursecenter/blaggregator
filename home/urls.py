@@ -19,5 +19,6 @@ urlpatterns = patterns('',
     url(r'^log_out/$', views.log_out, name='log_out'),
     url(r'^login-error/$', views.login_error, name='login_error'),
     url(r'^about/$', views.about, name='about'),
+    url(r'^updated_avatar/(?P<user_id>\d+)/$', views.updated_avatar, name='updated_avatar'),
     url('', include('social.apps.django_app.urls', namespace='social')),
 )
