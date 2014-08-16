@@ -90,7 +90,7 @@ def update_user_details(hacker_id, user):
 
     try:
         response = backend.request(url, method='GET')
-        hacker_data = response.json()
+        hacker_data = backend.get_user_details(response.json())
         create_or_update_hacker(None, hacker_data, None, User.objects.get(id=hacker_id))
 
     except Exception:
