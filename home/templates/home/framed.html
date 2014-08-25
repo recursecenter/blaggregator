@@ -5,6 +5,8 @@
   <head>
       <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet" media="screen">
       <link href="{% static "css/mystyles.css" %}" rel="stylesheet" media="screen">
+      <script src="//code.jquery.com/jquery.js"></script>
+      <script src="{% static "js/update_images.js" %}"></script>
       <title>{% block pagetitle %}{{ post.title }}{% endblock %}</title>
       <script>
         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -19,12 +21,13 @@
 
   <body class="framed">
     <div class="everything">
-      
+
       <div class="bar">
         <div class="bar-container">
-          
-          <a href="http://hackerschool.com/people/{{ post.authorid }}"><img src="{{ post.avatar }}" class="framed" /></a>
-          
+
+          <a href="http://hackerschool.com/people/{{ post.authorid }}">
+            <img data-author-id="{{post.authorid}}" src="{{ post.avatar }}" class="framed" />
+          </a>
           <div class="words">
             <div class="post-title">{{ post.title }}</div>
             <div class="post-comments">
@@ -37,13 +40,13 @@
                     Join the discussion!
                 {% endif %}
               </a></div>
-            </div> 
+            </div>
           </div>
-          
+
           <div class="close-frame"><a href="{{ post.url }}">close frame ×</a></div>
         </div>
-      </div>        
-  
+      </div>
+
       <iframe frameborder="0" height="100%" marginheight="0" marginwidth="0" src="{{ post.url }}" width="100%" padding="0">
       </iframe>
     </div>

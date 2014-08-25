@@ -1,4 +1,4 @@
-from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.http import HttpResponse, HttpResponseRedirect, Http404, HttpResponseNotAllowed
 from django.contrib.auth import logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
@@ -8,6 +8,7 @@ from django.shortcuts import render_to_response, render
 from django.forms import TextInput
 from django.forms.models import modelform_factory
 from home.models import Hacker, Blog, Post, Comment
+from home.oauth import update_user_details
 from django.conf import settings
 import datetime
 import re
@@ -224,8 +225,8 @@ def new(request, page=1):
         user            = User.objects.get(blog__id__exact=post.blog_id)
         post.author     = user.first_name + " " + user.last_name
         post.authorid   = user.id
-        post.avatar     = Hacker.objects.get(user=user.id).avatar_url
         post.comments   = list(Comment.objects.filter(post=post))
+        post.avatar     = user.hacker.avatar_url
 
     context = Context({
         "newPostList": newPostList,
@@ -236,6 +237,21 @@ def new(request, page=1):
     return render_to_response('home/new.html',
                               context,
                               context_instance=RequestContext(request))
+
+
+@login_required
+def updated_avatar(request, user_id):
+    try:
+        Hacker.objects.get(user=user_id)
+
+    except Hacker.DoesNotExist:
+        raise Http404
+
+    else:
+        update_user_details(user_id, request.user)
+        hacker = Hacker.objects.get(user=user_id)
+
+    return HttpResponse(hacker.avatar_url)
 
 @login_required
 def feed(request):

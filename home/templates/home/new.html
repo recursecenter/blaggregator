@@ -18,7 +18,7 @@
     {% for post in newPostList %}
         <div class="media post">
           <a class="pull-left" href="http://hackerschool.com/people/{{ post.authorid }}">
-            <img class="media-object" src="{{ post.avatar }}" width="64px" height="64px">
+            <img class="media-object" data-author-id="{{post.authorid}}"  src="{{ post.avatar }}" width="64px" height="64px">
           </a>
           <div class="media-body">
             <h4 class="media-heading listing-title"><a href="/post/{{ post.slug }}/view">{{ post.title }}</a></h4><div><a href="/post/{{ post.slug }}" class="listing-comments">
