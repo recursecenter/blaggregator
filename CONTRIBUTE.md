@@ -5,7 +5,7 @@ This project is for the whole Hacker School community. Right now, we don't have 
 If you enjoy the tool or are interested in practice web programming on a real app that's heavily used every day, this is a great way to get some experience. Please feel free to contribute features and fixes. Here are some upcoming plans. Please feel free to reach out to Sasha (@sursh) if you have any other project ideas or questions. 
 
 ### High priority:
-- Fix broken avatars: query the HS API to grab the updated URLs, and store the images in our db 
+- Store profile pictures in S3 and store links to them in our db 
 - Celery backend so everything works more faster
 - Email subscription: allow people to sign up to get emailed when there are new posts (dependency: celery backend)
 - Set up testing infrastructure so future PRs can be reviewed more quickly
@@ -21,9 +21,10 @@ If you enjoy the tool or are interested in practice web programming on a real ap
 - allow users to edit their profiles (avatar, displayed name, social media links, and most importantly, edit the blogs they've added)
 - enhancing the profile page for each user within Blaggregator (right now we just list their blogs) that collates their posts and comments
 - [there are some nice bugs to tackle](https://github.com/sursh/blaggregator/issues?page=1&state=open)
-- Rewrite the app in Flask so it is easier to maintain
+- Rewrite the app in Flask so it is easier to maintain (this might not be worth the effort; let's discuss)
 
-### Done by past contributors: 
+### DONE! Past contributions: 
+- improved profile picture retrieval (thanks, @punchagan)
 - allow users to edit their blog registrations and allow posting to different streams on Zulip (thanks, @punchagan)
 - a bot to post new blog posts to Humbug (thanks, @einashaddad and @kenyavs)
 - comments on posts (@sursh)
