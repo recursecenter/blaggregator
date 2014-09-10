@@ -38,22 +38,16 @@ def get_comment_list(post):
     return commentList
 
 
-def framed(request, slug):
-    ''' Display the article in an iframe with a navigation header back to blaggregator. '''
+def view_post(request, slug):
+    """Redirect to the original link.
+
+    We use a redirect, so that we can collect stats if we decide to, and do
+    useful things with it.
+
+    """
 
     post = get_post_info(slug)
-    commentList = get_comment_list(post)
-    post.commentcount = len(commentList)
-        
-    context = Context({
-        "post": post,
-    })
-
-    return render_to_response(
-        'home/framed.html', 
-        context, 
-        context_instance=RequestContext(request)
-    )
+    return HttpResponseRedirect(post.url)
 
 def log_in_oauth(request):
     if request.user.is_authenticated():
