@@ -1,4 +1,4 @@
-from django.http import HttpResponse, HttpResponseRedirect, Http404, HttpResponseNotAllowed
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.contrib.auth import logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
@@ -7,7 +7,7 @@ from django.template import Context, RequestContext
 from django.shortcuts import render_to_response, render
 from django.forms import TextInput
 from django.forms.models import modelform_factory
-from home.models import Hacker, Blog, Post, Comment, generate_random_id
+from home.models import Blog, Comment, generate_random_id, Hacker, LogEntry, Post
 from home.oauth import update_user_details
 from django.conf import settings
 import datetime
@@ -46,6 +46,13 @@ def view_post(request, slug):
     """
 
     post = get_post_info(slug)
+    LogEntry.objects.create(
+        post=post,
+        date=datetime.datetime.now(),
+        referer=request.META.get('HTTP_REFERER', None),
+        remote_addr=request.META.get('REMOTE_ADDR', None),
+        user_agent=request.META.get('HTTP_USER_AGENT', None),
+    )
     return HttpResponseRedirect(post.url)
 
 def log_in_oauth(request):
