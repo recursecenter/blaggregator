@@ -26,19 +26,22 @@
 
                 <ul class="nav pull-right">
                   {% if user.is_authenticated %}
-                    <li></li>
                     <li class="dropdown">
                       <a id="navdropdown" href="#" class="dropdown-toggle" data-toggle="dropdown" > Welcome, {{ user.first_name }}! <b class="caret"></b> </a>
                       <ul class="dropdown-menu" aria-labeledby="navdropdown">
                         <li><a href="/add_blog">Add your blog</a></li>
                         <li><a href="/profile/{{user.id}}">Settings</a></li>
                         <li><a href="/about">About Blaggregator</a></li>
-                        <li><a href="https://github.com/sursh/blaggregator/blob/master/CONTRIBUTE.md">Contribute</a></li>                      
+                        <li><a href="https://github.com/sursh/blaggregator/blob/master/CONTRIBUTE.md">Contribute</a></li>
                         <li><a href="/logout">Log out</a></li>
                       </ul>
                     </li>
                   {% endif %}
                 </ul>
+
+                {% if user.is_authenticated and not primary_blog_set %}
+                <a href="/add_blog"><button class="btn pull-right btn-primary" type="button submit">Add Your Blog</button></a>
+                {% endif %}
 
             </div>
         </div>
