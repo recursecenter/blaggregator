@@ -1,46 +1,46 @@
-from django.http import HttpResponse, HttpResponseRedirect, Http404
+""" Views for blaggregator. """
+
+# Standard library
+import datetime
+import math
+import re
+
+
+# 3rd-party library
+from django.conf import settings
 from django.contrib.auth import logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
-from django.template import Context, RequestContext
-from django.shortcuts import render_to_response, render
 from django.forms import TextInput
 from django.forms.models import modelform_factory
+from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.shortcuts import render_to_response, render
+from django.template import Context, RequestContext
+
+# Local library
 from home.models import Blog, Comment, generate_random_id, Hacker, LogEntry, Post
 from home.oauth import update_user_details
-from django.conf import settings
-import datetime
-import re
 import feedergrabber27
-import math
-
-def get_post_info(slug):
-    """ Gets the post object at a given slug. """
-
-    try:
-        post = Post.objects.get(slug=slug)
-        user            = User.objects.get(blog__id__exact=post.blog_id)
-        post.author     = user.first_name + " " + user.last_name
-        post.authorid   = user.id
-        post.avatar     = Hacker.objects.get(user=user.id).avatar_url
-        post.slug       = slug
-
-    except Post.DoesNotExist:
-        raise Http404('Post does not exist.')
-
-    return post
 
 
-def get_comment_list(post):
-    """ Gets the list of comment objects for a given post instance. """
-    commentList = list(Comment.objects.filter(post=post).order_by('date_modified'))
-    for comment in commentList:
-        user            = User.objects.get(comment__slug__exact=comment.slug)
-        comment.author  = user.first_name
-        comment.avatar  = Hacker.objects.get(user=comment.user).avatar_url
-        comment.authorid = comment.user.id
-    return commentList
+
+# No Login views
+def about(request):
+    """ About page with more info on Blaggregator. """
+    return render(request, 'home/about.html')
+
+
+def login_error(request):
+    """OAuth error page"""
+    return render(request, 'home/login_error.html')
+
+
+def log_in_oauth(request):
+    if request.user.is_authenticated():
+        return HttpResponseRedirect('/new')
+    else:
+        return render(request, 'home/log_in_oauth.html')
 
 
 def view_post(request, slug):
@@ -61,12 +61,8 @@ def view_post(request, slug):
     )
     return HttpResponseRedirect(post.url)
 
-def log_in_oauth(request):
-    if request.user.is_authenticated():
-        return HttpResponseRedirect('/new')
-    else:
-        return render(request, 'home/log_in_oauth.html')
 
+# Login required views
 @login_required
 def log_out(request):
     '''Log out a logged in user.'''
@@ -301,11 +297,31 @@ def item(request, slug):
 
     return render_to_response('home/item.html', context, context_instance=RequestContext(request))
 
-def login_error(request):
-    """OAuth error page"""
-    return render(request, 'home/login_error.html')
 
-# login NOT required
-def about(request):
-    """ About page with more info on Blaggregator. """
-    return render(request, 'home/about.html')
+# Helper methods
+def get_post_info(slug):
+    """ Gets the post object at a given slug. """
+
+    try:
+        post = Post.objects.get(slug=slug)
+        user            = User.objects.get(blog__id__exact=post.blog_id)
+        post.author     = user.first_name + " " + user.last_name
+        post.authorid   = user.id
+        post.avatar     = Hacker.objects.get(user=user.id).avatar_url
+        post.slug       = slug
+
+    except Post.DoesNotExist:
+        raise Http404('Post does not exist.')
+
+    return post
+
+
+def get_comment_list(post):
+    """ Gets the list of comment objects for a given post instance. """
+    commentList = list(Comment.objects.filter(post=post).order_by('date_modified'))
+    for comment in commentList:
+        user            = User.objects.get(comment__slug__exact=comment.slug)
+        comment.author  = user.first_name
+        comment.avatar  = Hacker.objects.get(user=comment.user).avatar_url
+        comment.authorid = comment.user.id
+    return commentList
