@@ -8,7 +8,7 @@ import re
 
 # 3rd-party library
 from django.conf import settings
-from django.contrib.auth import logout
+from django.contrib.auth import logout as django_logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
@@ -36,11 +36,11 @@ def login_error(request):
     return render(request, 'home/login_error.html')
 
 
-def log_in_oauth(request):
+def login_oauth(request):
     if request.user.is_authenticated():
         return HttpResponseRedirect('/new')
     else:
-        return render(request, 'home/log_in_oauth.html')
+        return render(request, 'home/login_oauth.html')
 
 
 def view_post(request, slug):
@@ -64,9 +64,10 @@ def view_post(request, slug):
 
 # Login required views
 @login_required
-def log_out(request):
-    '''Log out a logged in user.'''
-    logout(request)
+def logout(request):
+    '''Logout a logged in user.'''
+
+    django_logout(request)
     return HttpResponseRedirect('/')
 
 
