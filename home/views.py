@@ -18,12 +18,18 @@ import math
 
 def get_post_info(slug):
     """ Gets the post object at a given slug. """
-    post = Post.objects.get(slug=slug)
-    user            = User.objects.get(blog__id__exact=post.blog_id)
-    post.author     = user.first_name + " " + user.last_name
-    post.authorid   = user.id
-    post.avatar     = Hacker.objects.get(user=user.id).avatar_url
-    post.slug       = slug
+
+    try:
+        post = Post.objects.get(slug=slug)
+        user            = User.objects.get(blog__id__exact=post.blog_id)
+        post.author     = user.first_name + " " + user.last_name
+        post.authorid   = user.id
+        post.avatar     = Hacker.objects.get(user=user.id).avatar_url
+        post.slug       = slug
+
+    except Post.DoesNotExist:
+        raise Http404('Post does not exist.')
+
     return post
     
     
