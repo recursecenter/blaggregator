@@ -1,8 +1,8 @@
-May need to run this on heroku: 
+May need to run this on heroku:
 
 http://south.readthedocs.org/en/latest/convertinganapp.html#converting-an-app
 
-on heroku: 
+on heroku:
 
 BACK UP THE DATABASE https://devcenter.heroku.com/articles/pgbackups#creating-a-backup
 

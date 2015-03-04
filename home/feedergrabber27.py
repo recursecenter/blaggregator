@@ -82,18 +82,18 @@ def feedergrabber(url=None):
 # its call to parse_domain strips everything after ParseResult.path,
 # eliminating a necessary query string. Fix this later. 20130615.
 #        link = postprocess(link)
-        
+
         # Title
         try:
             title = i.title
         except AttributeError as e:
             errors.append([url +
                     ':A title was unexpectedly not returned by feedparse.'])
-        
+
         # Unescaping HTML entities
         h = HTMLParser.HTMLParser()
         i.title = h.unescape(title)
-        
+
         # Date
         if i.updated_parsed:
             post_date = i.updated_parsed
