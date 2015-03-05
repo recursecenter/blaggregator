@@ -37,8 +37,14 @@ def login_error(request):
 
 
 def login_oauth(request):
+    """ Prompt user to login via Hacker School account.
+
+    If already logged in, redirect to /new.
+    """
+
     if request.user.is_authenticated():
         return HttpResponseRedirect('/new')
+
     else:
         return render(request, 'home/login_oauth.html')
 
@@ -63,19 +69,13 @@ def view_post(request, slug):
 
 
 # Login required views
-@login_required
-def logout(request):
-    '''Logout a logged in user.'''
-
-    django_logout(request)
-    return HttpResponseRedirect('/')
-
 
 @login_required
 def add_blog(request):
-    ''' Adds a new blog to a user's profile. '''
+    """Adds a new blog to a user"s profile."""
 
     if request.method == 'POST':
+
         if request.POST['feed_url']:
 
             feed_url = request.POST['feed_url']
@@ -88,8 +88,10 @@ def add_blog(request):
             # (naively - later we will crawl blog url for feed url)
             if re.search('atom.xml/*$', feed_url):
                 url = re.sub('atom.xml/*$', '', feed_url)
+
             elif re.search('rss/*$', feed_url):
                 url = re.sub('rss/*$', '', feed_url)
+
             else:
                 url = feed_url
 
@@ -125,39 +127,33 @@ def add_blog(request):
             except:
                 pass
 
-            return HttpResponseRedirect('/new')
+            response = HttpResponseRedirect('/new')
+
         else:
-            return HttpResponse("I didn't get your feed URL. Please go back and try again.")
+            response = HttpResponse(
+                "I didn't get your feed URL. Please go back and try again."
+            )
     else:
-        return render_to_response('home/add_blog.html', {}, context_instance=RequestContext(request))
-
-@login_required
-def profile(request, user_id):
-    """ A user's profile. Not currently tied to a template - needs work. """
-
-    try:
-        hacker = Hacker.objects.get(user=user_id)
-
-    except Hacker.DoesNotExist:
-        raise Http404
-
-    else:
-        added_blogs = Blog.objects.filter(user=user_id)
-        owner = True if int(user_id) == request.user.id else False
-
-        context = Context({
-            'hacker': hacker,
-            'blogs': added_blogs,
-            'owner': owner,
-        })
-
         response = render_to_response(
-            'home/profile.html',
-            context,
-            context_instance=RequestContext(request)
+            'home/add_blog.html', {}, context_instance=RequestContext(request)
         )
 
-        return response
+    return response
+
+
+@login_required
+def delete_blog(request, blog_id):
+
+    try:
+        user = request.user
+        blog = Blog.objects.get(id=blog_id, user=user)
+    except Blog.DoesNotExist:
+        raise Http404
+
+    blog.delete()
+
+    return HttpResponseRedirect(reverse('profile', kwargs={'user_id': user.id}))
+
 
 @login_required
 def edit_blog(request, blog_id):
@@ -195,65 +191,6 @@ def edit_blog(request, blog_id):
 
     return response
 
-@login_required
-def delete_blog(request, blog_id):
-
-    try:
-        user = request.user
-        blog = Blog.objects.get(id=blog_id, user=user)
-    except Blog.DoesNotExist:
-        raise Http404
-
-    blog.delete()
-
-    return HttpResponseRedirect(reverse('profile', kwargs={'user_id': user.id}))
-
-
-@login_required
-def new(request, page=1):
-    ''' Newest blog posts - main app view. '''
-
-    # pagination handling
-    items_per_page = 10
-    if page is None or int(page) <= 0:
-        start = 0
-    else:
-        start = (int(page) - 1)*items_per_page
-    end = start + items_per_page
-    pages = int(math.ceil(Post.objects.count()/float(items_per_page)))
-
-    newPostList = Post.objects.order_by('-date_updated')[start:end]
-    for post in newPostList:
-        user            = User.objects.get(blog__id__exact=post.blog_id)
-        post.author     = user.first_name + " " + user.last_name
-        post.authorid   = user.id
-        post.comments   = list(Comment.objects.filter(post=post))
-        post.avatar     = user.hacker.avatar_url
-
-    context = Context({
-        "newPostList": newPostList,
-        "page": int(page),
-        "pages": pages,
-    })
-
-    return render_to_response('home/new.html',
-                              context,
-                              context_instance=RequestContext(request))
-
-
-@login_required
-def updated_avatar(request, user_id):
-    try:
-        Hacker.objects.get(user=user_id)
-
-    except Hacker.DoesNotExist:
-        raise Http404
-
-    else:
-        update_user_details(user_id, request.user)
-        hacker = Hacker.objects.get(user=user_id)
-
-    return HttpResponse(hacker.avatar_url)
 
 @login_required
 def feed(request):
@@ -299,6 +236,89 @@ def item(request, slug):
     return render_to_response('home/item.html', context, context_instance=RequestContext(request))
 
 
+@login_required
+def logout(request):
+    """Logout a logged in user."""
+
+    django_logout(request)
+    return HttpResponseRedirect('/')
+
+
+@login_required
+def new(request, page=1):
+    ''' Newest blog posts - main app view. '''
+
+    # pagination handling
+    items_per_page = 10
+    if page is None or int(page) <= 0:
+        start = 0
+    else:
+        start = (int(page) - 1)*items_per_page
+    end = start + items_per_page
+    pages = int(math.ceil(Post.objects.count()/float(items_per_page)))
+
+    newPostList = Post.objects.order_by('-date_updated')[start:end]
+    for post in newPostList:
+        user            = User.objects.get(blog__id__exact=post.blog_id)
+        post.author     = user.first_name + " " + user.last_name
+        post.authorid   = user.id
+        post.comments   = list(Comment.objects.filter(post=post))
+        post.avatar     = user.hacker.avatar_url
+
+    context = Context({
+        "newPostList": newPostList,
+        "page": int(page),
+        "pages": pages,
+    })
+
+    return render_to_response('home/new.html',
+                              context,
+                              context_instance=RequestContext(request))
+
+
+@login_required
+def profile(request, user_id):
+    """ A user's profile. Not currently tied to a template - needs work. """
+
+    try:
+        hacker = Hacker.objects.get(user=user_id)
+
+    except Hacker.DoesNotExist:
+        raise Http404
+
+    else:
+        added_blogs = Blog.objects.filter(user=user_id)
+        owner = True if int(user_id) == request.user.id else False
+
+        context = Context({
+            'hacker': hacker,
+            'blogs': added_blogs,
+            'owner': owner,
+        })
+
+        response = render_to_response(
+            'home/profile.html',
+            context,
+            context_instance=RequestContext(request)
+        )
+
+        return response
+
+
+@login_required
+def updated_avatar(request, user_id):
+    try:
+        Hacker.objects.get(user=user_id)
+    except Hacker.DoesNotExist:
+        raise Http404
+
+    else:
+        update_user_details(user_id, request.user)
+        hacker = Hacker.objects.get(user=user_id)
+
+    return HttpResponse(hacker.avatar_url)
+
+
 # Helper methods
 def get_post_info(slug):
     """ Gets the post object at a given slug. """
@@ -318,7 +338,8 @@ def get_post_info(slug):
 
 
 def get_comment_list(post):
-    """ Gets the list of comment objects for a given post instance. """
+    """Gets the list of comment objects for a given post instance."""
+
     commentList = list(Comment.objects.filter(post=post).order_by('date_modified'))
     for comment in commentList:
         user            = User.objects.get(comment__slug__exact=comment.slug)
