@@ -76,9 +76,8 @@ def add_blog(request):
 
     if request.method == 'POST':
 
-        if request.POST['feed_url']:
-
-            feed_url = request.POST['feed_url']
+        feed_url = request.POST.get('feed_url')
+        if feed_url:
 
             # add http:// prefix if missing
             if feed_url[:4] != "http":

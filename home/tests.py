@@ -7,7 +7,8 @@ from django.test import TestCase
 from django.test.client import Client
 from django.test.utils import override_settings
 
-from home.oauth import create_user, HackerSchoolOAuth2, create_or_update_hacker
+from home.oauth import create_or_update_hacker
+from home.models import Blog
 
 
 class BlaggregatorNoLoginTests(TestCase):
@@ -42,7 +43,7 @@ class BlaggregatorNoLoginTests(TestCase):
 
         # Then
         self.assertEqual(200, response.status_code)
-        self.assertIn('Login with Hacker School', response.content)
+        self.assertContains(response, 'Login with Hacker School')
 
 @override_settings(
     AUTHENTICATION_BACKENDS=(
@@ -71,7 +72,7 @@ class BlaggregatorLoggedInTests(TestCase):
         response = client.get('/login/')
 
         # Then
-        self.assertRedirectPath(response, 'new')
+        self.assertRedirects(response, '/new', target_status_code=301)
 
     def test_logout_redirects_to_home(self):
         # Given
@@ -81,11 +82,52 @@ class BlaggregatorLoggedInTests(TestCase):
         response = client.get('/logout/')
 
         # Then
-        self.assertRedirectPath(response, '/')
+        self.assertRedirects(response, '/', target_status_code=302)
 
-    # Assertions ####
+    def test_should_show_add_blog_form(self):
+        # Given
+        client = self.client
 
-    def assertRedirectPath(self, response, path, redirect=302):
-        self.assertEqual(redirect, response.status_code)
-        actual_path = response.get('Location', '').rsplit('/', 1)[-1]
-        self.assertEqual(path.strip('/'), actual_path)
+        # When
+        response = client.get('/add_blog/')
+
+        # Then
+        self.assertEqual(200, response.status_code)
+        self.assertContains(response, 'Add Your Blog')
+
+    def test_should_error_when_no_feed_url(self):
+        # Given
+        client = self.client
+
+        # When
+        response = client.post('/add_blog/')
+
+        # Then
+        self.assertEqual(200, response.status_code)
+        self.assertContains(response, 'go back and try again')
+
+    def test_should_add_blog(self):
+        # Given
+        client = self.client
+        feed_url = 'https://www.hackerschool.com/blog.rss'
+
+        # When
+        response = client.post('/add_blog/', data={'feed_url': feed_url})
+
+        # Then
+        self.assertRedirects(response, '/new', target_status_code=301)
+        self.assertIsNotNone(Blog.objects.get(feed_url=feed_url))
+
+    def test_should_delete_blog(self):
+        # Given
+        client = self.client
+        feed_url = 'https://www.hackerschool.com/blog.rss'
+        client.post('/add_blog/', data={'feed_url': feed_url})
+        blog = Blog.objects.get(feed_url=feed_url)
+
+        # When
+        client.get('/delete_blog/%s/' % blog.id)
+
+        # Then
+        with self.assertRaises(Blog.DoesNotExist):
+            Blog.objects.get(feed_url=feed_url)
