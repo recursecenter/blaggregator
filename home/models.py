@@ -57,7 +57,7 @@ class Comment(models.Model):
 class LogEntry(models.Model):
 
     def __unicode__(self):
-        return self.content[:40]
+        return "%s %s" % (self.date, self.post)
 
     post = models.ForeignKey(Post)
 
