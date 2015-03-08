@@ -13,7 +13,6 @@ import datetime
 log = logging.getLogger("blaggregator")
 
 ROOT_URL = 'http://www.blaggregator.us/'
-max_zulip_age = datetime.timedelta(days=2)
 
 STREAM = 'blogging'
 MAX_POST_ANNOUNCE = 2
@@ -35,7 +34,7 @@ class Command(NoArgsCommand):
             ),
         )
 
-    # Queue up the messages for Zulip so they aren't sent until after the 
+    # Queue up the messages for Zulip so they aren't sent until after the
     #   blog post instance is created in the database
     zulip_queue = deque()
 
