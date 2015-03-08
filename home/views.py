@@ -1,4 +1,4 @@
-from django.http import HttpResponse, HttpResponseRedirect, Http404, HttpResponseNotAllowed
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.contrib.auth import logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
@@ -7,13 +7,12 @@ from django.template import Context, RequestContext
 from django.shortcuts import render_to_response, render
 from django.forms import TextInput
 from django.forms.models import modelform_factory
-from home.models import Hacker, Blog, Post, Comment
+from home.models import Blog, Comment, generate_random_id, Hacker, LogEntry, Post
 from home.oauth import update_user_details
 from django.conf import settings
 import datetime
 import re
 import feedergrabber27
-import random, string
 import math
 
 def get_post_info(slug):
@@ -25,8 +24,8 @@ def get_post_info(slug):
     post.avatar     = Hacker.objects.get(user=user.id).avatar_url
     post.slug       = slug
     return post
-    
-    
+
+
 def get_comment_list(post):
     """ Gets the list of comment objects for a given post instance. """
     commentList = list(Comment.objects.filter(post=post).order_by('date_modified'))
@@ -38,22 +37,23 @@ def get_comment_list(post):
     return commentList
 
 
-def framed(request, slug):
-    ''' Display the article in an iframe with a navigation header back to blaggregator. '''
+def view_post(request, slug):
+    """Redirect to the original link.
+
+    We use a redirect, so that we can collect stats if we decide to, and do
+    useful things with it.
+
+    """
 
     post = get_post_info(slug)
-    commentList = get_comment_list(post)
-    post.commentcount = len(commentList)
-        
-    context = Context({
-        "post": post,
-    })
-
-    return render_to_response(
-        'home/framed.html', 
-        context, 
-        context_instance=RequestContext(request)
+    LogEntry.objects.create(
+        post=post,
+        date=datetime.datetime.now(),
+        referer=request.META.get('HTTP_REFERER', None),
+        remote_addr=request.META.get('REMOTE_ADDR', None),
+        user_agent=request.META.get('HTTP_USER_AGENT', None),
     )
+    return HttpResponseRedirect(post.url)
 
 def log_in_oauth(request):
     if request.user.is_authenticated():
@@ -98,12 +98,11 @@ def add_blog(request):
 
             # create new blog record in db
             blog = Blog.objects.create(
-                                        user=User.objects.get(id=request.user.id),
-                                        feed_url=feed_url,
-                                        url=url,
-                                        created=datetime.datetime.now(),
-                                       )
-            blog.save()
+                user=User.objects.get(id=request.user.id),
+                feed_url=feed_url,
+                url=url,
+                created=datetime.datetime.now(),
+            )
 
             # Feedergrabber returns ( [(link, title, date)], [errors])
             # We're not handling the errors returned for right now
@@ -113,13 +112,13 @@ def add_blog(request):
             try:
                 for post in crawled:
                     post_url, post_title, post_date = post
-                    newpost = Post.objects.create(
-                                                  blog=Blog.objects.get(user=request.user.id),
-                                                  url=post_url,
-                                                  title=post_title,
-                                                  content="",
-                                                  date_updated=post_date,
-                                                  )
+                    Post.objects.create(
+                        blog=Blog.objects.get(user=request.user.id),
+                        url=post_url,
+                        title=post_title,
+                        content="",
+                        date_updated=post_date,
+                    )
             except:
                 pass
 
@@ -276,15 +275,14 @@ def item(request, slug):
 
     if request.method == 'POST':
         if request.POST['content']:
-            comment = Comment.objects.create(
-                slug         = ''.join(random.choice(string.ascii_uppercase + string.digits + string.ascii_lowercase) for x in range(6)),
-                user            = request.user,
-                post            = Post.objects.get(slug=slug),
-                parent          = None,
-                date_modified   = datetime.datetime.now(),
-                content         = request.POST['content'],
+            Comment.objects.create(
+                slug=generate_random_id(),
+                user=request.user,
+                post=Post.objects.get(slug=slug),
+                parent=None,
+                date_modified=datetime.datetime.now(),
+                content=request.POST['content'],
             )
-            comment.save()
 
     post = get_post_info(slug)
 

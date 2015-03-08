@@ -53,3 +53,15 @@ class Comment(models.Model):
     parent          = models.ForeignKey('self', blank=True, null=True)
     date_modified   = models.DateTimeField('date modified')
     content         = models.TextField()
+
+class LogEntry(models.Model):
+
+    def __unicode__(self):
+        return "%s %s" % (self.date, self.post)
+
+    post = models.ForeignKey(Post)
+
+    date = models.DateTimeField()
+    referer = models.URLField(blank=True)
+    remote_addr = models.IPAddressField(blank=True)
+    user_agent = models.TextField(blank=True)
