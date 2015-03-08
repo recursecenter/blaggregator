@@ -16,6 +16,7 @@ ROOT_URL = 'http://www.blaggregator.us/'
 max_zulip_age = datetime.timedelta(days=2)
 
 STREAM = 'blogging'
+MAX_POST_ANNOUNCE = 2
 
 key = os.environ.get('HUMBUG_KEY')
 email = os.environ.get('HUMBUG_EMAIL')
@@ -39,13 +40,12 @@ class Command(NoArgsCommand):
     zulip_queue = deque()
 
     def crawlblog(self, blog):
-
         # Feedergrabber returns ( [(link, title, date)], [errors])
         # We're ignoring the errors returned for right now
         crawled, errors = feedergrabber27.feedergrabber(blog.feed_url)
 
         if crawled:
-
+            post_count = 0
             for link, title, date in crawled:
 
                 date = timezone.make_aware(date, timezone.get_default_timezone())
@@ -65,11 +65,12 @@ class Command(NoArgsCommand):
 
                 if created:
                     print "Created '%s' from blog '%s'" % (title, blog.feed_url)
-                    # Only post to zulip if the post was created recently
-                    #   so that new accounts don't spam zulip with their entire post list
-                    if (now - date) < max_zulip_age:
+
+                    # Throttle the amount of new posts that can be announced per user per crawl.
+                    if post_count < MAX_POST_ANNOUNCE:
                         post_page = ROOT_URL + 'post/' + Post.objects.get(url=link).slug
                         self.enqueue_zulip(self.zulip_queue, blog.user, post_page, title, blog.stream)
+                        post_count += 1
 
                 # if new info, update the posts
                 if not created:
