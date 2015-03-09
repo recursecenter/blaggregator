@@ -62,6 +62,6 @@ class LogEntry(models.Model):
     post = models.ForeignKey(Post)
 
     date = models.DateTimeField()
-    referer = models.URLField(blank=True)
-    remote_addr = models.IPAddressField(blank=True)
-    user_agent = models.TextField(blank=True)
+    referer = models.URLField(blank=True, null=True)
+    remote_addr = models.IPAddressField(blank=True, null=True)
+    user_agent = models.TextField(blank=True, null=True)
