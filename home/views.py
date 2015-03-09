@@ -1,19 +1,21 @@
-from django.http import HttpResponse, HttpResponseRedirect, Http404
+import math
+import re
+
+from django.conf import settings
 from django.contrib.auth import logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
-from django.template import Context, RequestContext
-from django.shortcuts import render_to_response, render
 from django.forms import TextInput
 from django.forms.models import modelform_factory
+from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.shortcuts import render_to_response, render
+from django.template import Context, RequestContext
+from django.utils import timezone
+
 from home.models import Blog, Comment, generate_random_id, Hacker, LogEntry, Post
 from home.oauth import update_user_details
-from django.conf import settings
-import datetime
-import re
 import feedergrabber27
-import math
 
 def get_post_info(slug):
     """ Gets the post object at a given slug. """
@@ -54,7 +56,7 @@ def view_post(request, slug):
     post = get_post_info(slug)
     LogEntry.objects.create(
         post=post,
-        date=datetime.datetime.now(),
+        date=timezone.now(),
         referer=request.META.get('HTTP_REFERER', None),
         remote_addr=request.META.get('REMOTE_ADDR', None),
         user_agent=request.META.get('HTTP_USER_AGENT', None),
@@ -103,11 +105,12 @@ def add_blog(request):
                     return HttpResponseRedirect('/new')
 
             # create new blog record in db
+
             blog = Blog.objects.create(
                 user=User.objects.get(id=request.user.id),
                 feed_url=feed_url,
                 url=url,
-                created=datetime.datetime.now(),
+                created=timezone.now(),
             )
 
             # Feedergrabber returns ( [(link, title, date)], [errors])
@@ -118,6 +121,7 @@ def add_blog(request):
             try:
                 for post in crawled:
                     post_url, post_title, post_date = post
+                    post_date = timezone.make_aware(post_date, timezone.get_default_timezone())
                     Post.objects.create(
                         blog=Blog.objects.get(user=request.user.id),
                         url=post_url,
@@ -286,7 +290,7 @@ def item(request, slug):
                 user=request.user,
                 post=Post.objects.get(slug=slug),
                 parent=None,
-                date_modified=datetime.datetime.now(),
+                date_modified=timezone.now(),
                 content=request.POST['content'],
             )
 
