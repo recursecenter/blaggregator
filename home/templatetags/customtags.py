@@ -1,3 +1,5 @@
+from urllib import quote
+
 from django.template import Library
 from home.models import STREAM_CHOICES
 
@@ -19,3 +21,8 @@ def pagination(pages, page):
 @register.filter
 def stream_name(stream_id):
     return dict(STREAM_CHOICES).get(stream_id, 'Unknown')
+
+@register.filter
+def zulip_url(title):
+    path = quote(title, safe='').replace('%', '.')
+    return 'https://zulip.com/#narrow/stream/blogging/topic/%s' % path
