@@ -46,37 +46,6 @@ a.muted {
   color: #85ACC0;
 }
 
-/* Comments */
-.comments li {
-  display: block;
-  margin: 2em 1em;
-}
-
-.comments .meta {
-  border-bottom: 1px solid #ddd;
-  color: #999;
-  font-size: 0.9em;
-}
-
-.add_comment {
-  border-top: 1px solid #ddd;
-  margin-top: 4em;
-}
-
-.add_comment form {
-  margin: 2em auto 0;
-  padding: 0;
-  width: 700px;
-}
-
-.add_comment textarea {
-  width: 100%;
-}
-
-.add_comment h4 {
-  margin-bottom: 1em;
-}
-
 .subbrand {
   color: #ccc;
 }
@@ -137,16 +106,13 @@ div.bar-container {
   font-size: 1.5em;
   padding-bottom: 5px;
 }
-.post-comments {
-  display: block;
-}
 .close-frame {
   position: absolute;
   right: 10px;
 }
 .close-frame a:link {
   text-decoration: none;
-  color:gray; 
+  color:gray;
 }
 .close-frame a:visited {
   text-decoration: none;

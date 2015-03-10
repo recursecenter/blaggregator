@@ -42,18 +42,6 @@ class Post(models.Model):
     date_updated = models.DateTimeField('date updated')
     slug         = models.CharField(max_length=6, default=generate_random_id, unique=True)
 
-class Comment(models.Model):
-
-    def __unicode__(self):
-        return self.content[:40]
-
-    slug            = models.CharField(max_length=6, default=generate_random_id, unique=True)
-    user            = models.ForeignKey(User)
-    post            = models.ForeignKey(Post)
-    parent          = models.ForeignKey('self', blank=True, null=True)
-    date_modified   = models.DateTimeField('date modified')
-    content         = models.TextField()
-
 class LogEntry(models.Model):
 
     def __unicode__(self):
