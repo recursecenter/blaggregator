@@ -21,15 +21,9 @@
             <img class="media-object" data-author-id="{{post.authorid}}"  src="{{ post.avatar }}" width="64px" height="64px">
           </a>
           <div class="media-body">
-            <h4 class="media-heading listing-title"><a href="/post/{{ post.slug }}/view">{{ post.title }}</a></h4><div><a href="/post/{{ post.slug }}" class="listing-comments">
-            {% if post.comments|length == 1 %}
-                View 1 comment
-            {% elif post.comments %}
-                View {{ post.comments|length }} comments
-            {% else %}
-                Join the discussion
-            {% endif %}
-              </a></div>
+            <h4 class="media-heading listing-title">
+              <a href="/post/{{ post.slug }}/view">{{ post.title }}</a>
+            </h4>
           </div>
         </div>
     {% endfor %}
@@ -47,8 +41,3 @@
 </div>
 
 {% endblock %}
-
-
-
-
-

@@ -7,7 +7,7 @@ from django.template import Context, RequestContext
 from django.shortcuts import render_to_response, render
 from django.forms import TextInput
 from django.forms.models import modelform_factory
-from home.models import Blog, Comment, generate_random_id, Hacker, LogEntry, Post
+from home.models import Blog, Hacker, LogEntry, Post
 from home.oauth import update_user_details
 from django.conf import settings
 import datetime
@@ -30,17 +30,6 @@ def get_post_info(slug):
         raise Http404('Post does not exist.')
 
     return post
-
-
-def get_comment_list(post):
-    """ Gets the list of comment objects for a given post instance. """
-    commentList = list(Comment.objects.filter(post=post).order_by('date_modified'))
-    for comment in commentList:
-        user            = User.objects.get(comment__slug__exact=comment.slug)
-        comment.author  = user.first_name
-        comment.avatar  = Hacker.objects.get(user=comment.user).avatar_url
-        comment.authorid = comment.user.id
-    return commentList
 
 
 def view_post(request, slug):
@@ -230,7 +219,6 @@ def new(request, page=1):
         user            = User.objects.get(blog__id__exact=post.blog_id)
         post.author     = user.first_name + " " + user.last_name
         post.authorid   = user.id
-        post.comments   = list(Comment.objects.filter(post=post))
         post.avatar     = user.hacker.avatar_url
 
     context = Context({
@@ -279,26 +267,10 @@ def feed(request):
 @login_required
 def item(request, slug):
 
-    if request.method == 'POST':
-        if request.POST['content']:
-            Comment.objects.create(
-                slug=generate_random_id(),
-                user=request.user,
-                post=Post.objects.get(slug=slug),
-                parent=None,
-                date_modified=datetime.datetime.now(),
-                content=request.POST['content'],
-            )
-
     post = get_post_info(slug)
-
-    commentList = get_comment_list(post)
-
     context = Context({
-        "post": post,
-        "commentList": commentList,
+        "post": post
     })
-
     return render_to_response('home/item.html', context, context_instance=RequestContext(request))
 
 def login_error(request):

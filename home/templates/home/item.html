@@ -22,36 +22,4 @@
     </div>
 </div>
 
-<ul class="comments">
-{% for comment in commentList %}
-  <li>
-    <div class="media">
-      <a class="avatar media-object pull-left" href="#">
-        <img src="{{ comment.avatar }}" width="80px" height="80px">
-      </a>
-      <div class="media-body">
-
-        <p class="meta">
-          <span class="byline"><a href="http://hackerschool.com/people/{{ comment.authorid }}">{{ comment.author }}</a> said,</span>
-          <span class="date">{{ comment.date_modified | naturaltime }}: </span>
-          <!-- &bull; <span class="permalink"><a href="post/{{ comment.slug }}" class="muted">Permalink</a></span> -->
-        </p>
-
-        <p class="content">{{ comment.content }}</p>
-
-      </div>
-    </div>
-  </li>
-{% endfor %}
-</ul>
-
-<div class='add_comment clearfix'>
-  <form action="" method="post">
-    <h4>Add a comment</h4>
-    {% csrf_token %}
-    <textarea rows="4" type="text" name="content"></textarea>
-    <div><button type="submit" class="btn pull-right">Post comment</button></div>
-  </form>
-</div>
-
 {% endblock %}
