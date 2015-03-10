@@ -1,13 +1,9 @@
 """Blaggregator Tests."""
 
-from unittest import expectedFailure
-
 from django.contrib.auth.models import User
 from django.test import TestCase
-from django.test.client import Client
 from django.test.utils import override_settings
 
-from home.oauth import create_or_update_hacker
 from home.models import Blog
 
 
@@ -23,7 +19,6 @@ class BlaggregatorNoLoginTests(TestCase):
         # Then
         self.assertEqual(200, response.status_code)
 
-    @expectedFailure
     def test_404_for_unknown_slug(self):
         # Given
         client = self.client
