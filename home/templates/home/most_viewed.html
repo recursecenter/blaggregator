@@ -1,0 +1,36 @@
+{% extends "home/base.html" %}
+{% load customtags %}
+
+{% block pagetitle %}Blaggregator -- Most Viewed Posts{% endblock %}
+
+{% block title %}
+
+{% endblock %}
+
+{% block content %}
+
+<script>
+    var current = document.getElementById("all");
+    current.className = current.className + " active";
+</script>
+
+<h3> Most viewed posts : {{ from }} -- {{ to }} </h3>
+
+<div class='postlist'>
+    {% for post in post_list %}
+    <div class="media post">
+      <a class="pull-left" href="http://hackerschool.com/people/{{ post.authorid }}">
+        <img class="media-object"
+             data-author-id="{{post.authorid}}"
+             src="{{ post.avatar }}" width="64px" height="64px">
+      </a>
+      <div class="media-body">
+        <h4 class="media-heading listing-title">
+          <a href="/post/{{ post.slug }}/view">{{ post.title }}</a>
+        </h4>
+      </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

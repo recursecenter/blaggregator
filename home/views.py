@@ -1,3 +1,5 @@
+from collections import namedtuple
+import datetime
 import math
 import re
 
@@ -6,6 +8,7 @@ from django.contrib.auth import logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
+from django.db.models import Count, Model
 from django.forms import TextInput
 from django.forms.models import modelform_factory
 from django.http import HttpResponse, HttpResponseRedirect, Http404
@@ -313,3 +316,59 @@ def login_error(request):
 def about(request):
     """ About page with more info on Blaggregator. """
     return render(request, 'home/about.html')
+
+
+@login_required
+def most_viewed(request):
+    now = timezone.now()
+    one_week = now - datetime.timedelta(days=7)
+    entries = _get_most_viewed_entries(since=one_week)
+
+    # Return a tab separated values file, if requested
+    if request.GET.get('tsv') == '1':
+        text = '\n'.join(_get_tsv(entry) for entry in entries)
+        response = HttpResponse(text, content_type='text/tab-separated-values')
+
+    else:
+        Post = namedtuple('Post', ('authorid', 'avatar', 'slug', 'title'))
+        context = {
+            'post_list': [
+                Post(
+                    slug=entry['post__slug'],
+                    authorid=entry['post__blog__user__id'],
+                    avatar=entry['post__blog__user__hacker__avatar_url'],
+                    title=entry['post__title'],
+                )
+                for entry in entries
+            ],
+            'from': one_week.date(),
+            'to': now.date(),
+        }
+        response = render_to_response(
+            'home/most_viewed.html', context
+        )
+
+    return response
+
+
+def _get_most_viewed_entries(since, n=20):
+    # Get posts visited during the last week
+    entries = LogEntry.objects.filter(date__gte=since)
+
+    # Get post url and title
+    entries = entries.values(
+        'post__id', 'post__title', 'post__url', 'post__slug',
+        'post__blog__user__id', 'post__blog__user__hacker__avatar_url'
+    )
+
+    # Count the visits
+    entries = entries.annotate(total=Count('post__id'))
+
+    # Get top 'n' posts
+    entries = entries.order_by('total').reverse()[:n]
+
+    return entries
+
+
+def _get_tsv(entry):
+    return '{post__id}\t{post__title}\t{post__url}\t{total}'.format(**entry)
