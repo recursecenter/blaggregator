@@ -25,7 +25,7 @@
               <a href="/post/{{ post.slug }}/view">{{ post.title }}</a>
             </h4>
             <div>
-              <a href="{{ post.title|zulip_url }}" target="_blank" class="listing-comments">
+              <a href="{{ post.title|zulip_url:post.stream }}" target="_blank" class="listing-comments">
                 Join the discussion (on Zulip)
               </a>
             </div>

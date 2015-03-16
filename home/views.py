@@ -227,6 +227,7 @@ def new(request, page=1):
         post.author     = user.first_name + " " + user.last_name
         post.authorid   = user.id
         post.avatar     = user.hacker.avatar_url
+        post.stream     = post.blog.get_stream_display()
 
     context = Context({
         "newPostList": newPostList,
