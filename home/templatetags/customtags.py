@@ -23,10 +23,12 @@ def stream_name(stream_id):
     return dict(STREAM_CHOICES).get(stream_id, 'Unknown')
 
 @register.filter
-def zulip_url(title):
+def zulip_url(title, stream):
     """Return the Zulip url given the title. """
 
     # Some browsers zealously URI-decode the contents of window.location.hash.
     # So Zulip hides the URI-encoding by replacing '%' with '.'
-    path = quote(title, safe='').replace('.', '%2E').replace('%', '.')
-    return 'https://zulip.com/#narrow/stream/blogging/topic/%s' % path
+    replace = lambda x: quote(x, safe='').replace('.', '%2E').replace('%', '.')
+    hash_path = 'narrow/stream/%s/topic/%s' % (replace(stream), replace(title))
+
+    return 'https://zulip.com/#%s' % hash_path
