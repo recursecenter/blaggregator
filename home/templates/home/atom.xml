@@ -6,7 +6,7 @@
   <link href="{{ domain }}" />
   <id>{{ domain }}</id>
   <updated>{{ postList.0.date_updated|date:'Y-m-d\TH:i:s'}}</updated>
-  {% for post in postList %} 
+  {% for post in postList %}
   <entry>
     <title>{{ post.title }}</title>
     <link href="{{ post.url }}" />

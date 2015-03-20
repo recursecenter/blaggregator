@@ -11,8 +11,8 @@ heroku pgbackups:url
 heroku pgbackups:url --remote prod
 curl -o latest.dump `heroku pgbackups:url --remote prod`
 ls
-less latest.dump 
-less latest.dump 
+less latest.dump
+less latest.dump
 pg_restore --verbose --clean --no-acl --no-owner -h localhost -U sasha -d mydb latest.dump
 subl .
 pg_restore --verbose --clean --no-acl --no-owner -h localhost -U sasha -d default latest.dump

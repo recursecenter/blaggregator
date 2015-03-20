@@ -1,4 +1,4 @@
-brief documentation of our staging environment's configuration: 
+brief documentation of our staging environment's configuration:
 
 instructions for configuring git locally: https://devcenter.heroku.com/articles/multiple-environments
 

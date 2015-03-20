@@ -6,7 +6,7 @@ SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 DEBUG = 'DJANGO_DEBUG' in os.environ
 TEMPLATE_DEBUG = DEBUG
 
-if os.environ.get('PROD', None):
+if os.environ.get('PROD'):
     print "** DETECTED PRODUCTION ENVIRONMENT"
     SITE_URL = 'http://blaggregator.herokuapp.com'
 
@@ -19,7 +19,7 @@ if os.environ.get('PROD', None):
     STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 
-elif os.environ.get('STAGING', None):
+elif os.environ.get('STAGING'):
     print "** DETECTED STAGING ENVIRONMENT"
     SITE_URL = 'http://blaggregator-staging.herokuapp.com'
 
@@ -31,6 +31,16 @@ elif os.environ.get('STAGING', None):
     STATIC_URL = 'http://' + AWS_STORAGE_BUCKET_NAME + '.s3.amazonaws.com/'
     STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+
+elif os.environ.get('BLAGGREGATOR_TESTING'):
+    print "** DETECTED TESTING ENVIRONMENT"
+    SITE_URL = 'http://blaggregator-testing.herokuapp.com'
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    STATIC_URL = '/static/'
+
+    STATICFILES_DIRS = (
+        os.path.join(BASE_DIR, 'home', 'static'),
+    )
 
 else:
     print "** DETECTED LOCAL ENVIRONMENT"
@@ -56,9 +66,13 @@ DATABASES = {
     }
 }
 
+if os.environ.get('BLAGGREGATOR_TESTING'):
+    import dj_database_url
+    DATABASES['default'] =  dj_database_url.config()
+
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = ['localhost', 'blaggregator.herokuapp.com', 'blaggregator-staging.herokuapp.com', 'www.blaggregator.us']
+ALLOWED_HOSTS = ['localhost', 'blaggregator.herokuapp.com', 'blaggregator-staging.herokuapp.com', 'blaggregator-testing.herokuapp.com', 'www.blaggregator.us']
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -182,12 +196,14 @@ SOCIAL_AUTH_HACKERSCHOOL_LOGIN_URL = '/login'
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/new/'
 SOCIAL_AUTH_LOGIN_ERROR_URL = '/login-error/'
 
-if os.environ.get('PROD', None):
+if os.environ.get('PROD'):
     SOCIAL_AUTH_HACKERSCHOOL_REDIRECT_URL = 'http://www.blaggregator.us/complete/hackerschool'
-elif os.environ.get('STAGING', None):
+elif os.environ.get('STAGING'):
     SOCIAL_AUTH_HACKERSCHOOL_REDIRECT_URL = 'http://blaggregator-staging.herokuapp.com/complete/hackerschool'
+elif os.environ.get('TESTING'):
+    SOCIAL_AUTH_HACKERSCHOOL_REDIRECT_URL = 'http://blaggregator-testing.herokuapp.com/complete/hackerschool'
 else:
-    SOCIAL_AUTH_HACKERSCHOOL_REDIRECT_URL = 'http://localhost:8000/complete/hackerschool'
+    SOCIAL_AUTH_HACKERSCHOOL_REDIRECT_URL = 'http://localhost:8000/complete/hackerschool/'
 
 SOCIAL_AUTH_PIPELINE = (
     'social.pipeline.social_auth.social_details',

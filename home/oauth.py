@@ -40,17 +40,17 @@ def find_legacy_user(strategy, uid, details, user=None, social=None, *args, **kw
     # If we get down here, we're almost certainly dealing with a new uesr.
     # Social.pipeline.user.create_user will make a new user shortly after this.
     return None
-    
+
 def create_user(strategy, details, response, uid, user=None, *args, **kwargs):
     if user:
         return
 
-    fields = dict((name, kwargs.get(name) or details.get(name))  
+    fields = dict((name, kwargs.get(name) or details.get(name))
                         for name in strategy.setting('USER_FIELDS',
                                                       USER_FIELDS))
     # The new user ID should be the same as their ID on hackerschool.com
     fields['id'] = details.get("id")
-    
+
     if not fields:
         return
 
