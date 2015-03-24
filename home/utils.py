@@ -27,8 +27,9 @@ def index_post(post):
     """ Index the given post using elasticsearch. """
     user = post.blog.user
     author = '%s %s' % (user.first_name, user.last_name)
+    url = '/post/%s/view' % post.slug
     result =  index_article(
-        author, post.title, post.content, post.url, post.slug, post.date_updated
+        author, post.title, post.content, url, post.slug, post.date_updated
     )
     return result
 
