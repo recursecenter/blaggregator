@@ -115,12 +115,13 @@ def add_blog(request):
             # this try/except is a janky bugfix. This should be done with celery
             try:
                 for post in crawled:
-                    post_url, post_title, post_date = post
-                    Post.objects.create(
+                    post_url, post_title, post_date, post_content = post
+                    post = Post.objects.create(
                         blog=Blog.objects.get(user=request.user.id),
                         url=post_url,
                         title=post_title,
-                        content="",
+                        # fixme: Do we really want to add the full content?
+                        content=post_content,
                         date_updated=post_date,
                     )
             except:

@@ -9,7 +9,6 @@ from __future__ import print_function
 import re
 import urllib2
 import urlparse
-import bs4
 import feedparser
 import time
 import datetime
@@ -103,9 +102,15 @@ def feedergrabber(url=None):
             post_date = datetime.datetime.fromtimestamp(time.mktime(post_date))
         else:
             post_date = datetime.datetime.now()
+
+        # Post content
+        content = getattr(i, 'summary', '')
+
         # Append
-        post_links_and_titles.append((link, i.title, post_date))
+        post_links_and_titles.append((link, i.title, post_date, content))
+
     if not post_links_and_titles:
         post_links_and_titles = None
         errors.append([url + ': Parsing methods not successful.'])
+
     return post_links_and_titles, errors
