@@ -11,8 +11,9 @@ from django.utils import timezone
 import requests
 
 # Local library
-from home.models import Blog, Post
 from home import feedergrabber27
+from home.models import Blog, Post
+from home.utils import index_post
 
 
 log = logging.getLogger("blaggregator")
@@ -75,6 +76,9 @@ class Command(NoArgsCommand):
                         self.enqueue_zulip(self.zulip_queue, blog.user, post_page, title, blog.stream)
                         post_count += 1
 
+                    # Index new posts
+                    index_post(post)
+
                 # if new info, update the posts
                 else:
                     updated = False
@@ -102,6 +106,7 @@ class Command(NoArgsCommand):
         if options['dry_run']:
             transaction.rollback()
             print "\nDON'T FORGET TO RUN THIS FOR REAL\n"
+
         else:
             for message in self.zulip_queue:
                 user, link, title, stream = message

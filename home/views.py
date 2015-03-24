@@ -21,8 +21,8 @@ from django.template import Context, RequestContext
 # Local library
 from home.models import Blog, Comment, generate_random_id, Hacker, LogEntry, Post
 from home.oauth import update_user_details
+from home.utils import index_post
 import feedergrabber27
-
 
 
 # No Login views
@@ -124,6 +124,11 @@ def add_blog(request):
                         content=post_content,
                         date_updated=post_date,
                     )
+
+                    # Index posts for full text search.
+                    # fixme: needs to be done asynchronously.
+                    index_post(post)
+
             except:
                 pass
 
