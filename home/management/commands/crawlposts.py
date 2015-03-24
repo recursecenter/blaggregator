@@ -1,14 +1,19 @@
-from django.core.management.base import NoArgsCommand, CommandError
-from django.db import transaction
-from django.utils import timezone
+# Standard library
 from optparse import make_option
-from home.models import Blog, Post
-from home import feedergrabber27
 from collections import deque
 import logging
-import requests
 import os
-import datetime
+
+# 3rd-party library
+from django.core.management.base import NoArgsCommand
+from django.db import transaction
+from django.utils import timezone
+import requests
+
+# Local library
+from home.models import Blog, Post
+from home import feedergrabber27
+
 
 log = logging.getLogger("blaggregator")
 
@@ -48,8 +53,6 @@ class Command(NoArgsCommand):
             for link, title, date in crawled:
 
                 date = timezone.make_aware(date, timezone.get_default_timezone())
-                now = timezone.make_aware(datetime.datetime.now(), timezone.get_default_timezone())
-
                 title = cleantitle(title)
 
                 # create the post instance if it doesn't already exist
@@ -72,7 +75,7 @@ class Command(NoArgsCommand):
                         post_count += 1
 
                 # if new info, update the posts
-                if not created:
+                else:
                     updated = False
                     if date != post.date_updated:
                         post.date_updated = date
@@ -129,10 +132,11 @@ def send_message_zulip(user, link, title, stream=STREAM):
     # add a trailing slash if it's not already there (jankily)
     if link[-1] != '/': link = link + '/'
     url = link + "view"
-    data = {"type": "stream",
-            "to": "%s" % stream,
-            "subject": subject,
-            "content": "**%s %s** has a new blog post: [%s](%s)" % (user.first_name, user.last_name, title, url),
-        }
+    data = {
+        "type": "stream",
+        "to": "%s" % stream,
+        "subject": subject,
+        "content": "**%s %s** has a new blog post: [%s](%s)" % (user.first_name, user.last_name, title, url),
+    }
     print data['content']
-    r = requests.post(rs_url, data=data, auth=(email, key))
+    requests.post(rs_url, data=data, auth=(email, key))
