@@ -24,6 +24,11 @@
 
                 <a class="brand" href="/new">Blaggregator<span class="subbrand">.HackerSchool</span></a>
 
+                <form accept-charset="UTF-8" action="/search" class="blaggregator-search-form" method="get">
+                  <input type="text" class="nav" name="q"
+                         placeholder="Search Blaggregator" tabindex="1" >
+                </form>
+
                 <ul class="nav pull-right">
                   {% if user.is_authenticated %}
                     <li class="dropdown">

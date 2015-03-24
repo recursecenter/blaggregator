@@ -22,6 +22,7 @@ from django.template import Context, RequestContext
 from home.models import Blog, Comment, generate_random_id, Hacker, LogEntry, Post
 from home.oauth import update_user_details
 from home.utils import index_post
+from home.utils import search as search_util
 import feedergrabber27
 
 
@@ -308,6 +309,35 @@ def profile(request, user_id):
         )
 
         return response
+
+
+@login_required
+def search(request):
+    query = request.GET.get('q', '')
+    results = search_util(query)
+    if results is None:
+        results = []
+
+    else:
+        results = [
+            {
+                'summary': r['_source']['content'],
+                'title': r['_source']['title'],
+                'url': r['_source']['url'],
+            }
+
+            for r in results['hits']['hits']
+        ]
+
+    context = {
+        'query': query,
+        'results': results,
+        'count': len(results),
+    }
+
+    return render_to_response(
+        'home/search.html', context, context_instance=RequestContext(request)
+    )
 
 
 @login_required

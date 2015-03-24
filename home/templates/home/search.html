@@ -1,0 +1,30 @@
+{% extends "home/base.html" %}
+{% load customtags %}
+
+{% block content %}
+
+    <div class="span10">
+      <h2 style="margin-bottom:30px">Search results for '{{ query }}'</h2>
+      {% if not results %}
+      No results found!
+      {% else %}
+      <p>Found {{ count }} result(s)</p>
+
+      <div class="search-results">
+        <ul>
+          {% for result in results %}
+          <li>
+            <div class="search-result">
+              <p><a href="{{result.url}}">{{result.title}}</a></p>
+              <p>{{result.summary | safe}}</p>
+            </div>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      {% endif %}
+
+    </div>
+
+{% endblock %}

@@ -42,5 +42,11 @@ def search(query=None):
             }
         }
     }
-    results = es.search(index=ELASTICSEARCH_URL, body=body)
+
+    try:
+        results = es.search(index=ELASTICSEARCH_INDEX, body=body)
+
+    except Exception:
+        results = None
+
     return results

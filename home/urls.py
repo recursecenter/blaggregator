@@ -3,7 +3,8 @@ from django.http import HttpResponseRedirect
 
 from home import views
 
-urlpatterns = patterns('',
+urlpatterns = patterns(
+    '',
     url(r'^$', lambda x: HttpResponseRedirect('/new')),
     url(r'^login/$', views.login_oauth),
     url(r'^profile/(?P<user_id>\d+)/$', views.profile, name='profile'),
@@ -19,5 +20,6 @@ urlpatterns = patterns('',
     url(r'^login-error/$', views.login_error, name='login_error'),
     url(r'^about/$', views.about, name='about'),
     url(r'^updated_avatar/(?P<user_id>\d+)/$', views.updated_avatar, name='updated_avatar'),
+    url(r'^search/', views.search, name='search'),
     url('', include('social.apps.django_app.urls', namespace='social')),
 )

@@ -9,6 +9,15 @@ form {
     padding-top: 20px;
 }
 
+.blaggregator-search-form {
+    padding-top: 10px;
+    display: inline;
+}
+
+.navbar-inner {
+    padding-top: 10px;
+}
+
 /*
     New posts page - main view
 */
