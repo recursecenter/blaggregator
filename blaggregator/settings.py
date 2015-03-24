@@ -19,6 +19,10 @@ if os.environ.get('PROD'):
     STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 
+    # Elastic Search
+    ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL', '')
+    ELASTICSEARCH_INDEX = 'blaggregator'
+
 elif os.environ.get('STAGING'):
     print "** DETECTED STAGING ENVIRONMENT"
     SITE_URL = 'http://blaggregator-staging.herokuapp.com'
@@ -32,6 +36,10 @@ elif os.environ.get('STAGING'):
     STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 
+    # Elastic Search
+    ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL', '')
+    ELASTICSEARCH_INDEX = 'blaggregator-test'
+
 elif os.environ.get('BLAGGREGATOR_TESTING'):
     print "** DETECTED TESTING ENVIRONMENT"
     SITE_URL = 'http://blaggregator-testing.herokuapp.com'
@@ -42,10 +50,18 @@ elif os.environ.get('BLAGGREGATOR_TESTING'):
         os.path.join(BASE_DIR, 'home', 'static'),
     )
 
+    # Elastic Search
+    ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL', '')
+    ELASTICSEARCH_INDEX = 'blaggregator-test'
+
 else:
     print "** DETECTED LOCAL ENVIRONMENT"
     SITE_URL = 'http://127.0.0.1:8000'
     STATIC_URL = '/static/'
+
+    # Elastic Search
+    ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL', '')
+    ELASTICSEARCH_INDEX = 'blaggregator-test'
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
