@@ -13,8 +13,14 @@ def index_article(author, title, content, url, id_, timestamp=None):
         'timestamp': timestamp if timestamp is not None else datetime.now(),
         'url': url
     }
-    result = es.index(index=ELASTICSEARCH_INDEX, doc_type="post", id=id_, body=doc)
-    return result['created']
+
+    try:
+        result = es.index(index=ELASTICSEARCH_INDEX, doc_type="post", id=id_, body=doc)
+
+    except Exception:
+        result = {'created': False}
+
+    return result
 
 
 def index_post(post):
