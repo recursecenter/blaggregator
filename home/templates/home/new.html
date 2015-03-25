@@ -17,7 +17,7 @@
 <div class='postlist'>
     {% for post in newPostList %}
         <div class="media post">
-          <a class="pull-left" href="http://hackerschool.com/people/{{ post.authorid }}">
+          <a class="pull-left" href="http://recurse.com/people/{{ post.authorid }}">
             <img class="media-object" data-author-id="{{post.authorid}}"  src="{{ post.avatar }}" width="64px" height="64px">
           </a>
           <div class="media-body">
@@ -47,8 +47,3 @@
 </div>
 
 {% endblock %}
-
-
-
-
-
