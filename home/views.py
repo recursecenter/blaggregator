@@ -321,9 +321,10 @@ def search(request):
     else:
         results = [
             {
-                'summary': r['_source']['content'],
-                'title': r['_source']['title'],
-                'url': r['_source']['url'],
+                'summary': r['highlight'].get('content', [r['_source']['content'][:99]])[0],
+                'title': r['highlight'].get('title', [r['_source']['title']])[0],
+                'url': '/post/{}/view'.format(r['_source']['slug']),
+                'author': r['_source']['author'],
             }
 
             for r in results['hits']['hits']

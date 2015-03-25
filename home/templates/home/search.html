@@ -15,7 +15,7 @@
           {% for result in results %}
           <li>
             <div class="search-result">
-              <p><a href="{{result.url}}">{{result.title}}</a></p>
+              <p><a href="{{result.url}}">{{result.title|safe}}</a> by {{result.author}} </p>
               <p>{{result.summary | safe}}</p>
             </div>
           </li>
