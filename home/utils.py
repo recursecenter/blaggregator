@@ -41,6 +41,12 @@ def search(query=None):
                 "query": query,
                 "fields": ["title", "content"]
             }
+        },
+        "highlight" : {
+            "fields" : {
+                "content" : {},
+                "title": {}
+                }
         }
     }
 
