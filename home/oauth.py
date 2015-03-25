@@ -102,7 +102,7 @@ def update_user_details(hacker_id, user):
 class HackerSchoolOAuth2(BaseOAuth2):
     """HackerSchool.com OAuth2 authentication backend"""
     name = 'hackerschool'
-    HACKER_SCHOOL_ROOT = 'https://www.hackerschool.com'
+    HACKER_SCHOOL_ROOT = 'https://www.recurse.com'
     AUTHORIZATION_URL = HACKER_SCHOOL_ROOT + '/oauth/authorize'
     ACCESS_TOKEN_URL = HACKER_SCHOOL_ROOT + '/oauth/token'
     ACCESS_TOKEN_METHOD = 'POST'
