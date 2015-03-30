@@ -17,7 +17,7 @@
       </a>
       <div class="media-body">
         <h4 class="media-heading"><a href="view">{{ post.title }}</a></h4>
-        <span class="byline">by <a href="http://hackerschool.com/people/{{ post.authorid }}">{{ post.author }}</a></span>
+        <span class="byline">by <a href="http://recurse.com/people/{{ post.authorid }}">{{ post.author }}</a></span>
       </div>
     </div>
 </div>
@@ -32,7 +32,7 @@
       <div class="media-body">
 
         <p class="meta">
-          <span class="byline"><a href="http://hackerschool.com/people/{{ comment.authorid }}">{{ comment.author }}</a> said,</span>
+          <span class="byline"><a href="http://recurse.com/people/{{ comment.authorid }}">{{ comment.author }}</a> said,</span>
           <span class="date">{{ comment.date_modified | naturaltime }}: </span>
           <!-- &bull; <span class="permalink"><a href="post/{{ comment.slug }}" class="muted">Permalink</a></span> -->
         </p>
