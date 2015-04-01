@@ -7,13 +7,13 @@
 
 from __future__ import print_function
 import re
-import urllib2
 import urlparse
-import bs4
 import feedparser
 import time
 import datetime
 import HTMLParser
+
+import requests
 
 '''Retrieves the links and titles of recent posts from blog feeds.'''
 
@@ -24,9 +24,10 @@ illformed_slash_pattern = re.compile('/\.*(\.|/)+/*')
 def retrieve_file_contents(url):
     '''Retrieve file contents from a given URL and log any errors.'''
     try:
-        file_contents = feedparser.parse(url)
+        content = requests.get(url).content
+        file_contents = feedparser.parse(content)
         errors = None
-    except (urllib2.URLError, urllib2.HTTPError) as e:
+    except requests.ConnectionError as e:
         # For later: do logging and report at end, along with domain affected
         errors.append([url, e])
         file_contents = None
@@ -82,18 +83,18 @@ def feedergrabber(url=None):
 # its call to parse_domain strips everything after ParseResult.path,
 # eliminating a necessary query string. Fix this later. 20130615.
 #        link = postprocess(link)
-        
+
         # Title
         try:
             title = i.title
         except AttributeError as e:
             errors.append([url +
                     ':A title was unexpectedly not returned by feedparse.'])
-        
+
         # Unescaping HTML entities
         h = HTMLParser.HTMLParser()
         i.title = h.unescape(title)
-        
+
         # Date
         if i.updated_parsed:
             post_date = i.updated_parsed
