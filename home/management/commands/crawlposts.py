@@ -1,14 +1,18 @@
-from django.core.management.base import NoArgsCommand, CommandError
-from django.db import transaction
-from django.utils import timezone
-from optparse import make_option
-from home.models import Blog, Post
-from home import feedergrabber27
+# Standard library
 from collections import deque
 import logging
-import requests
+from optparse import make_option
 import os
-import datetime
+
+# 3rd-party library
+from django.core.management.base import NoArgsCommand
+from django.db import transaction
+from django.utils import timezone
+import requests
+
+# Local library
+from home.models import Blog, Post
+from home import feedergrabber27
 
 log = logging.getLogger("blaggregator")
 
@@ -48,7 +52,6 @@ class Command(NoArgsCommand):
             for link, title, date in crawled:
 
                 date = timezone.make_aware(date, timezone.get_default_timezone())
-                now = timezone.make_aware(datetime.datetime.now(), timezone.get_default_timezone())
 
                 title = cleantitle(title)
 
@@ -67,7 +70,7 @@ class Command(NoArgsCommand):
 
                     # Throttle the amount of new posts that can be announced per user per crawl.
                     if post_count < MAX_POST_ANNOUNCE:
-                        post_page = ROOT_URL + 'post/' + Post.objects.get(url=link).slug
+                        post_page = ROOT_URL + 'post/' + post.slug
                         self.enqueue_zulip(self.zulip_queue, blog.user, post_page, title, blog.stream)
                         post_count += 1
 
