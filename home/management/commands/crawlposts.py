@@ -1,14 +1,18 @@
-from django.core.management.base import NoArgsCommand, CommandError
-from django.db import transaction
-from django.utils import timezone
-from optparse import make_option
-from home.models import Blog, Post
-from home import feedergrabber27
+# Standard library
 from collections import deque
 import logging
-import requests
+from optparse import make_option
 import os
-import datetime
+
+# 3rd-party library
+from django.core.management.base import NoArgsCommand
+from django.db import transaction
+from django.utils import timezone
+import requests
+
+# Local library
+from home.models import Blog, Post
+from home import feedergrabber27
 
 log = logging.getLogger("blaggregator")
 
