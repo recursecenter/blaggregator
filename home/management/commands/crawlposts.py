@@ -67,7 +67,7 @@ class Command(NoArgsCommand):
 
                     # Throttle the amount of new posts that can be announced per user per crawl.
                     if post_count < MAX_POST_ANNOUNCE:
-                        post_page = ROOT_URL + 'post/' + Post.objects.get(url=link).slug
+                        post_page = ROOT_URL + 'post/' + post.slug
                         self.enqueue_zulip(self.zulip_queue, blog.user, post_page, title, blog.stream)
                         post_count += 1
 
