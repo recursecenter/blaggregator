@@ -46,6 +46,8 @@
       <input type="submit" value="Refresh Auth Token">
     </form>
 
+    <a href="{% url 'feed' %}?token={{hacker.token}}" target="_blank">View blaggregator feed</a>
+
 {% endif %}
 
 {% endblock %}
