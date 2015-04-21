@@ -45,7 +45,7 @@ class Command(NoArgsCommand):
 
         if crawled:
             post_count = 0
-            for link, title, date in crawled:
+            for link, title, date, content in crawled:
 
                 date = timezone.make_aware(date, timezone.get_default_timezone())
                 now = timezone.make_aware(datetime.datetime.now(), timezone.get_default_timezone())
@@ -54,11 +54,12 @@ class Command(NoArgsCommand):
 
                 # create the post instance if it doesn't already exist
                 post, created = Post.objects.get_or_create(
-                    blog = blog,
-                    url = link,
-                    defaults = {
+                    blog=blog,
+                    url=link,
+                    defaults={
                         'title': title,
                         'date_updated': date,
+                        'content': content,
                     }
                 )
 
