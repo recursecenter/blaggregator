@@ -39,6 +39,13 @@
 
 {% if owner %}
     <a href="/add_blog" class="btn btn-success">Add another blog</a>
+
+    <form action={% url "refresh_token" %}>
+      RSS Auth Token: </br>
+      <input class="span5" type="text" name="token" size="50" value="{{ hacker.token }}" readonly> </br>
+      <input type="submit" value="Refresh Auth Token">
+    </form>
+
 {% endif %}
 
 {% endblock %}
