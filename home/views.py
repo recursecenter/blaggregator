@@ -4,11 +4,11 @@ import math
 import re
 
 from django.conf import settings
-from django.contrib.auth import logout
+from django.contrib.auth import authenticate, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
-from django.db.models import Count, Model
+from django.db.models import Count
 from django.forms import TextInput
 from django.forms.models import modelform_factory
 from django.http import HttpResponse, HttpResponseRedirect, Http404
@@ -122,15 +122,13 @@ def add_blog(request):
 
             # this try/except is a janky bugfix. This should be done with celery
             try:
-                for post in crawled:
-                    post_url, post_title, post_date = post
-                    post_date = timezone.make_aware(post_date, timezone.get_default_timezone())
+                for post_url, post_title, post_date in crawled:
                     Post.objects.create(
                         blog=blog,
                         url=post_url,
                         title=post_title,
                         content="",
-                        date_updated=post_date,
+                        date_updated=timezone.make_aware(post_date, timezone.get_default_timezone()),
                     )
             except:
                 pass
@@ -265,15 +263,19 @@ def updated_avatar(request, user_id):
 
     return HttpResponse(hacker.avatar_url)
 
-@login_required
+
 def feed(request):
     ''' Atom feed of all new posts. '''
 
-    postList = list(Post.objects.all().order_by('-date_updated'))
+    token = request.GET.get('token')
+    if authenticate(token=token) is None:
+        raise Http404
 
+    postList = Post.objects.all().order_by('-date_updated')[:100]
     for post in postList:
         user = User.objects.get(blog__id__exact=post.blog_id)
         post.author = user.first_name + " " + user.last_name
+        # fixme: also add the full content of the post to the feed.
 
     context = Context({
         "postList": postList,
@@ -282,6 +284,31 @@ def feed(request):
 
     return render(request, 'home/atom.xml', context, content_type="text/xml")
 
+@login_required
+def refresh_token(request):
+    """Refresh a users' auth token."""
+
+    hacker = Hacker.objects.get(user=request.user)
+    hacker.token = get_random_unique_token()
+    hacker.save()
+
+    profile_url = reverse('profile', kwargs={'user_id': request.user.id})
+    return HttpResponseRedirect(profile_url)
+
+def get_random_unique_token():
+    """Get a random token after ensuring that it is unique.
+
+    The model is passed as an argument to allow using this function in data
+    migrations.
+
+    """
+
+    while True:
+        token = generate_random_id(40)
+        try:
+            Hacker.objects.get(token=token)
+        except Hacker.DoesNotExist:
+            return token
 
 @login_required
 def item(request, slug):

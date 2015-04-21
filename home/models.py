@@ -2,8 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 import random, string
 
-def generate_random_id():
-    return ''.join(random.choice(string.ascii_uppercase + string.digits + string.ascii_lowercase) for x in range(6))
+def generate_random_id(n=6):
+    return ''.join(random.choice(string.ascii_uppercase + string.digits + string.ascii_lowercase) for x in range(n))
 
 STREAM_CHOICES = (
     ('BLOGGING', 'blogging'),
@@ -17,6 +17,7 @@ class Hacker(models.Model):
     avatar_url  = models.TextField(blank=True)
     github      = models.TextField(blank=True)
     twitter     = models.TextField(blank=True)
+    token       = models.SlugField(max_length=40, default=lambda: generate_random_id(40), unique=True)
 
 class Blog(models.Model):
 
