@@ -9,7 +9,7 @@ from django.forms import TextInput
 from django.forms.models import modelform_factory
 from home.models import Blog, Comment, generate_random_id, Hacker, LogEntry, Post
 from home.oauth import update_user_details
-from django.conf import settings
+from home.feeds import LatestEntriesFeed
 import datetime
 import re
 import feedergrabber27
@@ -259,24 +259,15 @@ def updated_avatar(request, user_id):
 
 
 def feed(request):
-    ''' Atom feed of all new posts. '''
+    """Atom feed of all new posts."""
 
     token = request.GET.get('token')
     if authenticate(token=token) is None:
         raise Http404
 
-    postList = Post.objects.all().order_by('-date_updated')[:100]
-    for post in postList:
-        user = User.objects.get(blog__id__exact=post.blog_id)
-        post.author = user.first_name + " " + user.last_name
-        # fixme: also add the full content of the post to the feed.
+    feed = LatestEntriesFeed().get_feed(None, request).writeString('utf8')
+    return HttpResponse(feed, content_type="text/xml")
 
-    context = Context({
-        "postList": postList,
-        "domain": settings.SITE_URL
-    })
-
-    return render(request, 'home/atom.xml', context, content_type="text/xml")
 
 @login_required
 def refresh_token(request):
