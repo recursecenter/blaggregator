@@ -122,12 +122,12 @@ def add_blog(request):
 
             # this try/except is a janky bugfix. This should be done with celery
             try:
-                for post_url, post_title, post_date in crawled:
+                for post_url, post_title, post_date, post_content in crawled:
                     Post.objects.create(
                         blog=blog,
                         url=post_url,
                         title=post_title,
-                        content="",
+                        content=post_content,
                         date_updated=timezone.make_aware(post_date, timezone.get_default_timezone()),
                     )
             except:
