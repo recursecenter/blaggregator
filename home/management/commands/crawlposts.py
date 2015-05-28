@@ -48,26 +48,17 @@ class Command(NoArgsCommand):
             for link, title, date in crawled:
 
                 date = timezone.make_aware(date, timezone.get_default_timezone())
-                now = timezone.make_aware(datetime.datetime.now(), timezone.get_default_timezone())
-
                 title = cleantitle(title)
 
                 # create the post instance if it doesn't already exist
-                post, created = Post.objects.get_or_create(
-                    blog = blog,
-                    url = link,
-                    defaults = {
-                        'title': title,
-                        'date_updated': date,
-                    }
-                )
+                post, created = get_or_create_post(blog, title, link, date)
 
                 if created:
                     print "Created '%s' from blog '%s'" % (title, blog.feed_url)
 
                     # Throttle the amount of new posts that can be announced per user per crawl.
                     if post_count < MAX_POST_ANNOUNCE:
-                        post_page = ROOT_URL + 'post/' + Post.objects.get(url=link).slug
+                        post_page = ROOT_URL + 'post/' + post.slug
                         self.enqueue_zulip(self.zulip_queue, blog.user, post_page, title, blog.stream)
                         post_count += 1
 
@@ -120,6 +111,30 @@ def cleantitle(title):
     return newtitle
 
 
+def get_or_create_post(blog, title, link, date):
+    try:
+        post = Post.objects.get(blog=blog, title=title)
+        return post, False
+    except Post.DoesNotExist:
+        pass
+
+    try:
+        post = Post.objects.get(blog=blog, url=link)
+        return post, False
+
+    except Post.DoesNotExist:
+        post, created = Post.objects.get_or_create(
+            blog=blog,
+            url=link,
+            defaults = {
+                'title': title,
+                'date_updated': date,
+            }
+        )
+
+    return post, created
+
+
 def send_message_zulip(user, link, title, stream=STREAM):
 
     subject = title
@@ -135,4 +150,4 @@ def send_message_zulip(user, link, title, stream=STREAM):
             "content": "**%s %s** has a new blog post: [%s](%s)" % (user.first_name, user.last_name, title, url),
         }
     print data['content']
-    r = requests.post(rs_url, data=data, auth=(email, key))
+    return requests.post(rs_url, data=data, auth=(email, key))
