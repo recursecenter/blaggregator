@@ -113,7 +113,10 @@ def cleantitle(title):
 
 def get_or_create_post(blog, title, link, date):
     try:
-        post = Post.objects.get(blog=blog, title=title)
+        # The previous code checked only for url, and therefore, the db can
+        # have posts with duplicate titles. So, we check if there is atleast
+        # one post with the title -- using `filter.latest` instead of `get`.
+        post = Post.objects.filter(blog=blog, title=title).latest('date_updated')
         return post, False
     except Post.DoesNotExist:
         pass
