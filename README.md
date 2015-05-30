@@ -17,11 +17,11 @@ Once your blog is added, Blaggregator will crawl it periodically for new posts.
 Want to contribute a feature or bugfix? Blaggregator is a straightforward Django app with a simple Bootstrap frontend. It's deployed on Heroku and uses their Postgres and Scheduler add-ons.
 
 Key files:
-- home/views.py: the heart of the app. all of the views ("controllers" if you're coming from Ruby)
-- blaggregator/settings.py: app settings
-- home/management/commands/crawlposts.py: background crawler script
-- home/feedergrabber27.py: feed parser contributed by dpb
-- home/templates/home: all templates live here
+- `home/views.py`: the heart of the app. all of the views ("controllers" if you're coming from Ruby)
+- `blaggregator/settings.py`: app settings
+- `home/management/commands/crawlposts.py`: background crawler script
+- `home/feedergrabber27.py`: feed parser contributed by dpb
+- `home/templates/home`: all templates live here
 
 Check out [CONTRIBUTE.md](CONTRIBUTE.md) for contribution ideas.
 
