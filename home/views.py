@@ -62,10 +62,12 @@ def view_post(request, slug):
     return HttpResponseRedirect(post.url)
 
 def log_in_oauth(request):
+    next = request.GET.get('next', '/new')
     if request.user.is_authenticated():
-        return HttpResponseRedirect('/new')
+        return HttpResponseRedirect(next)
+
     else:
-        return render(request, 'home/log_in_oauth.html')
+        return render(request, 'home/log_in_oauth.html', dict(next=next))
 
 @login_required
 def log_out(request):
