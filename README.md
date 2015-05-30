@@ -1,4 +1,4 @@
-##Blog post aggregator for the Recruse Center community.
+##Blog post aggregator for the Recurse Center community.
 
 RCers are writing awesome blog posts all over the internet. This brings them
 together and provides a place where alums from every batch can discuss
