@@ -123,7 +123,7 @@ def add_blog(request):
                     post_url, post_title, post_date = post
                     post_date = timezone.make_aware(post_date, timezone.get_default_timezone())
                     Post.objects.create(
-                        blog=Blog.objects.get(user=request.user.id),
+                        blog=blog,
                         url=post_url,
                         title=post_title,
                         content="",
