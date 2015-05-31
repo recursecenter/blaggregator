@@ -7,7 +7,7 @@
         Your
     {% else %}
         <a class="avatar media-object pull-left" href="#">
-          <img data-author-id="{{ hacker.user.id }}" src="{{ hacker.avatar_url }}x" width="80px" height="80px" style="margin-bottom:1em; margin-right:0.5em;">
+          <img data-author-id="{{ hacker.user.id }}" src="{{ hacker.avatar_url }}" width="80px" height="80px" style="margin-bottom:1em; margin-right:0.5em;">
         </a>
         {{ hacker.user.first_name }} {{ hacker.user.last_name }}'s
     {% endif %}
@@ -36,7 +36,7 @@
     </tr>
     {% endfor %}
     </table>
-    
+
 {% if owner %}
     <a href="/add_blog" class="btn btn-success">Add another blog</a>
 {% endif %}
