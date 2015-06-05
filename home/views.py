@@ -107,18 +107,23 @@ def add_blog(request):
                     print "FOUND %s which matches %s" % (blog.url, url)
                     return HttpResponseRedirect('/new')
 
-            # create new blog record in db
+            # Feedergrabber returns ( [(link, title, date)], [errors])
+            # We're not handling the errors returned for right now
+            # Returns None if there was an exception when parsing the content.
+            crawled, _ = feedergrabber27.feedergrabber(feed_url)
+            if crawled is None:
+                return HttpResponse(
+                    "This url does not seem to contain valid atom/rss feed xml. "
+                    "Please use your blog's feed url!"
+                )
 
+            # create new blog record in db
             blog = Blog.objects.create(
                 user=User.objects.get(id=request.user.id),
                 feed_url=feed_url,
                 url=url,
                 created=timezone.now(),
             )
-
-            # Feedergrabber returns ( [(link, title, date)], [errors])
-            # We're not handling the errors returned for right now
-            crawled, _ = feedergrabber27.feedergrabber(feed_url)
 
             # this try/except is a janky bugfix. This should be done with celery
             try:

@@ -68,6 +68,9 @@ def feedergrabber(url=None):
     # Get file contents
     file_contents, _ = retrieve_file_contents(url)
 
+    if file_contents.bozo:
+        return None, [file_contents.bozo_exception]
+
     # Gather links, titles, and dates
     for i in file_contents.entries:
         # Link
@@ -103,7 +106,6 @@ def feedergrabber(url=None):
         post_links_and_titles.append((link, i.title, post_date))
 
     if not post_links_and_titles:
-        post_links_and_titles = None
         errors.append([url + ': Parsing methods not successful.'])
 
     return post_links_and_titles, errors
