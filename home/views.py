@@ -268,7 +268,7 @@ def feed(request):
     """Atom feed of all new posts."""
 
     token = request.GET.get('token')
-    if authenticate(token=token) is None:
+    if not token or authenticate(token=token) is None:
         raise Http404
 
     feed = LatestEntriesFeed().get_feed(None, request).writeString('utf8')
