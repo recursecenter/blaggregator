@@ -9,7 +9,6 @@ from __future__ import print_function
 import re
 import urllib2
 import urlparse
-import bs4
 import feedparser
 import time
 import datetime

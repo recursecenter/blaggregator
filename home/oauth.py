@@ -2,8 +2,6 @@ from social.backends.oauth import BaseOAuth2
 from social.storage.django_orm import DjangoUserMixin
 from social.strategies.django_strategy import DjangoStrategy
 from urllib import urlencode
-import json
-import sys
 
 from models import User, Hacker
 
