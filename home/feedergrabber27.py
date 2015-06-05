@@ -20,11 +20,10 @@ http_pattern = re.compile('^https?://')
 reference_pattern = re.compile('^#')
 illformed_slash_pattern = re.compile('/\.*(\.|/)+/*')
 
-def retrieve_file_contents(url):
+def retrieve_file_contents(url, errors):
     '''Retrieve file contents from a given URL and log any errors.'''
     try:
         file_contents = feedparser.parse(url)
-        errors = None
     except (urllib2.URLError, urllib2.HTTPError) as e:
         # For later: do logging and report at end, along with domain affected
         errors.append([url, e])
@@ -77,9 +76,12 @@ def feedergrabber(url=None):
     post_links_and_titles = []
 
     # Get file contents
-    file_contents, _ = retrieve_file_contents(url)
+    file_contents, _ = retrieve_file_contents(url, errors)
 
-    if file_contents.bozo:
+    if file_contents is None:
+        return None, None
+
+    elif file_contents.bozo:
         feed_url = find_feed_url(file_contents)
         return None, feed_url
 
