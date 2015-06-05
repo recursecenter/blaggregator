@@ -110,12 +110,18 @@ def add_blog(request):
             # Feedergrabber returns ( [(link, title, date)], [errors])
             # We're not handling the errors returned for right now
             # Returns None if there was an exception when parsing the content.
-            crawled, _ = feedergrabber27.feedergrabber(feed_url)
+            crawled, error = feedergrabber27.feedergrabber(feed_url)
             if crawled is None:
-                return HttpResponse(
+                message = (
                     "This url does not seem to contain valid atom/rss feed xml. "
-                    "Please use your blog's feed url!"
+                    "Please use your blog's feed url! "
                 )
+
+                if error:
+                    feed_url = error
+                    message += 'Is may be this -- {}'.format(feed_url)
+
+                return HttpResponse(message)
 
             # create new blog record in db
             blog = Blog.objects.create(

@@ -50,6 +50,17 @@ def check_wellformed(url):
     url = url.lower()
     return url
 
+def find_feed_url(parsed_content):
+    """Try to find the feed url from parsed content."""
+    try:
+        links = parsed_content.feed.links
+    except AttributeError:
+        links = []
+
+    for link in links:
+        if link.get('type', '') in ('application/atom+xml', 'application/rss+xml'):
+            return link.href
+
 def feedergrabber(url=None):
     """The main function of the module."""
 
@@ -69,7 +80,8 @@ def feedergrabber(url=None):
     file_contents, _ = retrieve_file_contents(url)
 
     if file_contents.bozo:
-        return None, [file_contents.bozo_exception]
+        feed_url = find_feed_url(file_contents)
+        return None, feed_url
 
     # Gather links, titles, and dates
     for i in file_contents.entries:
