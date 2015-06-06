@@ -1,3 +1,9 @@
+# Patch everything as early as possible.
+import gevent.monkey; gevent.monkey.patch_all(thread=False)
+# We turn off patching threading, since we don't really need it. If not, we get
+# a KeyError on threading shutdown.
+# See http://stackoverflow.com/a/12639040 for an explanation of the exception.
+
 # Standard library
 from collections import deque
 import logging
@@ -8,11 +14,13 @@ import os
 from django.core.management.base import NoArgsCommand
 from django.db import transaction
 from django.utils import timezone
+from gevent import pool, wait
 import requests
 
 # Local library
 from home.models import Blog, Post
 from home import feedergrabber27
+
 
 log = logging.getLogger("blaggregator")
 
@@ -85,11 +93,18 @@ class Command(NoArgsCommand):
 
     @transaction.commit_manually
     def handle_noargs(self, **options):
-        for blog in Blog.objects.all():
-            try:
-                self.crawlblog(blog)
-            except Exception as e:
-                log.exception(e)
+        p = pool.Pool(25)
+        jobs = [
+            p.spawn(self.crawlblog, blog)
+            for blog in Blog.objects.all()
+        ]
+
+        wait(jobs)
+
+        for job in jobs:
+            if not job.successful():
+                log.exception(job.exception)
+
         if options['dry_run']:
             transaction.rollback()
             print "\nDON'T FORGET TO RUN THIS FOR REAL\n"
