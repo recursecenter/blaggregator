@@ -4,6 +4,10 @@ import gevent.monkey; gevent.monkey.patch_all(thread=False)
 # a KeyError on threading shutdown.
 # See http://stackoverflow.com/a/12639040 for an explanation of the exception.
 
+# Patch psycopg2 to work with other async I/O.
+import psycogreen.gevent
+psycogreen.gevent.patch_psycopg()
+
 # Standard library
 from collections import deque
 import logging
