@@ -1,16 +1,24 @@
+# Patch everything as early as possible.
+import gevent.monkey
+
+# We turn off patching threading, since we don't really need it. If not, we get
+# a KeyError on threading shutdown.
+# See http://stackoverflow.com/a/12639040 for an explanation of the exception.
+gevent.monkey.patch_all(thread=False)
 # Standard library
-from collections import deque
-import logging
+from collections import deque  # noqa
+import logging  # noqa
 
 # 3rd-party library
-from django.core.management.base import BaseCommand
-from django.conf import settings
-from django.utils import timezone
+from django.core.management.base import BaseCommand  # noqa
+from django.conf import settings  # noqa
+from django.utils import timezone  # noqa
+from gevent import pool, wait  # noqa
 
 # Local library
-from home import feedergrabber27
-from home.models import Blog, Post
-from home.zulip_helpers import announce_new_post
+from home import feedergrabber27  # noqa
+from home.models import Blog, Post  # noqa
+from home.zulip_helpers import announce_new_post  # noqa
 
 log = logging.getLogger("blaggregator")
 
@@ -49,11 +57,12 @@ class Command(BaseCommand):
                 update_post(post, title, link, content)
 
     def handle(self, **options):
-        for blog in Blog.objects.filter(skip_crawl=False):
-            try:
-                self.crawlblog(blog)
-            except Exception as e:
-                log.exception(e)
+        p = pool.Pool(20)
+        jobs = [
+            p.spawn(self.crawlblog, blog)
+            for blog in Blog.objects.filter(skip_crawl=False)
+        ]
+        wait(jobs)
         for post in self.zulip_queue:
             announce_new_post(post, debug=settings.DEBUG)
 
