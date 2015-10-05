@@ -7,7 +7,7 @@ from django.db import models
 class Migration(DataMigration):
 
     def forwards(self, orm):
-        "Make the token for each Hacker unique."
+        """Make the token for each Hacker unique."""
 
         Hacker = orm['home.Hacker']
 
@@ -27,7 +27,7 @@ class Migration(DataMigration):
                     return token
 
         for hacker in Hacker.objects.all():
-            hacker.token = get_random_unique_token(Hacker)
+            hacker.token = get_random_unique_token()
             hacker.save()
 
     def backwards(self, orm):
