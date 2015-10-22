@@ -9,8 +9,8 @@ form {
     padding-top: 20px;
 }
 
-/* 
-    New posts page - main view 
+/*
+    New posts page - main view
 */
 .media .post {
     margin-top:25px;
@@ -117,4 +117,7 @@ div.bar-container {
 .close-frame a:visited {
   text-decoration: none;
   color:gray;
+}
+.feed-icon {
+    margin-top: 8px;
 }
