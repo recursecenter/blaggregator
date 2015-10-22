@@ -40,13 +40,22 @@
 {% if owner %}
     <a href="/add_blog" class="btn btn-success">Add another blog</a>
 
-    <form action={% url "refresh_token" %}>
-      RSS Auth Token: </br>
-      <input class="span5" type="text" name="token" size="50" value="{{ hacker.token }}" readonly> </br>
-      <input type="submit" value="Refresh Auth Token">
-    </form>
 
-    <a href="{% url 'feed' %}?token={{hacker.token}}" target="_blank">View blaggregator feed</a>
+    <div class="alert-block">
+        <p>
+            Blaggregator provides an <strong>authenticated</strong> <a href="">RSS feed</a>,
+            and your authentication token is <span class="alert alert-info"> {{ hacker.token }} </span>
+        </p>
+
+        <p>
+            Please keep your token private.  In case you accidentally share the
+            token, you can reset it using the button below.
+        </p>
+
+        <form action={% url "refresh_token" %}>
+            <input class="btn btn-info" type="submit" value="Refresh Auth Token">
+        </form>
+    </div>
 
 {% endif %}
 
