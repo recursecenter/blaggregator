@@ -39,8 +39,15 @@
                   {% endif %}
                 </ul>
 
-                {% if user.is_authenticated and not primary_blog_set %}
-                <a href="/add_blog"><button class="btn pull-right btn-primary" type="button submit">Add Your Blog</button></a>
+
+                {% if user.is_authenticated %}
+                  <a href="{% url 'feed' %}?token={{user.hacker.token}}" target="_blank">
+                    <img class="feed-icon pull-right" src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Rss-feed.svg/24px-Rss-feed.svg.png"/>
+                  </a>
+
+                  {% if not primary_blog_set %}
+                    <a href="/add_blog"><button class="btn pull-right btn-primary" type="button submit">Add Your Blog</button></a>
+                  {% endif %}
                 {% endif %}
 
             </div>
