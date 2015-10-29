@@ -223,8 +223,14 @@ LOGGING = {
             'class': 'django.utils.log.AdminEmailHandler'
         },
         "console": {
-            "level": "DEBUG",
+            "level": "ERROR",
             "class": "logging.StreamHandler"
+        },
+        'logfile': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'when': 'midnight',
+            'filename': os.path.join(os.path.dirname(SITE_ROOT), 'blaggregator.log'),
         },
     },
     'loggers': {
@@ -234,7 +240,7 @@ LOGGING = {
             'propagate': True,
         },
         "blaggregator": {
-            "handlers": ["console"],
+            "handlers": ["console", 'logfile'],
             "level": "DEBUG",
             "propagate": True,
         }
