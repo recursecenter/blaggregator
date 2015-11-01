@@ -11,18 +11,18 @@ class LatestEntriesFeed(Feed):
     def items(self):
         return Post.objects.order_by('-date_updated')[:100]
 
-    def item_title(self, item):
-        return item.title
+    def item_title(self, post):
+        return post.title
 
-    def item_description(self, item):
-        return item.content
+    def item_description(self, post):
+        return post.content
 
-    def item_link(self, item):
-        return item.url
+    def item_link(self, post):
+        return post.url
 
-    def item_author_name(self, item):
-        user = item.blog.user
+    def item_author_name(self, post):
+        user = post.blog.user
         return user.first_name + " " + user.last_name
 
-    def item_pubdate(self, item):
-        return item.date_updated
+    def item_pubdate(self, post):
+        return post.date_updated
