@@ -1,5 +1,6 @@
 from collections import namedtuple
 import datetime
+import logging
 import math
 import re
 
@@ -19,6 +20,8 @@ from django.utils import timezone
 from home.models import Blog, Comment, generate_random_id, Hacker, LogEntry, Post
 from home.oauth import update_user_details
 import feedergrabber27
+
+log = logging.getLogger("blaggregator")
 
 def get_post_info(slug):
     """ Gets the post object at a given slug. """
@@ -104,17 +107,17 @@ def add_blog(request):
             # janky short circuit if they've already added this url
             for blog in Blog.objects.filter(user = request.user.id):
                 if url == blog.url:
-                    print "FOUND %s which matches %s" % (blog.url, url)
+                    log.debug('FOUND %s which matches %s', blog.url, url)
                     return HttpResponseRedirect('/new')
 
             # create new blog record in db
-
             blog = Blog.objects.create(
                 user=User.objects.get(id=request.user.id),
                 feed_url=feed_url,
                 url=url,
                 created=timezone.now(),
             )
+            log.debug('Blog created: %s', blog.url)
 
             # Feedergrabber returns ( [(link, title, date)], [errors])
             # We're not handling the errors returned for right now
@@ -132,8 +135,10 @@ def add_blog(request):
                         content="",
                         date_updated=post_date,
                     )
-            except:
-                pass
+                    log.debug('Created post for %s', post_url)
+
+            except Exception as e:
+                log.error('Creating post object failed for %s with %s', post_url, e)
 
             return HttpResponseRedirect('/new')
         else:

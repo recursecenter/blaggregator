@@ -58,7 +58,7 @@ class Command(NoArgsCommand):
                 post, created = get_or_create_post(blog, title, link, date)
 
                 if created:
-                    print "Created '%s' from blog '%s'" % (title, blog.feed_url)
+                    log.info("Created '%s' from blog '%s'", title, blog.feed_url)
 
                     # Throttle the amount of new posts that can be announced per user per crawl.
                     if post_count < MAX_POST_ANNOUNCE:
@@ -76,11 +76,11 @@ class Command(NoArgsCommand):
                         post.title = title
                         updated = True
                     if updated:
-                        print "Updated %s in %s." % (title, blog.feed_url)
+                        log.info("Updated %s in %s.", title, blog.feed_url)
                         post.save()
 
         else:
-            log.debug(str(errors))
+            log.error(str(errors))
 
 
     @transaction.commit_manually
@@ -156,5 +156,9 @@ def send_message_zulip(user, link, title, stream=STREAM):
             "subject": subject,
             "content": "**%s %s** has a new blog post: [%s](%s)" % (user.first_name, user.last_name, title, url),
         }
-    print data['content']
-    return requests.post(rs_url, data=data, auth=(email, key))
+    log.info('Sending request to %s with %s payload', rs_url,  data)
+    response = requests.post(rs_url, data=data, auth=(email, key))
+
+    log_command = log.info if int(response.status_code/100) == 2 else log.error
+    log_command('Received response, status: %s, msg: %s', response.status_code, response.text)
+    return response
