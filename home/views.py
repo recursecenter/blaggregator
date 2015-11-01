@@ -262,8 +262,7 @@ def feed(request):
     if not token or authenticate(token=token) is None:
         raise Http404
 
-    feed = LatestEntriesFeed().get_feed(None, request).writeString('utf8')
-    return HttpResponse(feed, content_type="text/xml")
+    return LatestEntriesFeed()(request)
 
 
 @login_required
