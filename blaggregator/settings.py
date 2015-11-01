@@ -8,7 +8,6 @@ TEMPLATE_DEBUG = DEBUG
 
 if os.environ.get('PROD', None):
     print "** DETECTED PRODUCTION ENVIRONMENT"
-    SITE_URL = 'http://blaggregator.herokuapp.com'
 
     # S3
     AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
@@ -21,7 +20,6 @@ if os.environ.get('PROD', None):
 
 elif os.environ.get('STAGING', None):
     print "** DETECTED STAGING ENVIRONMENT"
-    SITE_URL = 'http://blaggregator-staging.herokuapp.com'
 
     # S3
     AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
@@ -34,7 +32,6 @@ elif os.environ.get('STAGING', None):
 
 else:
     print "** DETECTED LOCAL ENVIRONMENT"
-    SITE_URL = 'http://127.0.0.1:8000'
     STATIC_URL = '/static/'
 
 ADMINS = (
@@ -69,8 +66,6 @@ TIME_ZONE = 'America/New_York'
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'en-us'
-
-SITE_ID = 1
 
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
@@ -160,7 +155,6 @@ INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-    'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'home',
