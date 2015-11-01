@@ -43,17 +43,14 @@
 
     <div class="alert-block">
         <p>
-            Blaggregator provides an <strong>authenticated</strong> <a href="">RSS feed</a>,
-            and your authentication token is <span class="alert alert-info"> {{ hacker.token }} </span>
-        </p>
-
-        <p>
-            Please keep your token private.  In case you accidentally share the
-            token, you can reset it using the button below.
+          Blaggregator provides an <strong>authenticated</strong>
+          <a href="{% url 'feed' %}?token={{hacker.token}}">RSS feed</a>.  Please keep
+          your feed URL private.  In case you accidentally share the URL, you
+          can reset it using the button below.
         </p>
 
         <form action={% url "refresh_token" %}>
-            <input class="btn btn-info" type="submit" value="Refresh Auth Token">
+            <input class="btn btn-info" type="submit" value="Create new feed URL">
         </form>
     </div>
 
