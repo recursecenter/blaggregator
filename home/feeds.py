@@ -6,6 +6,7 @@ class LatestEntriesFeed(Feed):
     title = "Blaggregator"
     link = "/feed/"
     description = "Syndicated feed for blaggregator."
+    description_template = 'home/feed_item.tmpl'
 
     def items(self):
         return Post.objects.order_by('-date_updated')[:100]

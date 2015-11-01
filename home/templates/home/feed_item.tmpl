@@ -1,0 +1,10 @@
+{% load customtags %}
+
+{{ obj.content|safe }}
+
+<p>
+  This post was originally published <a href="{{ obj.url }}"
+  target="_blank">here</a> and is brought to you by <a href="{{ site.domain }}"
+  >Blaggregator</a>. You can <a href="{{ obj.title|zulip_url:obj.blog.stream }}" target="_blank"> join
+  the discussion </a> on Zulip!.
+</p>
