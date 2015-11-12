@@ -277,12 +277,7 @@ def refresh_token(request):
     return HttpResponseRedirect(profile_url)
 
 def get_random_unique_token():
-    """Get a random token after ensuring that it is unique.
-
-    The model is passed as an argument to allow using this function in data
-    migrations.
-
-    """
+    """Get a random token after ensuring that it is unique."""
 
     while True:
         token = generate_random_id(40)
