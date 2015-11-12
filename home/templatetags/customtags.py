@@ -26,9 +26,12 @@ def stream_name(stream_id):
 def zulip_url(title, stream):
     """Return the Zulip url given the title. """
 
+    # We just replicate how Zulip creates/manages urls.
+    # https://github.com/zulip/zulip/blob/33295180a918fcd420428d9aa2fb737b864cacaf/zerver/lib/notifications.py#L34
+
     # Some browsers zealously URI-decode the contents of window.location.hash.
     # So Zulip hides the URI-encoding by replacing '%' with '.'
-    replace = lambda x: quote(x, safe='').replace('.', '%2E').replace('%', '.')
+    replace = lambda x: quote(x.encode('utf-8'), safe='').replace('.', '%2E').replace('%', '.')
     hash_path = 'narrow/stream/%s/topic/%s' % (replace(stream), replace(title))
 
     return 'https://zulip.com/#%s' % hash_path
