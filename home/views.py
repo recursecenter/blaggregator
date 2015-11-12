@@ -287,13 +287,6 @@ def get_random_unique_token():
             return token
 
 @login_required
-def item(request, slug):
-    post = get_post_info(slug)
-    context = Context({
-        "post": post
-    })
-    return render_to_response('home/item.html', context, context_instance=RequestContext(request))
-
 def login_error(request):
     """OAuth error page"""
     return render(request, 'home/login_error.html')
