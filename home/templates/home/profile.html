@@ -11,7 +11,7 @@
         </a>
         {{ hacker.user.first_name }} {{ hacker.user.last_name }}'s
     {% endif %}
-        blogs
+        profile
     </p>
 {% endblock %}
 
@@ -22,23 +22,47 @@
     {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
 
-    <table class="table">
-      <tr>
-	<th>Feed URL</th> <th>Stream</th> <th>&nbsp;</th>
-      </tr>
-    {% for blog in blogs %}
-    <tr>
-      <td><a href="{{blog.feed_url}}" target="_blank">{{blog.feed_url}}</a></td>
-      <td><a href="https://zulip.com/#narrow/stream/{{blog.stream|stream_name}}" target="_blank">{{blog.stream|stream_name}}</a></td>
-      {% if owner %}
-      <td><a href="{% url "edit_blog" blog_id=blog.id %}">Edit <i class="icon-pencil"></i></a></td>
-      {% endif %}
-    </tr>
-    {% endfor %}
-    </table>
+    {% if blogs %}
+      <table class="table">
+        <tr>
+	  <th>Feed URL</th> <th>Stream</th> <th>&nbsp;</th>
+        </tr>
+        {% for blog in blogs %}
+          <tr>
+            <td><a href="{{blog.feed_url}}" target="_blank">{{blog.feed_url}}</a></td>
+            <td><a href="https://zulip.com/#narrow/stream/{{blog.stream|stream_name}}" target="_blank">{{blog.stream|stream_name}}</a></td>
+            {% if owner %}
+              <td><a href="{% url "edit_blog" blog_id=blog.id %}">Edit <i class="icon-pencil"></i></a></td>
+            {% endif %}
+          </tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+
 
 {% if owner %}
-    <a href="/add_blog" class="btn btn-success">Add another blog</a>
+    <a href="/add_blog" class="btn btn-success">
+        {% if blogs %}
+        Add another blog
+        {% else %}
+        Add your blog
+        {% endif %}
+    </a>
+
+
+    <div class="alert-block">
+        <p>
+          Blaggregator provides an <strong>authenticated</strong>
+          <a href="{% url 'feed' %}?token={{hacker.token}}">RSS feed</a>.  Please keep
+          your feed URL private.  In case you accidentally share the URL, you
+          can reset it using the button below.
+        </p>
+
+        <form action={% url "refresh_token" %}>
+            <input class="btn btn-info" type="submit" value="Create new feed URL">
+        </form>
+    </div>
+
 {% endif %}
 
 {% endblock %}
