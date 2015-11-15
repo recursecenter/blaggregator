@@ -1,38 +1,10 @@
 import os
-SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
+SITE_ROOT = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
 # True: heroku config:set DJANGO_DEBUG=True
 # False: heroku config:unset DJANGO_DEBUG
 DEBUG = 'DJANGO_DEBUG' in os.environ
 TEMPLATE_DEBUG = DEBUG
-
-if os.environ.get('PROD', None):
-    print "** DETECTED PRODUCTION ENVIRONMENT"
-
-    # S3
-    AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
-    AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
-    AWS_STORAGE_BUCKET_NAME = 'blaggregator'
-
-    STATIC_URL = 'http://' + AWS_STORAGE_BUCKET_NAME + '.s3.amazonaws.com/'
-    STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-
-elif os.environ.get('STAGING', None):
-    print "** DETECTED STAGING ENVIRONMENT"
-
-    # S3
-    AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
-    AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
-    AWS_STORAGE_BUCKET_NAME = 'blaggregator-staging'
-
-    STATIC_URL = 'http://' + AWS_STORAGE_BUCKET_NAME + '.s3.amazonaws.com/'
-    STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-
-else:
-    print "** DETECTED LOCAL ENVIRONMENT"
-    STATIC_URL = '/static/'
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
@@ -46,9 +18,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
         'NAME': 'blaggregator_dev',                      # Or path to database file if using sqlite3.
         # The following settings are not used with sqlite3:
-        'USER': 'sasha',
+        'USER': '',
         'PASSWORD': '',
-        'HOST': '',                      # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
+        'HOST': '',             # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
         'PORT': '',                      # Set to empty string for default.
     }
 }
@@ -167,7 +139,6 @@ INSTALLED_APPS = (
 
 AUTHENTICATION_BACKENDS = (
     'home.oauth.HackerSchoolOAuth2',
-    'home.token_auth.TokenAuthBackend',
 )
 
 LOGIN_URL='/login'
@@ -177,12 +148,7 @@ SOCIAL_AUTH_HACKERSCHOOL_LOGIN_URL = '/login'
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/new/'
 SOCIAL_AUTH_LOGIN_ERROR_URL = '/login-error/'
 
-if os.environ.get('PROD', None):
-    SOCIAL_AUTH_HACKERSCHOOL_REDIRECT_URL = 'http://www.blaggregator.us/complete/hackerschool'
-elif os.environ.get('STAGING', None):
-    SOCIAL_AUTH_HACKERSCHOOL_REDIRECT_URL = 'http://blaggregator-staging.herokuapp.com/complete/hackerschool'
-else:
-    SOCIAL_AUTH_HACKERSCHOOL_REDIRECT_URL = 'http://localhost:8000/complete/hackerschool'
+SOCIAL_AUTH_HACKERSCHOOL_REDIRECT_URL = 'http://localhost:8000/complete/hackerschool'
 
 SOCIAL_AUTH_PIPELINE = (
     'social.pipeline.social_auth.social_details',
@@ -235,17 +201,3 @@ LOGGING = {
         }
     }
 }
-
-# This bit uses the module dj_database_url to manage databases based on the
-# url of the database, as configured in environmental variables (which are
-# in turn managed by the Heroku Postgres add-on)
-if os.environ.get('PROD', '') or os.environ.get('STAGING', ''):
-
-    # Parse database configuration from $DATABASE_URL
-    import dj_database_url
-    DATABASES['default'] = dj_database_url.config()
-
-    # Honor the 'X-Forwarded-Proto' header for request.is_secure()
-    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-
-ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'
