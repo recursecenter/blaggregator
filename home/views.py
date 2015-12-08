@@ -327,7 +327,9 @@ def most_viewed(request, ndays='7'):
 
     # Return a tab separated values file, if requested
     if request.GET.get('tsv') == '1':
+        header = 'post_id\ttitle\turl\tcount\n'
         text = '\n'.join(_get_tsv(entry) for entry in entries)
+        text = header + text
         response = HttpResponse(text, content_type='text/tab-separated-values')
 
     else:
@@ -373,3 +375,4 @@ def _get_most_viewed_entries(since, n=20):
 
 def _get_tsv(entry):
     return u'{post__id}\t{post__title}\t{post__url}\t{total}'.format(**entry)
+
