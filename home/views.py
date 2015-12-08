@@ -371,4 +371,4 @@ def _get_most_viewed_entries(since, n=20):
 
 
 def _get_tsv(entry):
-    return '{post__id}\t{post__title}\t{post__url}\t{total}'.format(**entry)
+    return u'{post__id}\t{post__title}\t{post__url}\t{total}'.format(**entry)
