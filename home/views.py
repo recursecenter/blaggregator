@@ -319,10 +319,11 @@ def about(request):
 
 
 @login_required
-def most_viewed(request):
+def most_viewed(request, ndays='7'):
     now = timezone.now()
-    one_week = now - datetime.timedelta(days=7)
-    entries = _get_most_viewed_entries(since=one_week)
+    ndays = int(ndays)
+    since = now - datetime.timedelta(days=ndays)
+    entries = _get_most_viewed_entries(since=since)
 
     # Return a tab separated values file, if requested
     if request.GET.get('tsv') == '1':
@@ -341,7 +342,7 @@ def most_viewed(request):
                 )
                 for entry in entries
             ],
-            'from': one_week.date(),
+            'from': since.date(),
             'to': now.date(),
         }
         response = render_to_response(
