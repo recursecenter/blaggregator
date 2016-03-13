@@ -58,7 +58,13 @@ DATABASES = {
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = ['localhost', 'blaggregator.herokuapp.com', 'blaggregator-staging.herokuapp.com', 'www.blaggregator.us']
+ALLOWED_HOSTS = [
+    'localhost',
+    'blaggregator.herokuapp.com',
+    'blaggregator-staging.herokuapp.com',
+    'www.blaggregator.us',
+    '104.131.26.123',
+]
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
