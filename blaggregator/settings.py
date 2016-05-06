@@ -160,7 +160,6 @@ INSTALLED_APPS = (
     'home',
     'django.contrib.admin',
     'storages',
-    'south',
     'django.contrib.humanize',
     'social.apps.django_app.default',
 )
