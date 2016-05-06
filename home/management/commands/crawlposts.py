@@ -84,21 +84,23 @@ class Command(NoArgsCommand):
             log.debug(str(errors))
 
 
-    @transaction.commit_manually
+    @transaction.atomic
     def handle_noargs(self, **options):
         for blog in Blog.objects.all():
             try:
-                self.crawlblog(blog)
+                with transaction.atomic():
+                    self.crawlblog(blog)
+
             except Exception as e:
                 log.exception(e)
+
         if options['dry_run']:
-            transaction.rollback()
-            print "\nDON'T FORGET TO RUN THIS FOR REAL\n"
+            raise SystemExit("\nDry run finished.\nDON'T FORGET TO RUN THIS FOR REAL\n")
+
         else:
             for message in self.zulip_queue:
                 user, link, title, stream = message
                 send_message_zulip(user, link, title, stream)
-            transaction.commit()
 
     def enqueue_zulip(self, queue, user, link, title, stream=STREAM):
         self.zulip_queue.append((user, link, title, stream))
