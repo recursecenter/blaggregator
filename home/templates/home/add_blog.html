@@ -22,6 +22,12 @@
       </ul>
 
 
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+
       <div class="input-append">
         <input class="span6" name="feed_url" type="url" placeholder="Feed URL">
         <button class="btn" type="button submit">Add Your Blog</button>

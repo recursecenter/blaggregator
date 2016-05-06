@@ -4,6 +4,7 @@ import math
 import re
 
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
@@ -68,7 +69,7 @@ def view_post(request, slug):
 
 def log_in_oauth(request):
     if request.user.is_authenticated():
-        return HttpResponseRedirect('/new')
+        return HttpResponseRedirect(reverse('new'))
     else:
         return render(request, 'home/log_in_oauth.html')
 
@@ -105,20 +106,32 @@ def add_blog(request):
             for blog in Blog.objects.filter(user = request.user.id):
                 if url == blog.url:
                     print "FOUND %s which matches %s" % (blog.url, url)
-                    return HttpResponseRedirect('/new')
+                    return HttpResponseRedirect(reverse('new'))
+
+            # Feedergrabber returns ( [(link, title, date)], [errors])
+            # We're not handling the errors returned for right now
+            # Returns None if there was an exception when parsing the content.
+            crawled, error = feedergrabber27.feedergrabber(feed_url)
+            if crawled is None:
+                message = (
+                    "This url does not seem to contain valid atom/rss feed xml. "
+                    "Please use your blog's feed url! "
+                )
+
+                if error:
+                    feed_url = error
+                    message += 'It may be this -- {}'.format(feed_url)
+
+                messages.error(request, message)
+                return HttpResponseRedirect(reverse('add_blog'))
 
             # create new blog record in db
-
             blog = Blog.objects.create(
                 user=User.objects.get(id=request.user.id),
                 feed_url=feed_url,
                 url=url,
                 created=timezone.now(),
             )
-
-            # Feedergrabber returns ( [(link, title, date)], [errors])
-            # We're not handling the errors returned for right now
-            crawled, _ = feedergrabber27.feedergrabber(feed_url)
 
             # this try/except is a janky bugfix. This should be done with celery
             try:
@@ -135,9 +148,10 @@ def add_blog(request):
             except:
                 pass
 
-            return HttpResponseRedirect('/new')
+            return HttpResponseRedirect(reverse('new'))
         else:
-            return HttpResponse("I didn't get your feed URL. Please go back and try again.")
+            messages.error(request, "No feed URL provided.")
+            return HttpResponseRedirect(reverse('add_blog'))
     else:
         return render_to_response('home/add_blog.html', {}, context_instance=RequestContext(request))
 
@@ -375,4 +389,3 @@ def _get_most_viewed_entries(since, n=20):
 
 def _get_tsv(entry):
     return u'{post__id}\t{post__title}\t{post__url}\t{total}'.format(**entry)
-
