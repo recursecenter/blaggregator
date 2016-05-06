@@ -143,7 +143,7 @@ def add_blog(request):
             messages.error(request, "No feed URL provided.")
             return HttpResponseRedirect(reverse('add_blog'))
     else:
-        return render_to_response('home/add_blog.html', {}, context_instance=RequestContext(request))
+        return render_to_response('home/add_blog.html', RequestContext(request))
 
 @login_required
 def profile(request, user_id):
@@ -162,7 +162,8 @@ def profile(request, user_id):
         for post in post_list:
             post.stream     = post.blog.get_stream_display()
 
-        context = Context({
+        context = RequestContext(request)
+        context.update({
             'hacker': hacker,
             'blogs': added_blogs,
             'owner': owner,
@@ -170,13 +171,9 @@ def profile(request, user_id):
             'show_avatars': False,
         })
 
-        response = render_to_response(
-            'home/profile.html',
-            context,
-            context_instance=RequestContext(request)
-        )
-
+        response = render_to_response('home/profile.html', context)
         return response
+
 
 @login_required
 def edit_blog(request, blog_id):
@@ -201,16 +198,13 @@ def edit_blog(request, blog_id):
 
     form = BlogForm(instance=blog)
 
-    context = Context({
+    context = RequestContext(request)
+    context.update({
         'blog': blog,
         'form': form
     })
 
-    response = render_to_response(
-        'home/edit_blog.html',
-        context,
-        context_instance=RequestContext(request)
-    )
+    response = render_to_response('home/edit_blog.html', context)
 
     return response
 
@@ -249,16 +243,15 @@ def new(request, page=1):
         post.avatar     = user.hacker.avatar_url
         post.stream     = post.blog.get_stream_display()
 
-    context = Context({
+    context = RequestContext(request)
+    context.update({
         "post_list": post_list,
         "page": int(page),
         "pages": pages,
         'show_avatars': True,
     })
 
-    return render_to_response('home/new.html',
-                              context,
-                              context_instance=RequestContext(request))
+    return render_to_response('home/new.html', context)
 
 
 @login_required
