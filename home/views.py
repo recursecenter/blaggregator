@@ -4,6 +4,7 @@ import math
 import re
 
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
@@ -68,7 +69,7 @@ def view_post(request, slug):
 
 def log_in_oauth(request):
     if request.user.is_authenticated():
-        return HttpResponseRedirect('/new')
+        return HttpResponseRedirect(reverse('new'))
     else:
         return render(request, 'home/log_in_oauth.html')
 
@@ -105,7 +106,7 @@ def add_blog(request):
             for blog in Blog.objects.filter(user = request.user.id):
                 if url == blog.url:
                     print "FOUND %s which matches %s" % (blog.url, url)
-                    return HttpResponseRedirect('/new')
+                    return HttpResponseRedirect(reverse('new'))
 
             # Feedergrabber returns ( [(link, title, date)], [errors])
             # We're not handling the errors returned for right now
@@ -119,9 +120,10 @@ def add_blog(request):
 
                 if error:
                     feed_url = error
-                    message += 'Is may be this -- {}'.format(feed_url)
+                    message += 'It may be this -- {}'.format(feed_url)
 
-                return HttpResponse(message)
+                messages.error(request, message)
+                return HttpResponseRedirect(reverse('add_blog'))
 
             # create new blog record in db
             blog = Blog.objects.create(
@@ -146,9 +148,10 @@ def add_blog(request):
             except:
                 pass
 
-            return HttpResponseRedirect('/new')
+            return HttpResponseRedirect(reverse('new'))
         else:
-            return HttpResponse("I didn't get your feed URL. Please go back and try again.")
+            messages.error(request, "No feed URL provided.")
+            return HttpResponseRedirect(reverse('add_blog'))
     else:
         return render_to_response('home/add_blog.html', {}, context_instance=RequestContext(request))
 
@@ -386,4 +389,3 @@ def _get_most_viewed_entries(since, n=20):
 
 def _get_tsv(entry):
     return u'{post__id}\t{post__title}\t{post__url}\t{total}'.format(**entry)
-
