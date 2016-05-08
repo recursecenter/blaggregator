@@ -120,7 +120,8 @@ def add_blog(request):
 
                 if errors and len(errors) == 1 and isinstance(errors[0], dict) and 'feed_url' in errors[0]:
                     feed_url = errors[0]['feed_url']
-                    message += 'It may be this -- {}'.format(feed_url)
+                    if feed_url is not None:
+                        message += 'It may be this -- {}'.format(feed_url)
 
                 messages.error(request, message)
                 return HttpResponseRedirect(reverse('add_blog'))
