@@ -17,7 +17,7 @@
       </a>
       <div class="media-body">
         <h4 class="media-heading"><a href="view">{{ post.title }}</a></h4>
-        <span class="byline">by <a href="http://recurse.com/people/{{ post.authorid }}">{{ post.author }}</a></span>
+        <span class="byline">by <a href="{% url 'profile' post.authorid %}">{{ post.author }}</a></span>
       </div>
     </div>
 </div>
