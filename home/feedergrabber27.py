@@ -60,7 +60,7 @@ def find_feed_url(parsed_content):
         if link.get('type', '') in ('application/atom+xml', 'application/rss+xml'):
             return link.href
 
-def feedergrabber(url=None):
+def feedergrabber(url=None, suggest_feed_url=False):
     """The main function of the module."""
 
     # Initial checks on the URL.
@@ -82,7 +82,7 @@ def feedergrabber(url=None):
         return None, errors
 
     elif file_contents.bozo and not isinstance(file_contents.bozo_exception, feedparser.CharacterEncodingOverride):
-        feed_url = find_feed_url(file_contents)
+        feed_url = find_feed_url(file_contents) if suggest_feed_url else None
         return None, [{'feed_url': feed_url, 'url': url, 'error': file_contents.bozo_exception}]
 
     # Gather links, titles, and dates
