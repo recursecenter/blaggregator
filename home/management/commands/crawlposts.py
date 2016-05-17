@@ -48,6 +48,7 @@ class Command(NoArgsCommand):
         crawled, errors = feedergrabber27.feedergrabber(blog.feed_url)
 
         if crawled:
+            log.debug('Crawled %s blogs from %s', len(crawled), blog.feed_url)
             post_count = 0
             for link, title, date in crawled:
 
@@ -58,7 +59,7 @@ class Command(NoArgsCommand):
                 post, created = get_or_create_post(blog, title, link, date)
 
                 if created:
-                    print "Created '%s' from blog '%s'" % (title, blog.feed_url)
+                    log.debug("Created '%s' from blog '%s'", title, blog.feed_url)
 
                     # Throttle the amount of new posts that can be announced per user per crawl.
                     if post_count < MAX_POST_ANNOUNCE:
