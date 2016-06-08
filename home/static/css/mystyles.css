@@ -12,8 +12,8 @@ form {
 /*
     New posts page - main view
 */
-.media .post {
-    margin-top:25px;
+.post {
+    margin-top: 25px;
 }
 /* title of each post listing */
 .media-heading {
@@ -120,4 +120,7 @@ div.bar-container {
 }
 .feed-icon {
     margin-top: 8px;
+}
+#content {
+    clear: both;
 }

@@ -3,66 +3,66 @@
 {% block pagetitle %}Blaggregator{% endblock %}
 
 {% block title %}
-    {% if owner %}
-        Your
-    {% else %}
-        <a class="avatar media-object pull-left" href="#">
-          <img data-author-id="{{ hacker.user.id }}" src="{{ hacker.avatar_url }}" width="80px" height="80px" style="margin-bottom:1em; margin-right:0.5em;">
-        </a>
-        {{ hacker.user.first_name }} {{ hacker.user.last_name }}'s
-    {% endif %}
-        profile
-    </p>
+{% if owner %}
+Your
+{% else %}
+<a class="avatar media-object pull-left" target="_blank" href="http://recurse.com/people/{{hacker.user.id}}">
+    <img data-author-id="{{ hacker.user.id }}" src="{{ hacker.avatar_url }}" width="80px" height="80px" style="margin-bottom:1em; margin-right:0.5em;">
+</a>
+{{ hacker.user.first_name }} {{ hacker.user.last_name }}'s
+{% endif %}
+Profile
 {% endblock %}
 
-<p>&nbsp;</p>
 
 {% block content %}
 
-    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-
-
-    {% if blogs %}
-      <table class="table">
-        <tr>
-	  <th>Feed URL</th> <th>Stream</th> <th>&nbsp;</th>
-        </tr>
-        {% for blog in blogs %}
-          <tr>
-            <td><a href="{{blog.feed_url}}" target="_blank">{{blog.feed_url}}</a></td>
-            <td><a href="https://zulip.com/#narrow/stream/{{blog.stream|stream_name}}" target="_blank">{{blog.stream|stream_name}}</a></td>
-            {% if owner %}
-              <td><a href="{% url "edit_blog" blog_id=blog.id %}">Edit <i class="icon-pencil"></i></a></td>
-            {% endif %}
-          </tr>
-        {% endfor %}
-      </table>
-    {% endif %}
-
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
 {% if owner %}
-    <a href="/add_blog" class="btn btn-success">
-        {% if blogs %}
-        Add another blog
-        {% else %}
-        Add your blog
-        {% endif %}
-    </a>
+<p>&nbsp;</p>
+<h2>Blogs</h2>
 
+{% if blogs %}
+<table class="table">
+            <tr>
+            <th>Feed URL</th> <th>Stream</th> <th>&nbsp;</th>
+        </tr>
+            {% for blog in blogs %}
+            <tr>
+            <td><a href="{{blog.feed_url}}" target="_blank">{{blog.feed_url}}</a></td>
+            <td><a href="https://zulip.com/#narrow/stream/{{blog.stream|stream_name}}" target="_blank">{{blog.stream|stream_name}}</a></td>
+            <td><a href="{% url "edit_blog" blog_id=blog.id %}">Edit <i class="icon-pencil"></i></a></td>
+          </tr>
+            {% endfor %}
+            <tr>
+            <td>
+            <a href="/add_blog" class="btn btn-success">Add another blog</a>
+          </td>
+            <td></td><td></td>
+        </tr>
+          </table>
+{% endif %}
 
-    <div class="alert-block">
-        <p>
-          Blaggregator provides an <strong>authenticated</strong>
-          <a href="{% url 'feed' %}?token={{hacker.token}}">RSS feed</a>.  Please keep
-          your feed URL private.  In case you accidentally share the URL, you
-          can reset it using the button below.
-        </p>
+<div class="alert-block">
+            <p>
+            Blaggregator provides an <strong>authenticated</strong>
+            <a href="{% url 'feed' %}?token={{hacker.token}}">RSS feed</a>.  Please keep
+            your feed URL private.  In case you accidentally share the URL, you
+            can reset it using the button below.
+      </p>
 
-        <form action={% url "refresh_token" %}>
+            <form action={% url "refresh_token" %}>
             <input class="btn btn-info" type="submit" value="Create new feed URL">
-        </form>
-    </div>
+      </form>
 
+        </div>
+{% endif %}
+
+
+{% if post_list %}
+<h2>Blog Posts</h2>
+{% include 'home/postlist.html' %}
 {% endif %}
 
 {% endblock %}

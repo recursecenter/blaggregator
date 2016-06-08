@@ -4,6 +4,7 @@ import math
 import re
 
 from django.contrib.auth import authenticate, logout
+from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
@@ -59,7 +60,7 @@ def view_post(request, slug):
 
 def log_in_oauth(request):
     if request.user.is_authenticated():
-        return HttpResponseRedirect('/new')
+        return HttpResponseRedirect(reverse('new'))
     else:
         return render(request, 'home/log_in_oauth.html')
 
@@ -96,20 +97,33 @@ def add_blog(request):
             for blog in Blog.objects.filter(user = request.user.id):
                 if url == blog.url:
                     print "FOUND %s which matches %s" % (blog.url, url)
-                    return HttpResponseRedirect('/new')
+                    return HttpResponseRedirect(reverse('new'))
+
+            # Feedergrabber returns ( [(link, title, date)], [errors])
+            # We're not handling the errors returned for right now
+            # Returns None if there was an exception when parsing the content.
+            crawled, errors = feedergrabber27.feedergrabber(feed_url, suggest_feed_url=True)
+            if crawled is None:
+                message = (
+                    "This url does not seem to contain valid atom/rss feed xml. "
+                    "Please use your blog's feed url! "
+                )
+
+                if errors and len(errors) == 1 and isinstance(errors[0], dict) and 'feed_url' in errors[0]:
+                    feed_url = errors[0]['feed_url']
+                    if feed_url is not None:
+                        message += 'It may be this -- {}'.format(feed_url)
+
+                messages.error(request, message)
+                return HttpResponseRedirect(reverse('add_blog'))
 
             # create new blog record in db
-
             blog = Blog.objects.create(
                 user=User.objects.get(id=request.user.id),
                 feed_url=feed_url,
                 url=url,
                 created=timezone.now(),
             )
-
-            # Feedergrabber returns ( [(link, title, date)], [errors])
-            # We're not handling the errors returned for right now
-            crawled, _ = feedergrabber27.feedergrabber(feed_url)
 
             # this try/except is a janky bugfix. This should be done with celery
             try:
@@ -124,15 +138,15 @@ def add_blog(request):
             except:
                 pass
 
-            return HttpResponseRedirect('/new')
+            return HttpResponseRedirect(reverse('new'))
         else:
-            return HttpResponse("I didn't get your feed URL. Please go back and try again.")
+            messages.error(request, "No feed URL provided.")
+            return HttpResponseRedirect(reverse('add_blog'))
     else:
         return render_to_response('home/add_blog.html', {}, context_instance=RequestContext(request))
 
 @login_required
 def profile(request, user_id):
-    """ A user's profile. Not currently tied to a template - needs work. """
 
     try:
         hacker = Hacker.objects.get(user=user_id)
@@ -144,10 +158,16 @@ def profile(request, user_id):
         added_blogs = Blog.objects.filter(user=user_id)
         owner = True if int(user_id) == request.user.id else False
 
+        post_list = Post.objects.filter(blog__user=user_id).order_by('-date_updated')
+        for post in post_list:
+            post.stream     = post.blog.get_stream_display()
+
         context = Context({
             'hacker': hacker,
             'blogs': added_blogs,
             'owner': owner,
+            'post_list': post_list,
+            'show_avatars': False,
         })
 
         response = render_to_response(
@@ -221,8 +241,8 @@ def new(request, page=1):
     end = start + items_per_page
     pages = int(math.ceil(Post.objects.count()/float(items_per_page)))
 
-    newPostList = Post.objects.order_by('-date_updated')[start:end]
-    for post in newPostList:
+    post_list = Post.objects.order_by('-date_updated')[start:end]
+    for post in post_list:
         user            = User.objects.get(blog__id__exact=post.blog_id)
         post.author     = user.first_name + " " + user.last_name
         post.authorid   = user.id
@@ -230,9 +250,10 @@ def new(request, page=1):
         post.stream     = post.blog.get_stream_display()
 
     context = Context({
-        "newPostList": newPostList,
+        "post_list": post_list,
         "page": int(page),
         "pages": pages,
+        'show_avatars': True,
     })
 
     return render_to_response('home/new.html',
@@ -298,14 +319,17 @@ def about(request):
 
 
 @login_required
-def most_viewed(request):
+def most_viewed(request, ndays='7'):
     now = timezone.now()
-    one_week = now - datetime.timedelta(days=7)
-    entries = _get_most_viewed_entries(since=one_week)
+    ndays = int(ndays)
+    since = now - datetime.timedelta(days=ndays)
+    entries = _get_most_viewed_entries(since=since)
 
     # Return a tab separated values file, if requested
     if request.GET.get('tsv') == '1':
+        header = 'post_id\ttitle\turl\tcount\n'
         text = '\n'.join(_get_tsv(entry) for entry in entries)
+        text = header + text
         response = HttpResponse(text, content_type='text/tab-separated-values')
 
     else:
@@ -320,7 +344,7 @@ def most_viewed(request):
                 )
                 for entry in entries
             ],
-            'from': one_week.date(),
+            'from': since.date(),
             'to': now.date(),
         }
         response = render_to_response(
@@ -350,4 +374,4 @@ def _get_most_viewed_entries(since, n=20):
 
 
 def _get_tsv(entry):
-    return '{post__id}\t{post__title}\t{post__url}\t{total}'.format(**entry)
+    return u'{post__id}\t{post__title}\t{post__url}\t{total}'.format(**entry)

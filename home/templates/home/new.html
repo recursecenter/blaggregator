@@ -9,40 +9,6 @@
 
 {% block content %}
 
-<script>
-    var current = document.getElementById("all");
-    current.className = current.className + " active";
-</script>
-
-<div class='postlist'>
-    {% for post in newPostList %}
-        <div class="media post">
-          <a class="pull-left" href="http://recurse.com/people/{{ post.authorid }}">
-            <img class="media-object" data-author-id="{{post.authorid}}"  src="{{ post.avatar }}" width="64px" height="64px">
-          </a>
-          <div class="media-body">
-            <h4 class="media-heading listing-title">
-              <a href="/post/{{ post.slug }}/view">{{ post.title }}</a>
-            </h4>
-            <div>
-              <a href="{{ post.title|zulip_url:post.stream }}" target="_blank" class="listing-comments">
-                Comments on Zulip
-              </a>
-            </div>
-          </div>
-        </div>
-    {% endfor %}
-    {% if pages > 1 %}
-        <div class="pagination pagination-centered">
-            <ul>
-                <li{% if page == 1 %} class="disabled"{% endif %}><a href="/new/{{ page|add:-1 }}">Prev</a></li>
-                {% for i in pages|pagination:page %}
-                    <li {% if page == i %} class="active"{% endif %}><a href="/new/{{ i }}/">{{ i }}</a></li>
-                {% endfor %}
-                <li{% if page == pages %} class="disabled"{% endif %}><a href="/new/{{ page|add:1}}">Next</a></li>
-            </ul>
-        </div>
-    {% endif %}
-</div>
+{% include 'home/postlist.html' %}
 
 {% endblock %}

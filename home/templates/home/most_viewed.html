@@ -19,7 +19,7 @@
 <div class='postlist'>
     {% for post in post_list %}
     <div class="media post">
-      <a class="pull-left" href="http://hackerschool.com/people/{{ post.authorid }}">
+      <a class="pull-left" href="{% url 'profile' post.authorid %}">
         <img class="media-object"
              data-author-id="{{post.authorid}}"
              src="{{ post.avatar }}" width="64px" height="64px">
