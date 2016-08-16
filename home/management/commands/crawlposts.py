@@ -63,7 +63,7 @@ class Command(NoArgsCommand):
                     # Throttle the amount of new posts that can be announced per user per crawl.
                     if post_count < MAX_POST_ANNOUNCE:
                         post_page = ROOT_URL + 'post/' + post.slug
-                        self.enqueue_zulip(self.zulip_queue, blog.user, post_page, title, blog.stream)
+                        self.enqueue_zulip(blog.user, post_page, title, blog.stream)
                         post_count += 1
 
                 # if new info, update the posts
@@ -99,7 +99,7 @@ class Command(NoArgsCommand):
                 send_message_zulip(user, link, title, stream)
             transaction.commit()
 
-    def enqueue_zulip(self, queue, user, link, title, stream=STREAM):
+    def enqueue_zulip(self, user, link, title, stream=STREAM):
         self.zulip_queue.append((user, link, title, stream))
 
 
