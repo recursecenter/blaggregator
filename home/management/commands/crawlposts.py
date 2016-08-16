@@ -21,10 +21,9 @@ ROOT_URL = 'http://www.blaggregator.us/'
 STREAM = 'blogging'
 MAX_POST_ANNOUNCE = 2
 
-key = os.environ.get('HUMBUG_KEY')
-email = os.environ.get('HUMBUG_EMAIL')
-rs_bucket = os.environ.get('RUNSCOPE_BUCKET')
-rs_url = 'https://api-zulip-com-{0}.runscope.net/v1/messages'.format(rs_bucket)
+ZULIP_KEY = os.environ.get('ZULIP_KEY')
+ZULIP_EMAIL = os.environ.get('ZULIP_EMAIL')
+ZULIP_URL = 'https://recurse.zulipchat.com/api/v1/messages'
 
 class Command(NoArgsCommand):
 
@@ -144,18 +143,23 @@ def get_or_create_post(blog, title, link, date):
 
 
 def send_message_zulip(user, link, title, stream=STREAM):
+    """Announce new post with given link and title by user on specified stream."""
 
-    subject = title
-    if len(subject) > 60:
-        subject = subject[:57] + "..."
+    subject = title if len(title) <= 60 else title[:57] + "..."
+    url = "{0}/view".format(link.rstrip('/'))
+    data = {
+        "type": "stream",
+        "to": "%s" % stream,
+        "subject": subject,
+        "content": "**%s %s** has a new blog post: [%s](%s)" % (user.first_name, user.last_name, title, url),
+    }
 
-    # add a trailing slash if it's not already there (jankily)
-    if link[-1] != '/': link = link + '/'
-    url = link + "view"
-    data = {"type": "stream",
-            "to": "%s" % stream,
-            "subject": subject,
-            "content": "**%s %s** has a new blog post: [%s](%s)" % (user.first_name, user.last_name, title, url),
-        }
-    print data['content']
-    return requests.post(rs_url, data=data, auth=(email, key))
+    try:
+        log.debug('Sending data %s to zulip stream %s', data['content'], stream)
+        response = requests.post(ZULIP_URL, data=data, auth=(ZULIP_EMAIL, ZULIP_KEY))
+        log.debug('Post returned with %s: %s', response.status_code, response.content)
+
+    except Exception as e:
+        log.exception(e)
+
+    return response
