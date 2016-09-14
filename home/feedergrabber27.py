@@ -107,12 +107,11 @@ def feedergrabber(url=None, suggest_feed_url=False):
         i.title = h.unescape(title)
 
         # Date
-        if i.updated_parsed:
-            post_date = i.updated_parsed
-        elif i.published_parsed:
-            post_date = i.published_parsed
-        if post_date:
-            post_date = datetime.datetime.fromtimestamp(time.mktime(post_date))
+        for name in ('updated_parsed', 'published_parsed'):
+            if name in i:
+                post_date = getattr(i, name)
+                post_date = datetime.datetime.fromtimestamp(time.mktime(post_date))
+                break
         else:
             post_date = datetime.datetime.now()
 
