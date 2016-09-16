@@ -3,22 +3,24 @@ import datetime
 import math
 import re
 
-from django.conf import settings
+from django.contrib.auth import authenticate, logout
 from django.contrib import messages
-from django.contrib.auth import logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
-from django.db.models import Count, Model
+from django.db.models import Count
 from django.forms import TextInput
 from django.forms.models import modelform_factory
+
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render_to_response, render
 from django.template import Context, RequestContext
 from django.utils import timezone
 
-from home.models import Blog, Comment, generate_random_id, Hacker, LogEntry, Post
+from home.models import Blog, Hacker, generate_random_id, LogEntry, Post
+
 from home.oauth import update_user_details
+from home.feeds import LatestEntriesFeed
 import feedergrabber27
 
 def get_post_info(slug):
@@ -36,17 +38,6 @@ def get_post_info(slug):
         raise Http404('Post does not exist.')
 
     return post
-
-
-def get_comment_list(post):
-    """ Gets the list of comment objects for a given post instance. """
-    commentList = list(Comment.objects.filter(post=post).order_by('date_modified'))
-    for comment in commentList:
-        user            = User.objects.get(comment__slug__exact=comment.slug)
-        comment.author  = user.first_name
-        comment.avatar  = Hacker.objects.get(user=comment.user).avatar_url
-        comment.authorid = comment.user.id
-    return commentList
 
 
 def view_post(request, slug):
@@ -136,15 +127,13 @@ def add_blog(request):
 
             # this try/except is a janky bugfix. This should be done with celery
             try:
-                for post in crawled:
-                    post_url, post_title, post_date = post
-                    post_date = timezone.make_aware(post_date, timezone.get_default_timezone())
+                for post_url, post_title, post_date, post_content in crawled:
                     Post.objects.create(
                         blog=blog,
                         url=post_url,
                         title=post_title,
-                        content="",
-                        date_updated=post_date,
+                        content=post_content,
+                        date_updated=timezone.make_aware(post_date, timezone.get_default_timezone()),
                     )
             except:
                 pass
@@ -257,8 +246,8 @@ def new(request, page=1):
         user            = User.objects.get(blog__id__exact=post.blog_id)
         post.author     = user.first_name + " " + user.last_name
         post.authorid   = user.id
-        post.comments   = list(Comment.objects.filter(post=post))
         post.avatar     = user.hacker.avatar_url
+        post.stream     = post.blog.get_stream_display()
 
     context = Context({
         "post_list": post_list,
@@ -286,49 +275,39 @@ def updated_avatar(request, user_id):
 
     return HttpResponse(hacker.avatar_url)
 
-@login_required
+
 def feed(request):
-    ''' Atom feed of all new posts. '''
+    """Atom feed of all new posts."""
 
-    postList = list(Post.objects.all().order_by('-date_updated'))
+    token = request.GET.get('token')
+    if not token or authenticate(token=token) is None:
+        raise Http404
 
-    for post in postList:
-        user = User.objects.get(blog__id__exact=post.blog_id)
-        post.author = user.first_name + " " + user.last_name
-
-    context = Context({
-        "postList": postList,
-        "domain": settings.SITE_URL
-    })
-
-    return render(request, 'home/atom.xml', context, content_type="text/xml")
+    return LatestEntriesFeed()(request)
 
 
 @login_required
-def item(request, slug):
+def refresh_token(request):
+    """Refresh a users' auth token."""
 
-    if request.method == 'POST':
-        if request.POST['content']:
-            Comment.objects.create(
-                slug=generate_random_id(),
-                user=request.user,
-                post=Post.objects.get(slug=slug),
-                parent=None,
-                date_modified=timezone.now(),
-                content=request.POST['content'],
-            )
+    hacker = Hacker.objects.get(user=request.user)
+    hacker.token = get_random_unique_token()
+    hacker.save()
 
-    post = get_post_info(slug)
+    profile_url = reverse('profile', kwargs={'user_id': request.user.id})
+    return HttpResponseRedirect(profile_url)
 
-    commentList = get_comment_list(post)
+def get_random_unique_token():
+    """Get a random token after ensuring that it is unique."""
 
-    context = Context({
-        "post": post,
-        "commentList": commentList,
-    })
+    while True:
+        token = generate_random_id(40)
+        try:
+            Hacker.objects.get(token=token)
+        except Hacker.DoesNotExist:
+            return token
 
-    return render_to_response('home/item.html', context, context_instance=RequestContext(request))
-
+@login_required
 def login_error(request):
     """OAuth error page"""
     return render(request, 'home/login_error.html')

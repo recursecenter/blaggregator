@@ -115,8 +115,11 @@ def feedergrabber(url=None, suggest_feed_url=False):
         else:
             post_date = datetime.datetime.now()
 
+        # Post content
+        content = getattr(i, 'summary', '')
+
         # Append
-        post_links_and_titles.append((link, i.title, post_date))
+        post_links_and_titles.append((link, i.title, post_date, content))
 
     if len(post_links_and_titles) == 0:
         post_links_and_titles = None
