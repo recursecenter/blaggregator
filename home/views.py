@@ -131,7 +131,6 @@ def add_blog(request):
                 user=User.objects.get(id=request.user.id),
                 feed_url=feed_url,
                 url=url,
-                created=timezone.now(),
             )
 
             # this try/except is a janky bugfix. This should be done with celery
