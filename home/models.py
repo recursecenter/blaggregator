@@ -1,6 +1,10 @@
-from django.db import models
+import random
+import string
+
 from django.contrib.auth.models import User
-import random, string
+from django.db import models
+from django.utils import timezone
+
 
 def generate_random_id():
     return ''.join(random.choice(string.ascii_uppercase + string.digits + string.ascii_lowercase) for x in range(6))
@@ -40,7 +44,7 @@ class Post(models.Model):
     url          = models.TextField()
     title        = models.TextField(blank=True)
     content      = models.TextField()
-    date_updated = models.DateTimeField('date updated')
+    date_posted_or_crawled = models.DateTimeField('date updated')
     slug         = models.CharField(max_length=6, default=generate_random_id, unique=True)
 
 class Comment(models.Model):
