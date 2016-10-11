@@ -5,6 +5,8 @@
 # as test.
 # David Prager Branner
 
+"""Retrieves the links and titles of recent posts from blog feeds."""
+
 from __future__ import print_function
 import re
 import urllib2
@@ -14,11 +16,10 @@ import time
 import datetime
 import HTMLParser
 
-'''Retrieves the links and titles of recent posts from blog feeds.'''
-
 http_pattern = re.compile('^https?://')
 reference_pattern = re.compile('^#')
 illformed_slash_pattern = re.compile('/\.*(\.|/)+/*')
+
 
 def retrieve_file_contents(url, errors):
     '''Retrieve file contents from a given URL and log any errors.'''
@@ -29,6 +30,7 @@ def retrieve_file_contents(url, errors):
         errors.append([url, e])
         file_contents = None
     return file_contents, errors
+
 
 def parse_domain(url):
     '''Divide a URL into its three principal parts.
@@ -41,6 +43,7 @@ def parse_domain(url):
     ParseResult = urlparse.urlparse(url)
     return ParseResult.scheme, ParseResult.netloc, ParseResult.path
 
+
 def check_wellformed(url):
     '''Fix some common minor problems in URL formatting.'''
     # remove any spaces
@@ -48,6 +51,7 @@ def check_wellformed(url):
     # make all lower case
     url = url.lower()
     return url
+
 
 def find_feed_url(parsed_content):
     """Try to find the feed url from parsed content."""
@@ -60,13 +64,14 @@ def find_feed_url(parsed_content):
         if link.get('type', '') in ('application/atom+xml', 'application/rss+xml'):
             return link.href
 
+
 def feedergrabber(url=None, suggest_feed_url=False):
     """The main function of the module."""
 
     # Initial checks on the URL.
     if not url:
         return None, ['Empty URL.']
-    url = check_wellformed(url) # ggg should we include parse_domain here?
+    url = check_wellformed(url)  # ggg should we include parse_domain here?
     scheme, domain, path = parse_domain(url)
     if not (scheme and domain):
         return None, ['URL malformed: ' + scheme + domain + path]
@@ -92,7 +97,7 @@ def feedergrabber(url=None, suggest_feed_url=False):
             link = i.link
         except AttributeError:
             errors.append([url +
-                    ': A link was unexpectedly not returned by feedparse.'])
+                           ': A link was unexpectedly not returned by feedparse.'])
             continue
 
         # Title
@@ -100,20 +105,29 @@ def feedergrabber(url=None, suggest_feed_url=False):
             title = i.title
         except AttributeError:
             errors.append([url +
-                    ':A title was unexpectedly not returned by feedparse.'])
+                           ':A title was unexpectedly not returned by feedparse.'])
 
         # Unescaping HTML entities
         h = HTMLParser.HTMLParser()
         i.title = h.unescape(title)
 
         # Date
-        for name in ('updated_parsed', 'published_parsed'):
+        post_date = None
+        for name in ('published_parsed', 'updated_parsed'):
             if name in i:
                 post_date = getattr(i, name)
-                post_date = datetime.datetime.fromtimestamp(time.mktime(post_date))
                 break
+
+        now = datetime.datetime.now()
+        if post_date is None:
+            # No date posts are marked as crawled now
+            post_date = now
+
         else:
-            post_date = datetime.datetime.now()
+            post_date = datetime.datetime(*post_date[:6])
+            # future dated posts are marked as crawled now
+            if post_date > now:
+                post_date = now
 
         # Append
         post_links_and_titles.append((link, i.title, post_date))

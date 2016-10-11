@@ -5,13 +5,13 @@
   <link href="{{ domain }}/atom.xml" rel="self" />
   <link href="{{ domain }}" />
   <id>{{ domain }}</id>
-  <updated>{{ postList.0.date_updated|date:'Y-m-d\TH:i:s'}}</updated>
-  {% for post in postList %} 
+  <updated>{{ postList.0.date_posted_or_crawled|date:'Y-m-d\TH:i:s'}}</updated>
+  {% for post in postList %}
   <entry>
     <title>{{ post.title }}</title>
     <link href="{{ post.url }}" />
     <id>{{ post.url }}</id>
-    <updated>{{ post.date_updated|date:'Y-m-d\TH:i:s'}}</updated>
+    <updated>{{ post.date_posted_or_crawled|date:'Y-m-d\TH:i:s'}}</updated>
     <author>
       <name><![CDATA[{{ post.author }}]]></name>
     </author>

@@ -1,6 +1,10 @@
-from django.db import models
+import random
+import string
+
 from django.contrib.auth.models import User
-import random, string
+from django.db import models
+from django.utils import timezone
+
 
 def generate_random_id():
     return ''.join(random.choice(string.ascii_uppercase + string.digits + string.ascii_lowercase) for x in range(6))
@@ -27,8 +31,9 @@ class Blog(models.Model):
     url          = models.URLField()
     feed_url     = models.URLField()
     last_crawled = models.DateTimeField('last crawled', blank=True, null=True)
-    created      = models.DateTimeField('date created')
+    created      = models.DateTimeField('date created', auto_now_add=True)
     stream       = models.CharField(max_length=100, default=STREAM_CHOICES[0][0], choices=STREAM_CHOICES)
+
 
 class Post(models.Model):
 
@@ -39,7 +44,7 @@ class Post(models.Model):
     url          = models.TextField()
     title        = models.TextField(blank=True)
     content      = models.TextField()
-    date_updated = models.DateTimeField('date updated')
+    date_posted_or_crawled = models.DateTimeField('date updated')
     slug         = models.CharField(max_length=6, default=generate_random_id, unique=True)
 
 class Comment(models.Model):

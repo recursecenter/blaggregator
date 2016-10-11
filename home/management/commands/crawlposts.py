@@ -31,11 +31,10 @@ class Command(NoArgsCommand):
 
     option_list = NoArgsCommand.option_list + (
         make_option('--dry-run',
-            action = 'store_true',
-            default = False,
-            help = 'Don\'t actually touch the database',
-            ),
-        )
+                    action='store_true',
+                    default=False,
+                    help="Don't actually touch the database"),
+    )
 
     # Queue up the messages for Zulip so they aren't sent until after the
     #   blog post instance is created in the database
@@ -46,42 +45,38 @@ class Command(NoArgsCommand):
         # We're ignoring the errors returned for right now
         crawled, errors = feedergrabber27.feedergrabber(blog.feed_url)
 
-        if crawled:
-            log.debug('Crawled %s blogs from %s', len(crawled), blog.feed_url)
-            post_count = 0
-            for link, title, date in crawled:
-
-                date = timezone.make_aware(date, timezone.get_default_timezone())
-                title = cleantitle(title)
-
-                # create the post instance if it doesn't already exist
-                post, created = get_or_create_post(blog, title, link, date)
-
-                if created:
-                    log.debug("Created '%s' from blog '%s'", title, blog.feed_url)
-
-                    # Throttle the amount of new posts that can be announced per user per crawl.
-                    if post_count < MAX_POST_ANNOUNCE:
-                        post_page = ROOT_URL + 'post/' + post.slug
-                        self.enqueue_zulip(blog.user, post_page, title, blog.stream)
-                        post_count += 1
-
-                # if new info, update the posts
-                if not created:
-                    updated = False
-                    if date != post.date_updated:
-                        post.date_updated = date
-                        updated = True
-                    if title != post.title:
-                        post.title = title
-                        updated = True
-                    if updated:
-                        print "Updated %s in %s." % (title, blog.feed_url)
-                        post.save()
-
-        else:
+        if not crawled:
             log.debug(str(errors))
+            return
 
+        log.debug('Crawled %s blogs from %s', len(crawled), blog.feed_url)
+
+        for link, title, date in crawled:
+            date = timezone.make_aware(date, timezone.get_default_timezone())
+            title = cleantitle(title)
+
+            # create the post instance if it doesn't already exist
+            post, created = get_or_create_post(blog, title, link, date)
+
+            if created:
+                created_count = 0
+                log.debug("Created '%s' from blog '%s'", title, blog.feed_url)
+
+                # Throttle the amount of new posts that can be announced per user per crawl.
+                if created_count < MAX_POST_ANNOUNCE:
+                    post_page = ROOT_URL + 'post/' + post.slug
+                    self.enqueue_zulip(blog.user, post_page, title, blog.stream)
+                    created_count += 1
+
+            # if title changes, update the post
+            elif title != post.title:
+                post.title = title
+                print "Updated %s in %s." % (title, blog.feed_url)
+                post.save()
+
+            else:
+                # Any other updates are ignored, as of now
+                pass
 
     @transaction.commit_manually
     def handle_noargs(self, **options):
@@ -120,7 +115,7 @@ def get_or_create_post(blog, title, link, date):
         # The previous code checked only for url, and therefore, the db can
         # have posts with duplicate titles. So, we check if there is atleast
         # one post with the title -- using `filter.latest` instead of `get`.
-        post = Post.objects.filter(blog=blog, title=title).latest('date_updated')
+        post = Post.objects.filter(blog=blog, title=title).latest('date_posted_or_crawled')
         return post, False
     except Post.DoesNotExist:
         pass
@@ -133,9 +128,9 @@ def get_or_create_post(blog, title, link, date):
         post, created = Post.objects.get_or_create(
             blog=blog,
             url=link,
-            defaults = {
+            defaults={
                 'title': title,
-                'date_updated': date,
+                'date_posted_or_crawled': date,
             }
         )
 

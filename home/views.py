@@ -131,7 +131,6 @@ def add_blog(request):
                 user=User.objects.get(id=request.user.id),
                 feed_url=feed_url,
                 url=url,
-                created=timezone.now(),
             )
 
             # this try/except is a janky bugfix. This should be done with celery
@@ -144,7 +143,7 @@ def add_blog(request):
                         url=post_url,
                         title=post_title,
                         content="",
-                        date_updated=post_date,
+                        date_posted_or_crawled=post_date,
                     )
             except:
                 pass
@@ -169,7 +168,7 @@ def profile(request, user_id):
         added_blogs = Blog.objects.filter(user=user_id)
         owner = True if int(user_id) == request.user.id else False
 
-        post_list = Post.objects.filter(blog__user=user_id).order_by('-date_updated')
+        post_list = Post.objects.filter(blog__user=user_id).order_by('-date_posted_or_crawled')
         for post in post_list:
             post.stream     = post.blog.get_stream_display()
 
@@ -252,7 +251,7 @@ def new(request, page=1):
     end = start + items_per_page
     pages = int(math.ceil(Post.objects.count()/float(items_per_page)))
 
-    post_list = Post.objects.order_by('-date_updated')[start:end]
+    post_list = Post.objects.order_by('-date_posted_or_crawled')[start:end]
     for post in post_list:
         user            = User.objects.get(blog__id__exact=post.blog_id)
         post.author     = user.first_name + " " + user.last_name
@@ -286,11 +285,12 @@ def updated_avatar(request, user_id):
 
     return HttpResponse(hacker.avatar_url)
 
+
 @login_required
 def feed(request):
     ''' Atom feed of all new posts. '''
 
-    postList = list(Post.objects.all().order_by('-date_updated'))
+    postList = list(Post.objects.all().order_by('-date_posted_or_crawled'))
 
     for post in postList:
         user = User.objects.get(blog__id__exact=post.blog_id)
