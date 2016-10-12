@@ -1,4 +1,4 @@
-##Blog post aggregator for the Recurse Center community.
+# Blog post aggregator for the Recurse Center community.
 
 RCers are writing awesome blog posts all over the internet. This brings them
 together and provides a place where alums from every batch can discuss
@@ -6,13 +6,13 @@ technical news and be an amazing audience for each other.
 
 The live site is [HERE](http://blaggregator.us). Recurse Center login required.
 
-###Add your blog
+## Add your blog
 
 You will be prompted to add your blog when you create an account. You can also [add it later](http://blaggregator.us/add_blog).
 
 Once your blog is added, Blaggregator will crawl it periodically for new posts.
 
-###Contribute
+## Contribute
 
 Want to contribute a feature or bugfix? Blaggregator is a straightforward Django app with a simple Bootstrap frontend. It's deployed on Heroku and uses their Postgres and Scheduler add-ons.
 
@@ -25,7 +25,7 @@ Key files:
 
 Check out [CONTRIBUTE.md](CONTRIBUTE.md) for contribution ideas.
 
-###Installation:
+## Installation:
 
 - Set up your virtual environment
 
@@ -84,3 +84,10 @@ You can administer your app through the [handy-dandy admin interface](http://loc
 7. 	You should now be able to access localhost:8000/admin while logged in!
 
 This installation can be a bit fiddly but once it's set up, it's smooth sailing.
+
+## License
+
+Copyright © 2013-2016 Sasha Laundy and others.
+
+This software is licensed under the terms of the AGPL, Version 3. The complete
+license can be found at http://www.gnu.org/licenses/agpl-3.0.html.
