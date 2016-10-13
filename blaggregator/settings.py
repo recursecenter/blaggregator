@@ -60,6 +60,9 @@ DATABASES = {
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = ['localhost', 'blaggregator.herokuapp.com', 'blaggregator-staging.herokuapp.com', 'www.blaggregator.us']
 
+# Use HTTP_X_FORWARDED_HOST header to construct absolute URIs
+USE_X_FORWARDED_HOST = True
+
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.

@@ -1,3 +1,5 @@
+import os
+
 from social.backends.oauth import BaseOAuth2
 from social.storage.django_orm import DjangoUserMixin
 from social.strategies.django_strategy import DjangoStrategy
@@ -7,6 +9,7 @@ from models import User, Hacker
 
 HACKER_ATTRIBUTES = ('avatar_url', 'twitter', 'github')
 USER_FIELDS = ['username', 'email']
+
 
 def find_legacy_user(strategy, uid, details, user=None, social=None, *args, **kwargs):
     # user is present if we're currently logged in (very unlikely given there's no
@@ -38,17 +41,18 @@ def find_legacy_user(strategy, uid, details, user=None, social=None, *args, **kw
     # If we get down here, we're almost certainly dealing with a new uesr.
     # Social.pipeline.user.create_user will make a new user shortly after this.
     return None
-    
+
+
 def create_user(strategy, details, response, uid, user=None, *args, **kwargs):
     if user:
         return
 
-    fields = dict((name, kwargs.get(name) or details.get(name))  
+    fields = dict((name, kwargs.get(name) or details.get(name))
                         for name in strategy.setting('USER_FIELDS',
                                                       USER_FIELDS))
     # The new user ID should be the same as their ID on hackerschool.com
     fields['id'] = details.get("id")
-    
+
     if not fields:
         return
 
@@ -56,6 +60,7 @@ def create_user(strategy, details, response, uid, user=None, *args, **kwargs):
         'is_new': True,
         'user': strategy.create_user(**fields)
     }
+
 
 def create_or_update_hacker(strategy, details, response, user, *args, **kwargs):
     if hasattr(user, 'hacker'):
@@ -99,6 +104,7 @@ def update_user_details(hacker_id, user):
 
 class HackerSchoolOAuth2(BaseOAuth2):
     """HackerSchool.com OAuth2 authentication backend"""
+
     name = 'hackerschool'
     HACKER_SCHOOL_ROOT = 'https://www.recurse.com'
     AUTHORIZATION_URL = HACKER_SCHOOL_ROOT + '/oauth/authorize'
@@ -111,6 +117,23 @@ class HackerSchoolOAuth2(BaseOAuth2):
         ('expires_in', 'expires_in'),
         ('refresh_token', 'refresh_token')
     ]
+
+    def auth_params(self, state=None):
+        """Override to allow manually setting redirect_uri."""
+
+        params = super(HackerSchoolOAuth2, self).auth_params(state)
+        redirect_uri = os.environ.get('SOCIAL_AUTH_REDIRECT_URI')
+        if redirect_uri:
+            params['redirect_uri'] = redirect_uri
+        return params
+
+    def auth_complete_params(self, state=None):
+        """Override to allow manually setting redirect_uri."""
+        params = super(HackerSchoolOAuth2, self).auth_complete_params(state)
+        redirect_uri = os.environ.get('SOCIAL_AUTH_REDIRECT_URI')
+        if redirect_uri:
+            params['redirect_uri'] = redirect_uri
+        return params
 
     def get_user_details(self, response):
         """Return user details."""
