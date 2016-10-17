@@ -58,7 +58,7 @@ DATABASES = {
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = ['localhost', 'blaggregator.herokuapp.com', 'blaggregator-staging.herokuapp.com', 'www.blaggregator.us']
+ALLOWED_HOSTS = ['localhost', 'blaggregator.herokuapp.com', 'blaggregator-staging.herokuapp.com', 'www.blaggregator.us', 'blaggregator.recurse.com']
 
 # Use HTTP_X_FORWARDED_HOST header to construct absolute URIs
 USE_X_FORWARDED_HOST = True
