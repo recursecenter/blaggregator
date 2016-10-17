@@ -16,7 +16,7 @@ from home import feedergrabber27
 
 log = logging.getLogger("blaggregator")
 
-ROOT_URL = 'http://www.blaggregator.us/'
+ROOT_URL = 'https://blaggregator.recurse.com/'
 
 STREAM = 'blogging'
 MAX_POST_ANNOUNCE = 2
