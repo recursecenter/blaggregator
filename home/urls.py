@@ -1,10 +1,12 @@
 from django.conf.urls import include, patterns, url
+from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 
 from home import views
 
-urlpatterns = patterns('',
-    url(r'^$', lambda x: HttpResponseRedirect('/new')),
+urlpatterns = patterns(
+    '',  # prefix
+    url(r'^$', lambda x: HttpResponseRedirect(reverse('new'))),
     url(r'^login/$', views.log_in_oauth),
     url(r'^profile/(?P<user_id>\d+)/$', views.profile, name='profile'),
     url(r'^new/$', views.new, name='new'),
