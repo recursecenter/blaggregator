@@ -8,7 +8,7 @@ The live version runs at https://blaggregator.recurse.com. Recurse Center login 
 
 ## Add your blog
 
-You will be prompted to add your blog when you create an account. You can also [add it later](http://blaggregator.us/add_blog).
+You will be prompted to add your blog when you create an account. You can also [add it later](https://blaggregator.recurse.com/add_blog).
 
 Once your blog is added, Blaggregator will crawl it periodically for new posts.
 
