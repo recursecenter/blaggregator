@@ -4,7 +4,7 @@ RCers are writing awesome blog posts all over the internet. This brings them
 together and provides a place where alums from every batch can discuss
 technical news and be an amazing audience for each other.
 
-The live site is [HERE](http://blaggregator.us). Recurse Center login required.
+The live version runs at https://blaggregator.recurse.com. Recurse Center login required.
 
 ## Add your blog
 
