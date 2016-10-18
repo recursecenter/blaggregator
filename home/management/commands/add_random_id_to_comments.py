@@ -8,6 +8,7 @@ from home.models import Comment
 import random
 import string
 
+
 class Command(NoArgsCommand):
 
     help = 'One-time script to set unique ID\'s for all comments in database.'
@@ -23,6 +24,6 @@ class Command(NoArgsCommand):
         else:
             print "OK, quitting without doing anything."
 
+
 def generate_random_id():
     return ''.join(random.choice(string.ascii_uppercase + string.digits + string.ascii_lowercase) for x in range(6))
-

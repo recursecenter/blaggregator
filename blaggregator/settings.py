@@ -46,7 +46,8 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'blaggregator_dev',                      # Or path to database file if using sqlite3.
         # The following settings are not used with sqlite3:
         'USER': 'sasha',
@@ -58,7 +59,13 @@ DATABASES = {
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = ['localhost', 'blaggregator.herokuapp.com', 'blaggregator-staging.herokuapp.com', 'www.blaggregator.us', 'blaggregator.recurse.com']
+ALLOWED_HOSTS = [
+    'localhost',
+    'blaggregator.herokuapp.com',
+    'blaggregator-staging.herokuapp.com',
+    'www.blaggregator.us',
+    'blaggregator.recurse.com'
+]
 
 # Use HTTP_X_FORWARDED_HOST header to construct absolute URIs
 USE_X_FORWARDED_HOST = True
@@ -113,17 +120,18 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = os.environ.get('BLAGGREGATOR_SECRET_KEY', '%dut3)!1f(nm0x8bm@tuj!*!2oe=+3+bsw2lf0)%(4l8d2^z8s')
+SECRET_KEY = os.environ.get('BLAGGREGATOR_SECRET_KEY',
+                            '%dut3)!1f(nm0x8bm@tuj!*!2oe=+3+bsw2lf0)%(4l8d2^z8s')
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
+    #     'django.template.loaders.eggs.Loader',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -179,7 +187,7 @@ AUTHENTICATION_BACKENDS = (
     'home.oauth.HackerSchoolOAuth2',
 )
 
-LOGIN_URL='/login'
+LOGIN_URL = '/login'
 SOCIAL_AUTH_HACKERSCHOOL_KEY = os.environ.get('SOCIAL_AUTH_HS_KEY', None)
 SOCIAL_AUTH_HACKERSCHOOL_SECRET = os.environ.get('SOCIAL_AUTH_HS_SECRET', None)
 SOCIAL_AUTH_HACKERSCHOOL_LOGIN_URL = '/login'

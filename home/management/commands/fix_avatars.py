@@ -3,13 +3,14 @@
 '''
 
 from django.core.management.base import NoArgsCommand
-from django.contrib.auth.models import User
 from home.models import Hacker
 from django.core.exceptions import ObjectDoesNotExist
 
 PREFIX = "https://www.hackerschool.com/assets/people/"
 
-slugs = # dictionary of { id: "url.jpg" } goes here
+# FIXME: dictionary of { id: "url.jpg" } goes here
+slugs = {}
+
 
 class Command(NoArgsCommand):
 

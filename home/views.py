@@ -9,7 +9,7 @@ from django.contrib.auth import logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
-from django.db.models import Count, Model
+from django.db.models import Count
 from django.forms import TextInput
 from django.forms.models import modelform_factory
 from django.http import HttpResponse, HttpResponseRedirect, Http404
@@ -21,16 +21,17 @@ from home.models import Blog, Comment, generate_random_id, Hacker, LogEntry, Pos
 from home.oauth import update_user_details
 import feedergrabber27
 
+
 def get_post_info(slug):
     """ Gets the post object at a given slug. """
 
     try:
         post = Post.objects.get(slug=slug)
-        user            = User.objects.get(blog__id__exact=post.blog_id)
-        post.author     = user.first_name + " " + user.last_name
-        post.authorid   = user.id
-        post.avatar     = Hacker.objects.get(user=user.id).avatar_url
-        post.slug       = slug
+        user = User.objects.get(blog__id__exact=post.blog_id)
+        post.author = user.first_name + " " + user.last_name
+        post.authorid = user.id
+        post.avatar = Hacker.objects.get(user=user.id).avatar_url
+        post.slug = slug
 
     except Post.DoesNotExist:
         raise Http404('Post does not exist.')
@@ -42,9 +43,9 @@ def get_comment_list(post):
     """ Gets the list of comment objects for a given post instance. """
     commentList = list(Comment.objects.filter(post=post).order_by('date_modified'))
     for comment in commentList:
-        user            = User.objects.get(comment__slug__exact=comment.slug)
-        comment.author  = user.first_name
-        comment.avatar  = Hacker.objects.get(user=comment.user).avatar_url
+        user = User.objects.get(comment__slug__exact=comment.slug)
+        comment.author = user.first_name
+        comment.avatar = Hacker.objects.get(user=comment.user).avatar_url
         comment.authorid = comment.user.id
     return commentList
 
@@ -67,11 +68,13 @@ def view_post(request, slug):
     )
     return HttpResponseRedirect(post.url)
 
+
 def log_in_oauth(request):
     if request.user.is_authenticated():
         return HttpResponseRedirect(reverse('new'))
     else:
         return render(request, 'home/log_in_oauth.html')
+
 
 @login_required
 def log_out(request):
@@ -103,7 +106,7 @@ def add_blog(request):
                 url = feed_url
 
             # janky short circuit if they've already added this url
-            for blog in Blog.objects.filter(user = request.user.id):
+            for blog in Blog.objects.filter(user=request.user.id):
                 if url == blog.url:
                     print "FOUND %s which matches %s" % (blog.url, url)
                     return HttpResponseRedirect(reverse('new'))
@@ -155,6 +158,7 @@ def add_blog(request):
     else:
         return render_to_response('home/add_blog.html', {}, context_instance=RequestContext(request))
 
+
 @login_required
 def profile(request, user_id):
 
@@ -170,7 +174,7 @@ def profile(request, user_id):
 
         post_list = Post.objects.filter(blog__user=user_id).order_by('-date_posted_or_crawled')
         for post in post_list:
-            post.stream     = post.blog.get_stream_display()
+            post.stream = post.blog.get_stream_display()
 
         context = Context({
             'hacker': hacker,
@@ -187,6 +191,7 @@ def profile(request, user_id):
         )
 
         return response
+
 
 @login_required
 def edit_blog(request, blog_id):
@@ -224,6 +229,7 @@ def edit_blog(request, blog_id):
 
     return response
 
+
 @login_required
 def delete_blog(request, blog_id):
 
@@ -247,17 +253,17 @@ def new(request, page=1):
     if page is None or int(page) <= 0:
         start = 0
     else:
-        start = (int(page) - 1)*items_per_page
+        start = (int(page) - 1) * items_per_page
     end = start + items_per_page
-    pages = int(math.ceil(Post.objects.count()/float(items_per_page)))
+    pages = int(math.ceil(Post.objects.count() / float(items_per_page)))
 
     post_list = Post.objects.order_by('-date_posted_or_crawled')[start:end]
     for post in post_list:
-        user            = User.objects.get(blog__id__exact=post.blog_id)
-        post.author     = user.first_name + " " + user.last_name
-        post.authorid   = user.id
-        post.comments   = list(Comment.objects.filter(post=post))
-        post.avatar     = user.hacker.avatar_url
+        user = User.objects.get(blog__id__exact=post.blog_id)
+        post.author = user.first_name + " " + user.last_name
+        post.authorid = user.id
+        post.comments = list(Comment.objects.filter(post=post))
+        post.avatar = user.hacker.avatar_url
 
     context = Context({
         "post_list": post_list,
@@ -329,11 +335,14 @@ def item(request, slug):
 
     return render_to_response('home/item.html', context, context_instance=RequestContext(request))
 
+
 def login_error(request):
     """OAuth error page"""
     return render(request, 'home/login_error.html')
 
 # login NOT required
+
+
 def about(request):
     """ About page with more info on Blaggregator. """
     return render(request, 'home/about.html')
