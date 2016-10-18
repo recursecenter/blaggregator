@@ -16,7 +16,6 @@ urlpatterns = patterns(
     url(r'^delete_blog/(?P<blog_id>\d+)/$', views.delete_blog, name='delete_blog'),
     url(r'^atom\.xml/$', views.feed, name='feed'),
     url(r'^post/(?P<slug>\w+)/view', views.view_post, name='view_post'),
-    url(r'^post/(?P<slug>\w+)/', views.item, name='post'),
     url(r'^logout/$', views.log_out),
     url(r'^log_out/$', views.log_out, name='log_out'),
     url(r'^login-error/$', views.login_error, name='login_error'),
