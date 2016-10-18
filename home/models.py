@@ -3,7 +3,6 @@ import string
 
 from django.contrib.auth.models import User
 from django.db import models
-from django.utils import timezone
 
 
 def generate_random_id():
@@ -16,23 +15,27 @@ STREAM_CHOICES = (
 
 # extends the User class to hold additional profile info
 # access with u.hacker.github (where u is user object instance)
+
+
 class Hacker(models.Model):
     user = models.OneToOneField(User)
-    avatar_url  = models.TextField(blank=True)
-    github      = models.TextField(blank=True)
-    twitter     = models.TextField(blank=True)
+    avatar_url = models.TextField(blank=True)
+    github = models.TextField(blank=True)
+    twitter = models.TextField(blank=True)
+
 
 class Blog(models.Model):
 
     def __unicode__(self):
         return self.feed_url
 
-    user         = models.ForeignKey(User)
-    url          = models.URLField()
-    feed_url     = models.URLField()
+    user = models.ForeignKey(User)
+    url = models.URLField()
+    feed_url = models.URLField()
     last_crawled = models.DateTimeField('last crawled', blank=True, null=True)
-    created      = models.DateTimeField('date created', auto_now_add=True)
-    stream       = models.CharField(max_length=100, default=STREAM_CHOICES[0][0], choices=STREAM_CHOICES)
+    created = models.DateTimeField('date created', auto_now_add=True)
+    stream = models.CharField(max_length=100, default=STREAM_CHOICES[
+                              0][0], choices=STREAM_CHOICES)
 
 
 class Post(models.Model):
@@ -40,24 +43,28 @@ class Post(models.Model):
     def __unicode__(self):
         return self.title
 
-    blog         = models.ForeignKey(Blog)
-    url          = models.TextField()
-    title        = models.TextField(blank=True)
-    content      = models.TextField()
+    blog = models.ForeignKey(Blog)
+    url = models.TextField()
+    title = models.TextField(blank=True)
+    content = models.TextField()
     date_posted_or_crawled = models.DateTimeField('date updated')
-    slug         = models.CharField(max_length=6, default=generate_random_id, unique=True)
+    slug = models.CharField(
+        max_length=6, default=generate_random_id, unique=True)
+
 
 class Comment(models.Model):
 
     def __unicode__(self):
         return self.content[:40]
 
-    slug            = models.CharField(max_length=6, default=generate_random_id, unique=True)
-    user            = models.ForeignKey(User)
-    post            = models.ForeignKey(Post)
-    parent          = models.ForeignKey('self', blank=True, null=True)
-    date_modified   = models.DateTimeField('date modified')
-    content         = models.TextField()
+    slug = models.CharField(
+        max_length=6, default=generate_random_id, unique=True)
+    user = models.ForeignKey(User)
+    post = models.ForeignKey(Post)
+    parent = models.ForeignKey('self', blank=True, null=True)
+    date_modified = models.DateTimeField('date modified')
+    content = models.TextField()
+
 
 class LogEntry(models.Model):
 

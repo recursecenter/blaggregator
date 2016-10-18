@@ -25,6 +25,7 @@ ZULIP_KEY = os.environ.get('ZULIP_KEY')
 ZULIP_EMAIL = os.environ.get('ZULIP_EMAIL')
 ZULIP_URL = 'https://recurse.zulipchat.com/api/v1/messages'
 
+
 class Command(NoArgsCommand):
 
     help = 'Periodically crawls all blogs for new posts.'
@@ -62,7 +63,8 @@ class Command(NoArgsCommand):
                 created_count = 0
                 log.debug("Created '%s' from blog '%s'", title, blog.feed_url)
 
-                # Throttle the amount of new posts that can be announced per user per crawl.
+                # Throttle the amount of new posts that can be announced per
+                # user per crawl.
                 if created_count < MAX_POST_ANNOUNCE:
                     post_page = ROOT_URL + 'post/' + post.slug
                     self.enqueue_zulip(blog.user, post_page, title, blog.stream)

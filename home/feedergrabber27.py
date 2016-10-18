@@ -12,7 +12,6 @@ import re
 import urllib2
 import urlparse
 import feedparser
-import time
 import datetime
 import HTMLParser
 

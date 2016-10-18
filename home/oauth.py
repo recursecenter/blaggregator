@@ -48,8 +48,8 @@ def create_user(strategy, details, response, uid, user=None, *args, **kwargs):
         return
 
     fields = dict((name, kwargs.get(name) or details.get(name))
-                        for name in strategy.setting('USER_FIELDS',
-                                                      USER_FIELDS))
+                  for name in strategy.setting('USER_FIELDS',
+                                               USER_FIELDS))
     # The new user ID should be the same as their ID on hackerschool.com
     fields['id'] = details.get("id")
 
@@ -141,15 +141,15 @@ class HackerSchoolOAuth2(BaseOAuth2):
         last_name = response.get('last_name') or ''
         username = first_name + last_name
         return {
-                'id':           response.get('id'),
-                'email':        response.get('email'),
-                'first_name':   first_name,
-                'last_name':    last_name,
-                'username':     username,
-                'avatar_url':   response.get('image'),
-                'twitter':      response.get('twitter') or '',
-                'github':       response.get('github') or '',
-            }
+            'id': response.get('id'),
+            'email': response.get('email'),
+            'first_name': first_name,
+            'last_name': last_name,
+            'username': username,
+            'avatar_url': response.get('image'),
+            'twitter': response.get('twitter') or '',
+            'github': response.get('github') or '',
+        }
 
     def get_user_id(self, details, response):
         """Return a unique ID for the current user, by default from server
@@ -159,7 +159,7 @@ class HackerSchoolOAuth2(BaseOAuth2):
     def user_data(self, access_token, *args, **kwargs):
         """Loads user data."""
         url = self.HACKER_SCHOOL_ROOT + '/api/v1/people/me?' + urlencode({
-             'access_token': access_token
+            'access_token': access_token
         })
         try:
             request = self.request(url, method='GET')
