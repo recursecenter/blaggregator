@@ -3,7 +3,6 @@ import datetime
 import math
 import re
 
-from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.models import User
@@ -19,6 +18,7 @@ from django.utils import timezone
 
 from home.models import Blog, Hacker, LogEntry, Post
 from home.oauth import update_user_details
+from home.feeds import LatestEntriesFeed
 import feedergrabber27
 
 
@@ -281,22 +281,14 @@ def updated_avatar(request, user_id):
     return HttpResponse(hacker.avatar_url)
 
 
+# FIXME: This view could be cached, with cache cleared on crawls or Blog
+# create/delete signals.  Probably most other views could be cached.
 @login_required
 def feed(request):
-    ''' Atom feed of all new posts. '''
+    """Atom feed of new posts."""
 
-    postList = list(Post.objects.all().order_by('-date_posted_or_crawled'))
-
-    for post in postList:
-        user = User.objects.get(blog__id__exact=post.blog_id)
-        post.author = user.first_name + " " + user.last_name
-
-    context = Context({
-        "postList": postList,
-        "domain": settings.SITE_URL
-    })
-
-    return render(request, 'home/atom.xml', context, content_type="text/xml")
+    # FIXME: Need to add token based auth for this view alone
+    return LatestEntriesFeed()(request)
 
 
 @login_required

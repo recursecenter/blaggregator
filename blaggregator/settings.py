@@ -260,3 +260,10 @@ if os.environ.get('PROD', '') or os.environ.get('STAGING', ''):
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'
+
+# Feed configuration
+
+# Maximum number of entries to have in the feed.  To balance between sending a
+# huge feed and forcing users to update feed super-frequently, a good value for
+# this would be around twice the average number of posts in a week.
+MAX_FEED_ENTRIES = 100
