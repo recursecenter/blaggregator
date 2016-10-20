@@ -125,16 +125,16 @@ def add_blog(request):
                 url=url,
             )
 
-            # this try/except is a janky bugfix. This should be done with celery
+            # FIXME: this try/except is a janky bugfix. Use celery instead?
+            # FIXME: very similar to code in crawlposts.get_or_create_post
             try:
-                for post in crawled:
-                    post_url, post_title, post_date = post
+                for post_url, post_title, post_date, post_content in crawled:
                     post_date = timezone.make_aware(post_date, timezone.get_default_timezone())
                     Post.objects.create(
                         blog=blog,
                         url=post_url,
                         title=post_title,
-                        content="",
+                        content=post_content,
                         date_posted_or_crawled=post_date,
                     )
             except:

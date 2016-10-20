@@ -52,12 +52,12 @@ class Command(NoArgsCommand):
 
         log.debug('Crawled %s blogs from %s', len(crawled), blog.feed_url)
 
-        for link, title, date in crawled:
+        for link, title, date, content in crawled:
             date = timezone.make_aware(date, timezone.get_default_timezone())
             title = cleantitle(title)
 
             # create the post instance if it doesn't already exist
-            post, created = get_or_create_post(blog, title, link, date)
+            post, created = get_or_create_post(blog, title, link, date, content)
 
             if created:
                 created_count = 0
@@ -71,8 +71,9 @@ class Command(NoArgsCommand):
                     created_count += 1
 
             # if title changes, update the post
-            elif title != post.title:
+            elif title != post.title or content != post.content:
                 post.title = title
+                post.content = content
                 print "Updated %s in %s." % (title, blog.feed_url)
                 post.save()
 
@@ -112,7 +113,7 @@ def cleantitle(title):
     return newtitle
 
 
-def get_or_create_post(blog, title, link, date):
+def get_or_create_post(blog, title, link, date, content):
     try:
         # The previous code checked only for url, and therefore, the db can
         # have posts with duplicate titles. So, we check if there is atleast
@@ -133,6 +134,7 @@ def get_or_create_post(blog, title, link, date):
             defaults={
                 'title': title,
                 'date_posted_or_crawled': date,
+                'content': content,
             }
         )
 
