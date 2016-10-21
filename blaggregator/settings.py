@@ -189,6 +189,7 @@ INSTALLED_APPS = (
 
 AUTHENTICATION_BACKENDS = (
     'home.oauth.HackerSchoolOAuth2',
+    'home.token_auth.TokenAuthBackend',
 )
 
 LOGIN_URL = '/login'

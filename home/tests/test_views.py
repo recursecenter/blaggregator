@@ -3,13 +3,13 @@ from django.test import TestCase
 from django.test.utils import override_settings
 import feedparser
 
-from home.models import Post, User
+from home.models import Post, User, Hacker
 from .utils import create_posts
 
 N_MAX = settings.MAX_FEED_ENTRIES
 
 
-@override_settings(AUTHENTICATION_BACKENDS=('django.contrib.auth.backends.ModelBackend',))
+@override_settings(AUTHENTICATION_BACKENDS=('django.contrib.auth.backends.ModelBackend', 'home.token_auth.TokenAuthBackend'))
 class FeedsViewTestCase(TestCase):
 
     def setUp(self):
@@ -20,7 +20,21 @@ class FeedsViewTestCase(TestCase):
 
     def test_should_enforce_authentication(self):
         response = self.client.get('/atom.xml')
-        self.assertRedirects(response, '/login?next=/atom.xml', target_status_code=301)
+        self.assertEqual(response.status_code, 404)
+
+        response = self.client.get('/atom.xml', data={'token': ''})
+        self.assertEqual(response.status_code, 404)
+
+    def test_should_enforce_token(self):
+        self.login()
+        response = self.client.get('/new/')
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get('/atom.xml')
+        self.assertEqual(response.status_code, 404)
+
+        response = self.client.get('/atom.xml', data={'token': ''})
+        self.assertEqual(response.status_code, 404)
 
     def test_feed_with_no_posts(self):
         self.verify_feed_generation(0)
@@ -33,12 +47,12 @@ class FeedsViewTestCase(TestCase):
 
     # Helper methods ####
 
-    def clear_db(self):
-        User.objects.all().delete()
-
     def login(self):
         """Login as test user."""
         self.client.login(username=self.username, password=self.password)
+
+    def clear_db(self):
+        User.objects.all().delete()
 
     def parse_feed(self, content):
         """Parse feed content and return entries."""
@@ -46,10 +60,11 @@ class FeedsViewTestCase(TestCase):
         return feedparser.parse(content)
 
     def setup_test_user(self):
-        self.username = self.password = 'test_user'
+        self.username = self.password = 'test'
         self.user = User.objects.create_user(self.username)
         self.user.set_password(self.password)
         self.user.save()
+        self.hacker = Hacker.objects.create(user_id=self.user.id)
 
     def get_included_excluded_posts(self, posts, entries):
         """Returns the set of included and excluded posts."""
@@ -72,12 +87,12 @@ class FeedsViewTestCase(TestCase):
     def verify_feed_generation(self, n):
         # Given
         self.clear_db()
-        self.setup_test_user()
         self.login()
+        self.setup_test_user()
         posts = create_posts(n)
 
         # When
-        response = self.client.get('/atom.xml')
+        response = self.client.get('/atom.xml', data={'token': self.hacker.token})
 
         # Then
         self.assertEqual(n, Post.objects.count())

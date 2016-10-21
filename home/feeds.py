@@ -10,6 +10,7 @@ class LatestEntriesFeed(Feed):
     title = "Blaggregator"
     link = "/atom.xml"
     description = "Syndicated feed for blaggregator."
+    description_template = 'home/feed_item.tmpl'
 
     def items(self):
         return Post.objects.order_by('-date_posted_or_crawled')[:settings.MAX_FEED_ENTRIES]
