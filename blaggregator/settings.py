@@ -1,4 +1,5 @@
 import os
+import sys
 SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 
 # True: heroku config:set DJANGO_DEBUG=True
@@ -53,6 +54,14 @@ DATABASES = {
         'PORT': '',                      # Set to empty string for default.
     }
 }
+
+if 'test' in sys.argv:
+    DATABASES = {
+        'default': {
+            'NAME': 'blaggregator_test',
+            'ENGINE': 'django.db.backends.sqlite3',
+        }
+    }
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
@@ -260,3 +269,10 @@ if os.environ.get('PROD', '') or os.environ.get('STAGING', ''):
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'
+
+# Feed configuration
+
+# Maximum number of entries to have in the feed.  To balance between sending a
+# huge feed and forcing users to update feed super-frequently, a good value for
+# this would be around twice the average number of posts in a week.
+MAX_FEED_ENTRIES = 100

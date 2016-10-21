@@ -9,4 +9,5 @@ install:
 
 # command to run tests
 script:
+  - python manage.py test home
   - flake8 --ignore=E501 --exclude=migrations,wsgi.py
