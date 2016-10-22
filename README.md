@@ -64,12 +64,17 @@ community. Help make it more awesome!
 
 There's a list
 of
-[suggested contributions](https://github.com/sursh/blaggregator/blob/master/CONTRIBUTE.md) and
-[open issues](https://github.com/sursh/blaggregator/issues) if you're looking
+[suggested contributions](https://github.com/recursecenter/blaggregator/blob/master/CONTRIBUTE.md) and
+[open issues](https://github.com/recursecenter/blaggregator/issues) if you're looking
 for an idea.
 
-Before implementing a major contribution, it's wise to get in touch with Sasha
-to make sure it will fit with the rest of the road-map.
+Look at
+the
+[developer documentation](https://github.com/recursecenter/blaggregator/blob/master/docs/development.md) for
+help with setting up your development environment.
+
+Before implementing a major contribution, it's wise to get in touch with the
+maintainers by creating an issue (or using an existing issue) to discuss it.
 
 ### What's the stack?
 
@@ -138,7 +143,7 @@ writing.
     fucks](http://www.garann.com/dev/2013/how-to-blog-about-code-and-give-zero-fucks/).
     (Garann Means)
 -   Please add your fave inspiration with a [pull
-    request](http://github.com/sursh/blaggregator/).
+    request](http://github.com/recursecenter/blaggregator/pulls).
 
 ### I need some accountability!
 
