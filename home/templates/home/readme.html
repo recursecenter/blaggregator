@@ -26,10 +26,10 @@ launched their blog.</p>
 license can be found at http://www.gnu.org/licenses/agpl-3.0.html.</p>
 <h2>FAQ</h2>
 <h3>How does it work?</h3>
-<p>Once an hour, the crawler checks all registered blogs for new posts ("new" is
-defined as having a new URL, so you can tweak the title and change the
-timestamp to your heart's content). New posts are displayed on the main page
-and a message is sent to Zulip.</p>
+<p>Once an hour, the crawler checks all registered blogs for new posts. New posts
+are displayed on the main page and a message is sent to Zulip.</p>
+<p>"New" is defined as a post having a new URL and a new title.  So you can tweak
+the title, change the content or the timestamp to your heart's content.</p>
 <h3>Why do I have to log in?</h3>
 <p>The Recurse Center staff wishes to keep the list of people attending the
 Recurse Center private. So you are required to authenticate with your Recurse
@@ -67,8 +67,17 @@ crawler next checks the registered blogs. If Blaggregator finds many new posts
 on your blog, it will only post the two most recent posts to Zulip. All of your
 posts will still be available on the <a href="https://blaggregator.recurse.com">site</a></p>
 <h3>My blog post appears on blaggregator but no Zulip notification sent.</h3>
-<p>No Zulip notifications are sent for posts that were made before the blog was
-added to blaggregator.</p>
+<ul>
+<li>
+<p>When a blog is added to Blaggregator, all the posts currently in the feed are
+  added to the DB (and therefore marked as seen).  No notifications are sent
+  for these posts.</p>
+</li>
+<li>
+<p>From the next crawl onwards, for every crawl a maximum of 2 notifications are
+  sent for posts that haven't already been seen by blaggregator.</p>
+</li>
+</ul>
 <h3>My blog is multi-purpose and not wholly code/Recurse Center specific</h3>
 <p>No problem! Tag or categorize your relevant posts and make a separate RSS/Atom
 feed for them.  Most blogging software has separate feeds for different

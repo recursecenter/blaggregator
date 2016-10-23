@@ -33,10 +33,11 @@ license can be found at http://www.gnu.org/licenses/agpl-3.0.html.
 
 ### How does it work?
 
-Once an hour, the crawler checks all registered blogs for new posts ("new" is
-defined as having a new URL, so you can tweak the title and change the
-timestamp to your heart's content). New posts are displayed on the main page
-and a message is sent to Zulip.
+Once an hour, the crawler checks all registered blogs for new posts. New posts
+are displayed on the main page and a message is sent to Zulip.
+
+"New" is defined as a post having a new URL and a new title.  So you can tweak
+the title, change the content or the timestamp to your heart's content.
 
 ### Why do I have to log in?
 
@@ -91,8 +92,12 @@ posts will still be available on the [site](https://blaggregator.recurse.com)
 
 ### My blog post appears on blaggregator but no Zulip notification sent.
 
-No Zulip notifications are sent for posts that were made before the blog was
-added to blaggregator.
+- When a blog is added to Blaggregator, all the posts currently in the feed are
+  added to the DB (and therefore marked as seen).  No notifications are sent
+  for these posts.
+
+- From the next crawl onwards, for every crawl a maximum of 2 notifications are
+  sent for posts that haven't already been seen by blaggregator.
 
 ### My blog is multi-purpose and not wholly code/Recurse Center specific
 
