@@ -38,6 +38,7 @@ else:
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
     ('Sasha Laundy', 'sasha.laundy@gmail.com'),
+    ('Puneeth Chaganti', 'punchagan@muse-amuse.in'),
 )
 
 MANAGERS = ADMINS
