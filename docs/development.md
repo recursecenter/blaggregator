@@ -104,5 +104,3 @@ Key files:
 - `home/management/commands/crawlposts.py`: background crawler script
 - `home/feedergrabber27.py`: feed parser
 - `home/templates/home`: all templates live here
-
-Check out [CONTRIBUTE.md](CONTRIBUTE.md) for contribution ideas.

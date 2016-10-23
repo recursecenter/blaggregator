@@ -63,11 +63,11 @@ contributing.  You are welcome to contribute as well!
 Yes, that would be great! This is a project by and for the Recurse Center
 community. Help make it more awesome!
 
-There's a list
+There's a very generic and high level list
 of
-[suggested contributions](https://github.com/recursecenter/blaggregator/blob/master/CONTRIBUTE.md) and
-[open issues](https://github.com/recursecenter/blaggregator/issues) if you're looking
-for an idea.
+[areas that could use some help](https://github.com/recursecenter/blaggregator/blob/master/.github/CONTRIBUTING.md) and
+a bunch of specific
+[open issues](https://github.com/recursecenter/blaggregator/issues).
 
 Look at
 the
