@@ -11,6 +11,7 @@ feedparser==5.1.3
 flake8==3.0.4
 gunicorn==0.17.2
 ipaddress==1.0.17
+Markdown==2.6.7
 mccabe==0.5.2
 oauthlib==0.6.1
 psycopg2==2.5.1
