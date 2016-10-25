@@ -121,3 +121,8 @@ div.bar-container {
 #content {
     clear: both;
 }
+
+/* RSS Feed icon */
+.feed-icon {
+    margin-top: 8px;
+}

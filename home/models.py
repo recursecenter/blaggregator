@@ -1,5 +1,6 @@
 import random
 import string
+import uuid
 
 from django.contrib.auth.models import User
 from django.db import models
@@ -13,15 +14,13 @@ STREAM_CHOICES = (
     ('LOGS', 'Daily Logs'),
 )
 
-# extends the User class to hold additional profile info
-# access with u.hacker.github (where u is user object instance)
-
 
 class Hacker(models.Model):
     user = models.OneToOneField(User)
     avatar_url = models.TextField(blank=True)
     github = models.TextField(blank=True)
     twitter = models.TextField(blank=True)
+    token = models.SlugField(max_length=40, default=lambda: uuid.uuid4().hex, unique=True)
 
 
 class Blog(models.Model):
@@ -34,8 +33,7 @@ class Blog(models.Model):
     feed_url = models.URLField()
     last_crawled = models.DateTimeField('last crawled', blank=True, null=True)
     created = models.DateTimeField('date created', auto_now_add=True)
-    stream = models.CharField(max_length=100, default=STREAM_CHOICES[
-                              0][0], choices=STREAM_CHOICES)
+    stream = models.CharField(max_length=100, default=STREAM_CHOICES[0][0], choices=STREAM_CHOICES)
 
 
 class Post(models.Model):

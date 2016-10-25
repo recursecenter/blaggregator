@@ -1,0 +1,10 @@
+{% load customtags %}
+
+{{ obj.content|safe }}
+
+<p>
+    This post was originally published <a href="{{ obj.url }}" target="_blank">here</a> and
+    you are reading it in the
+    <a href="https://blaggregator.recurse.com/new/">Blaggregator</a> feed.
+    <a href="{{ obj.title|zulip_url:obj.blog.get_stream_display }}" target="_blank">Join the discussion</a> on Zulip!.
+</p>

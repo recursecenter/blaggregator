@@ -2,9 +2,10 @@ from collections import namedtuple
 import datetime
 import math
 import re
+import uuid
 
 from django.contrib import messages
-from django.contrib.auth import logout
+from django.contrib.auth import authenticate, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
@@ -283,12 +284,26 @@ def updated_avatar(request, user_id):
 
 # FIXME: This view could be cached, with cache cleared on crawls or Blog
 # create/delete signals.  Probably most other views could be cached.
-@login_required
 def feed(request):
     """Atom feed of new posts."""
 
-    # FIXME: Need to add token based auth for this view alone
+    token = request.GET.get('token')
+    if authenticate(token=token) is None:
+        raise Http404
+
     return LatestEntriesFeed()(request)
+
+
+@login_required
+def refresh_token(request):
+    """Refresh a users' auth token."""
+
+    hacker = Hacker.objects.get(user=request.user)
+    hacker.token = uuid.uuid4().hex
+    hacker.save()
+
+    profile_url = reverse('profile', kwargs={'user_id': request.user.id})
+    return HttpResponseRedirect(profile_url)
 
 
 @login_required
@@ -296,9 +311,8 @@ def login_error(request):
     """OAuth error page"""
     return render(request, 'home/login_error.html')
 
+
 # login NOT required
-
-
 def about(request):
     """ About page with more info on Blaggregator. """
     return render(request, 'home/about.html')

@@ -13,6 +13,8 @@ place to quickly see the latest changes that the project has undergone.
 
 - [#116] Added an AGPL license to the project -- @punchagan
 
+- [#128] Added token based authentication for atom feed -- @punchagan
+
 ### Changed
 
 - [#127] Use Django's feed generation mechanism instead of a custom template
