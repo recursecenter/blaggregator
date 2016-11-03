@@ -1,0 +1,5 @@
+[run]
+source = home,blaggregator
+omit =
+     home/migrations/*
+     blaggregator/wsgi.py
