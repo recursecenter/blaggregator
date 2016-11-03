@@ -18,9 +18,6 @@ class LatestEntriesFeed(Feed):
     def item_title(self, item):
         return item.title
 
-    def item_description(self, item):
-        return item.content
-
     def item_link(self, item):
         return item.url
 
