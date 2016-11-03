@@ -36,6 +36,9 @@ class FeedsViewTestCase(TestCase):
         response = self.client.get('/atom.xml', data={'token': ''})
         self.assertEqual(response.status_code, 404)
 
+        response = self.client.get('/atom.xml', data={'token': 'BOGUS-TOKEN'})
+        self.assertEqual(response.status_code, 404)
+
     def test_feed_with_no_posts(self):
         self.verify_feed_generation(0)
 
