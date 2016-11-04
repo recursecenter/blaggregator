@@ -1,1 +1,1 @@
-from .test_views import FeedsViewTestCase  # noqa
+from .test_views import AddBlogViewTestCase, FeedsViewTestCase  # noqa

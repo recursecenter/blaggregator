@@ -1,22 +1,44 @@
+from datetime import datetime
+
 from django.conf import settings
 from django.test import TestCase
 from django.test.utils import override_settings
 import feedparser
+from mock import patch
 
-from home.models import Post, User, Hacker
+from home.models import Hacker, Blog, Post, User
 from .utils import create_posts
 
 N_MAX = settings.MAX_FEED_ENTRIES
 
 
 @override_settings(AUTHENTICATION_BACKENDS=('django.contrib.auth.backends.ModelBackend', 'home.token_auth.TokenAuthBackend'))
-class FeedsViewTestCase(TestCase):
+class BaseViewTestCase(TestCase):
 
     def setUp(self):
         self.setup_test_user()
 
     def tearDown(self):
         self.clear_db()
+
+    # Helper methods ####
+
+    def clear_db(self):
+        User.objects.all().delete()
+
+    def setup_test_user(self):
+        self.username = self.password = 'test'
+        self.user = User.objects.create_user(self.username)
+        self.user.set_password(self.password)
+        self.user.save()
+        self.hacker = Hacker.objects.create(user_id=self.user.id)
+
+    def login(self):
+        """Login as test user."""
+        self.client.login(username=self.username, password=self.password)
+
+
+class FeedsViewTestCase(BaseViewTestCase):
 
     def test_should_enforce_authentication(self):
         response = self.client.get('/atom.xml')
@@ -50,24 +72,10 @@ class FeedsViewTestCase(TestCase):
 
     # Helper methods ####
 
-    def login(self):
-        """Login as test user."""
-        self.client.login(username=self.username, password=self.password)
-
-    def clear_db(self):
-        User.objects.all().delete()
-
     def parse_feed(self, content):
         """Parse feed content and return entries."""
         # FIXME: Would it be a good idea to use feedergrabber?
         return feedparser.parse(content)
-
-    def setup_test_user(self):
-        self.username = self.password = 'test'
-        self.user = User.objects.create_user(self.username)
-        self.user.set_password(self.password)
-        self.user.save()
-        self.hacker = Hacker.objects.create(user_id=self.user.id)
 
     def get_included_excluded_posts(self, posts, entries):
         """Returns the set of included and excluded posts."""
@@ -117,3 +125,144 @@ class FeedsViewTestCase(TestCase):
         max_excluded_date = max(excluded, key=lambda x: x.date_posted_or_crawled).date_posted_or_crawled
         min_included_date = min(included, key=lambda x: x.date_posted_or_crawled).date_posted_or_crawled
         self.assertGreaterEqual(min_included_date, max_excluded_date)
+
+
+def empty_feed(url, suggest_feed_url=False):
+    return ([], [])
+
+
+def incorrect_url(url, suggest_feed_url=True):
+    return None, [{'feed_url': 'http://jvns.ca/atom.xml'}]
+
+
+def feed_with_posts(url, suggest_feed_url=True):
+    posts = [
+        # (post_url, post_title, post_date, post_content),
+        ('', 'What happens when you run a rkt container?', datetime(2016, 11, 3), ''),
+        ('', 'Service discovery at Stripe', datetime(2016, 10, 31), ''),
+        ('', 'A few questions about open source', datetime(2016, 10, 26, 10, 0), ''),
+        ('', 'Running containers without Docker', datetime(2016, 10, 26, 21, 0), ''),
+        ('', 'A litmus test for job descriptions', datetime(2016, 10, 21), ''),
+    ]
+
+    return posts, []
+
+
+@patch('home.feedergrabber27.feedergrabber', new=empty_feed)
+class AddBlogViewTestCase(BaseViewTestCase):
+
+    def test_get_add_blog_requires_login(self):
+        # When
+        response = self.client.get('/add_blog/', follow=True)
+
+        # Then
+        self.assertRedirects(response, '/login/?next=%2Fadd_blog%2F')
+
+    def test_get_add_blog_works(self):
+        # Given
+        self.login()
+
+        # When
+        response = self.client.get('/add_blog/')
+
+        # Then
+        self.assertEqual(response.status_code, 200)
+
+    def test_post_add_blog_without_blog_url_barfs(self):
+        # Given
+        self.login()
+
+        # When
+        response = self.client.post('/add_blog/', follow=True)
+
+        # Then
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'No feed URL provided')
+
+    def test_post_add_blog_adds_blog(self):
+        # Given
+        self.login()
+        data = {'feed_url': 'https://jvns.ca/atom.xml'}
+
+        # When
+        response = self.client.post('/add_blog/', data=data, follow=True)
+
+        # Then
+        self.assertRedirects(response, '/new/')
+        self.assertEqual(response.status_code, 200)
+        self.assertIsNotNone(Blog.objects.get(feed_url=data['feed_url']))
+
+    def test_post_add_blog_adds_blog_without_schema(self):
+        # Given
+        self.login()
+        data = {'feed_url': 'jvns.ca/atom.xml'}
+
+        # When
+        response = self.client.post('/add_blog/', data=data, follow=True)
+
+        # Then
+        self.assertRedirects(response, '/new/')
+        self.assertEqual(response.status_code, 200)
+        self.assertIsNotNone(Blog.objects.get(feed_url='http://{}'.format(data['feed_url'])))
+
+    def test_post_add_blog_adds_only_once(self):
+        # Given
+        self.login()
+        data = {'feed_url': 'https://jvns.ca/atom.xml'}
+        self.client.post('/add_blog/', data=data, follow=True)
+        data_ = {'feed_url': 'https://jvns.ca/rss'}
+
+        # When
+        response = self.client.post('/add_blog/', data=data_, follow=True)
+
+        # Then
+        self.assertRedirects(response, '/new/')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(1, Blog.objects.count())
+
+    def test_post_add_blog_adds_different_feeds(self):
+        # Given
+        self.login()
+        data = {'feed_url': 'https://jvns.ca/atom.xml'}
+        self.client.post('/add_blog/', data=data, follow=True)
+        data_ = {'feed_url': 'https://jvns.ca/tags/blaggregator.xml'}
+
+        # When
+        response = self.client.post('/add_blog/', data=data_, follow=True)
+
+        # Then
+        self.assertRedirects(response, '/new/')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(2, Blog.objects.count())
+        self.assertIsNotNone(Blog.objects.get(feed_url=data['feed_url']))
+
+    def test_post_add_blog_suggests_feed_url(self):
+        # Given
+        self.login()
+        data = {'feed_url': 'https://jvns.ca/'}
+
+        # When
+        with patch('home.feedergrabber27.feedergrabber', new=incorrect_url):
+            response = self.client.post('/add_blog/', data=data, follow=True)
+
+        # Then
+        self.assertEqual(0, Blog.objects.count())
+        self.assertRedirects(response, '/add_blog/')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Please use your blog&#39;s feed url")
+        self.assertContains(response, "It may be this -- http://jvns.ca/atom.xml")
+
+    def test_post_add_blog_creates_posts(self):
+        # Given
+        self.login()
+        data = {'feed_url': 'https://jvns.ca/'}
+
+        # When
+        with patch('home.feedergrabber27.feedergrabber', new=feed_with_posts):
+            response = self.client.post('/add_blog/', data=data, follow=True)
+
+        # Then
+        self.assertEqual(1, Blog.objects.count())
+        self.assertEqual(5, Post.objects.count())
+        self.assertRedirects(response, '/new/')
+        self.assertEqual(response.status_code, 200)
