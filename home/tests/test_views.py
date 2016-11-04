@@ -307,3 +307,37 @@ class DeleteBlogViewTestCase(BaseViewTestCase):
 
         # Then
         self.assertEqual(404, response.status_code)
+
+
+class UpdatedAvatarViewTestCase(BaseViewTestCase):
+
+    def test_should_update_avatar_url(self):
+        # Given
+        self.login()
+        expected_url = 'foo.bar'
+
+        def update_user_details(user_id, user):
+            self.user.hacker.avatar_url = expected_url
+            self.user.hacker.save()
+
+        # When
+        with patch('home.views.update_user_details', new=update_user_details):
+            response = self.client.get('/updated_avatar/1/', follow=True)
+
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(expected_url, response.content)
+
+    def test_should_not_update_unknown_hacker_avatar_url(self):
+        # Given
+        self.login()
+        expected_url = 'foo.bar'
+
+        def update_user_details(user_id, user):
+            self.user.hacker.avatar_url = expected_url
+            self.user.hacker.save()
+
+        # When
+        with patch('home.views.update_user_details', new=update_user_details):
+            response = self.client.get('/updated_avatar/200/', follow=True)
+
+        self.assertEqual(404, response.status_code)
