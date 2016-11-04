@@ -3,10 +3,11 @@ from datetime import datetime
 from django.conf import settings
 from django.test import TestCase
 from django.test.utils import override_settings
+from django.utils import timezone
 import feedparser
 from mock import patch
 
-from home.models import Hacker, Blog, Post, User
+from home.models import Hacker, Blog, LogEntry, Post, User
 from .utils import create_posts
 
 N_MAX = settings.MAX_FEED_ENTRIES
@@ -394,3 +395,29 @@ class UpdatedAvatarViewTestCase(BaseViewTestCase):
             response = self.client.get('/updated_avatar/200/', follow=True)
 
         self.assertEqual(404, response.status_code)
+
+
+class ViewPostViewTestCase(BaseViewTestCase):
+
+    def test_should_redirect_to_post(self):
+        # Given
+        feed_url = 'https://jvns.ca/atom.xml'
+        post_url = 'https://jvns.ca/posts/awesome'
+        blog = Blog.objects.create(user=self.user, feed_url=feed_url)
+        timestamp = timezone.make_aware(datetime.now(), timezone.get_default_timezone())
+        post = Post.objects.create(blog=blog, url=post_url, date_posted_or_crawled=timestamp)
+
+        # When
+        response = self.client.get('/post/{}/view/'.format(post.slug))
+
+        # Then
+        self.assertEqual(response['Location'], post_url)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(1, LogEntry.objects.filter(post=post).count())
+
+    def test_does_not_redirect_to_bogus_post(self):
+        # When
+        response = self.client.get('/post/BOGUS/view/')
+
+        # Then
+        self.assertEqual(response.status_code, 404)
