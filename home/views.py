@@ -1,5 +1,6 @@
 from collections import namedtuple
 import datetime
+from functools import wraps
 import math
 import re
 import uuid
@@ -21,6 +22,18 @@ from home.models import Blog, Hacker, LogEntry, Post
 from home.oauth import update_user_details
 from home.feeds import LatestEntriesFeed
 import feedergrabber27
+
+
+def ensure_blog_exists(f):
+    @wraps(f)
+    def wrapper(request, blog_id):
+        try:
+            blog = Blog.objects.get(id=blog_id, user=request.user)
+            request.blog = blog
+        except Blog.DoesNotExist:
+            raise Http404
+        return f(request, blog_id)
+    return wrapper
 
 
 def get_post_info(slug):
@@ -148,28 +161,21 @@ def add_blog(request):
 
 
 @login_required
+@ensure_blog_exists
 def delete_blog(request, blog_id):
 
-    try:
-        user = request.user
-        blog = Blog.objects.get(id=blog_id, user=user)
-    except Blog.DoesNotExist:
-        raise Http404
-
+    blog = request.blog
+    user = request.user
     blog.delete()
-
     return HttpResponseRedirect(reverse('profile', kwargs={'user_id': user.id}))
 
 
 @login_required
+@ensure_blog_exists
 def edit_blog(request, blog_id):
 
-    try:
-        user = request.user
-        blog = Blog.objects.get(id=blog_id, user=user)
-    except Blog.DoesNotExist:
-        raise Http404
-
+    blog = request.blog
+    user = request.user
     BlogForm = modelform_factory(
         Blog,
         fields=("feed_url", "stream"),
