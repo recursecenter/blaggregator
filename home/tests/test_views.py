@@ -309,6 +309,59 @@ class DeleteBlogViewTestCase(BaseViewTestCase):
         self.assertEqual(404, response.status_code)
 
 
+class EditBlogViewTestCase(BaseViewTestCase):
+
+    def test_should_not_edit_blog_not_logged_in(self):
+        # Given
+        feed_url = 'https://jvns.ca/atom.xml'
+        blog = Blog.objects.create(user=self.user, feed_url=feed_url)
+
+        # When
+        response = self.client.get('/edit_blog/%s/' % blog.id, follow=True)
+
+        # Then
+        self.assertRedirects(response, '/login/?next=%2Fedit_blog%2F1%2F')
+
+    def test_should_edit_blog(self):
+        # Given
+        self.login()
+        feed_url = 'https://jvns.ca/atom.xml'
+        blog = Blog.objects.create(user=self.user, feed_url=feed_url)
+        data = {'feed_url': 'https://jvns.ca/rss', 'stream': 'BLOGGING'}
+
+        # When
+        response = self.client.post('/edit_blog/%s/' % blog.id, data=data, follow=True)
+
+        # Then
+        self.assertEqual(200, response.status_code)
+        with self.assertRaises(Blog.DoesNotExist):
+            Blog.objects.get(feed_url=feed_url)
+        self.assertIsNotNone(Blog.objects.get(feed_url=data['feed_url']))
+
+    def test_should_show_edit_blog_form(self):
+        # Given
+        self.login()
+        feed_url = 'https://jvns.ca/atom.xml'
+        blog = Blog.objects.create(user=self.user, feed_url=feed_url)
+
+        # When
+        response = self.client.get('/edit_blog/%s/' % blog.id, follow=True)
+
+        # Then
+        self.assertEqual(200, response.status_code)
+
+    def test_should_not_edit_unknown_blog(self):
+        # Given
+        self.login()
+        data = {'feed_url': 'https://jvns.ca/rss', 'stream': 'BLOGGING'}
+
+        # When
+        response = self.client.post('/edit_blog/%s/' % 200, data=data, follow=True)
+
+        # Then
+        self.assertEqual(404, response.status_code)
+
+
 class UpdatedAvatarViewTestCase(BaseViewTestCase):
 
     def test_should_update_avatar_url(self):

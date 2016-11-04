@@ -1,2 +1,2 @@
-from .test_views import (AddBlogViewTestCase, DeleteBlogViewTestCase,  # noqa
+from .test_views import (AddBlogViewTestCase, DeleteBlogViewTestCase, EditBlogViewTestCase,  # noqa
                          FeedsViewTestCase, UpdatedAvatarViewTestCase)
