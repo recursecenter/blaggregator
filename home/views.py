@@ -78,10 +78,8 @@ def add_blog(request):
     ''' Adds a new blog to a user's profile. '''
 
     if request.method == 'POST':
-        if request.POST['feed_url']:
-
-            feed_url = request.POST['feed_url']
-
+        feed_url = request.POST.get('feed_url', None)
+        if feed_url:
             # add http:// prefix if missing
             if feed_url[:4] != "http":
                 feed_url = "http://" + feed_url
@@ -138,8 +136,8 @@ def add_blog(request):
                         content=post_content,
                         date_posted_or_crawled=post_date,
                     )
-            except:
-                pass
+            except Exception as e:
+                print e
 
             return HttpResponseRedirect(reverse('new'))
         else:
@@ -150,37 +148,17 @@ def add_blog(request):
 
 
 @login_required
-def profile(request, user_id):
+def delete_blog(request, blog_id):
 
     try:
-        hacker = Hacker.objects.get(user=user_id)
-
-    except Hacker.DoesNotExist:
+        user = request.user
+        blog = Blog.objects.get(id=blog_id, user=user)
+    except Blog.DoesNotExist:
         raise Http404
 
-    else:
-        added_blogs = Blog.objects.filter(user=user_id)
-        owner = True if int(user_id) == request.user.id else False
+    blog.delete()
 
-        post_list = Post.objects.filter(blog__user=user_id).order_by('-date_posted_or_crawled')
-        for post in post_list:
-            post.stream = post.blog.get_stream_display()
-
-        context = Context({
-            'hacker': hacker,
-            'blogs': added_blogs,
-            'owner': owner,
-            'post_list': post_list,
-            'show_avatars': False,
-        })
-
-        response = render_to_response(
-            'home/profile.html',
-            context,
-            context_instance=RequestContext(request)
-        )
-
-        return response
+    return HttpResponseRedirect(reverse('profile', kwargs={'user_id': user.id}))
 
 
 @login_required
@@ -221,17 +199,37 @@ def edit_blog(request, blog_id):
 
 
 @login_required
-def delete_blog(request, blog_id):
+def profile(request, user_id):
 
     try:
-        user = request.user
-        blog = Blog.objects.get(id=blog_id, user=user)
-    except Blog.DoesNotExist:
+        hacker = Hacker.objects.get(user=user_id)
+
+    except Hacker.DoesNotExist:
         raise Http404
 
-    blog.delete()
+    else:
+        added_blogs = Blog.objects.filter(user=user_id)
+        owner = True if int(user_id) == request.user.id else False
 
-    return HttpResponseRedirect(reverse('profile', kwargs={'user_id': user.id}))
+        post_list = Post.objects.filter(blog__user=user_id).order_by('-date_posted_or_crawled')
+        for post in post_list:
+            post.stream = post.blog.get_stream_display()
+
+        context = Context({
+            'hacker': hacker,
+            'blogs': added_blogs,
+            'owner': owner,
+            'post_list': post_list,
+            'show_avatars': False,
+        })
+
+        response = render_to_response(
+            'home/profile.html',
+            context,
+            context_instance=RequestContext(request)
+        )
+
+        return response
 
 
 @login_required
