@@ -36,6 +36,18 @@ def ensure_blog_exists(f):
     return wrapper
 
 
+def ensure_hacker_exists(f):
+    @wraps(f)
+    def wrapper(request, user_id):
+        try:
+            hacker = Hacker.objects.get(user=user_id)
+        except Hacker.DoesNotExist:
+            raise Http404
+        request.hacker = hacker
+        return f(request, user_id)
+    return wrapper
+
+
 def get_post_info(slug):
     """ Gets the post object at a given slug. """
 
@@ -205,37 +217,30 @@ def edit_blog(request, blog_id):
 
 
 @login_required
+@ensure_hacker_exists
 def profile(request, user_id):
+    added_blogs = Blog.objects.filter(user=user_id)
+    owner = True if int(user_id) == request.user.id else False
 
-    try:
-        hacker = Hacker.objects.get(user=user_id)
+    post_list = Post.objects.filter(blog__user=user_id).order_by('-date_posted_or_crawled')
+    for post in post_list:
+        post.stream = post.blog.get_stream_display()
 
-    except Hacker.DoesNotExist:
-        raise Http404
+    context = Context({
+        'hacker': request.hacker,
+        'blogs': added_blogs,
+        'owner': owner,
+        'post_list': post_list,
+        'show_avatars': False,
+    })
 
-    else:
-        added_blogs = Blog.objects.filter(user=user_id)
-        owner = True if int(user_id) == request.user.id else False
+    response = render_to_response(
+        'home/profile.html',
+        context,
+        context_instance=RequestContext(request)
+    )
 
-        post_list = Post.objects.filter(blog__user=user_id).order_by('-date_posted_or_crawled')
-        for post in post_list:
-            post.stream = post.blog.get_stream_display()
-
-        context = Context({
-            'hacker': hacker,
-            'blogs': added_blogs,
-            'owner': owner,
-            'post_list': post_list,
-            'show_avatars': False,
-        })
-
-        response = render_to_response(
-            'home/profile.html',
-            context,
-            context_instance=RequestContext(request)
-        )
-
-        return response
+    return response
 
 
 @login_required
@@ -272,17 +277,10 @@ def new(request, page=1):
 
 
 @login_required
+@ensure_hacker_exists
 def updated_avatar(request, user_id):
-    try:
-        Hacker.objects.get(user=user_id)
-
-    except Hacker.DoesNotExist:
-        raise Http404
-
-    else:
-        update_user_details(user_id, request.user)
-        hacker = Hacker.objects.get(user=user_id)
-
+    update_user_details(user_id, request.user)
+    hacker = Hacker.objects.get(user=user_id)
     return HttpResponse(hacker.avatar_url)
 
 
