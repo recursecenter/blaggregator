@@ -266,3 +266,44 @@ class AddBlogViewTestCase(BaseViewTestCase):
         self.assertEqual(5, Post.objects.count())
         self.assertRedirects(response, '/new/')
         self.assertEqual(response.status_code, 200)
+
+
+class DeleteBlogViewTestCase(BaseViewTestCase):
+
+    def test_should_not_delete_blog_not_logged_in(self):
+        # Given
+        feed_url = 'https://jvns.ca/atom.xml'
+        blog = Blog.objects.create(user=self.user, feed_url=feed_url)
+
+        # When
+        self.client.get('/delete_blog/%s/' % blog.id)
+
+        # Then
+        self.assertEqual(1, Blog.objects.count())
+
+    def test_should_delete_blog(self):
+        # Given
+        self.login()
+        feed_url = 'https://jvns.ca/atom.xml'
+        blog = Blog.objects.create(user=self.user, feed_url=feed_url)
+
+        # When
+        self.client.get('/delete_blog/%s/' % blog.id)
+
+        # Then
+        self.assertEqual(0, Blog.objects.count())
+        with self.assertRaises(Blog.DoesNotExist):
+            Blog.objects.get(feed_url=feed_url)
+
+    def test_should_not_delete_unknown_blog(self):
+        # Given
+        self.login()
+        feed_url = 'https://jvns.ca/atom.xml'
+        blog = Blog.objects.create(user=self.user, feed_url=feed_url)
+        self.client.get('/delete_blog/%s/' % blog.id)
+
+        # When
+        response = self.client.get('/delete_blog/%s/' % blog.id)
+
+        # Then
+        self.assertEqual(404, response.status_code)
