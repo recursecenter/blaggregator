@@ -1,6 +1,6 @@
 from collections import namedtuple
 import datetime
-from functools import wraps
+import functools
 import math
 import re
 import uuid
@@ -25,7 +25,7 @@ import feedergrabber27
 
 
 def ensure_blog_exists(f):
-    @wraps(f)
+    @functools.wraps(f)
     def wrapper(request, blog_id):
         try:
             blog = Blog.objects.get(id=blog_id, user=request.user)
@@ -37,7 +37,7 @@ def ensure_blog_exists(f):
 
 
 def ensure_hacker_exists(f):
-    @wraps(f)
+    @functools.wraps(f)
     def wrapper(request, user_id):
         try:
             hacker = Hacker.objects.get(user=user_id)
