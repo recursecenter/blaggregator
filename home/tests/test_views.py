@@ -27,6 +27,12 @@ class BaseViewTestCase(TestCase):
     def clear_db(self):
         User.objects.all().delete()
 
+    def create_posts(self, n):
+        create_posts(1)
+        for blog in Blog.objects.filter():
+            blog.user = self.user
+            blog.save()
+
     def setup_test_user(self):
         self.username = self.password = 'test'
         self.user = User.objects.create_user(self.username)
@@ -401,11 +407,9 @@ class ViewPostViewTestCase(BaseViewTestCase):
 
     def test_should_redirect_to_post(self):
         # Given
-        feed_url = 'https://jvns.ca/atom.xml'
-        post_url = 'https://jvns.ca/posts/awesome'
-        blog = Blog.objects.create(user=self.user, feed_url=feed_url)
-        timestamp = timezone.make_aware(datetime.now(), timezone.get_default_timezone())
-        post = Post.objects.create(blog=blog, url=post_url, date_posted_or_crawled=timestamp)
+        self.create_posts(1)
+        post = Post.objects.filter()[0]
+        post_url = post.url
 
         # When
         response = self.client.get('/post/{}/view/'.format(post.slug))
@@ -421,3 +425,67 @@ class ViewPostViewTestCase(BaseViewTestCase):
 
         # Then
         self.assertEqual(response.status_code, 404)
+
+
+class MostViewedViewTestCase(BaseViewTestCase):
+
+    def test_should_enforce_authentication(self):
+        # When
+        response = self.client.get('/most_viewed/', follow=True)
+
+        # Then
+        self.assertRedirects(response, '/login/?next=%2Fmost_viewed%2F')
+
+    def test_should_show_most_viewed_posts(self):
+        # Given
+        self.login()
+        self.create_posts(10)
+        post = Post.objects.filter()[0]
+        self.client.get('/post/{}/view/'.format(post.slug))
+
+        # When
+        response = self.client.get('/most_viewed/', follow=True)
+
+        # Then
+        self.assertContains(response, post.title)
+
+    def test_should_show_most_viewed_posts_n_days(self):
+        # Given
+        self.login()
+        self.create_posts(10)
+        post = Post.objects.filter()[0]
+        self.client.get('/post/{}/view/'.format(post.slug))
+
+        # When
+        response = self.client.get('/most_viewed/30/', follow=True)
+
+        # Then
+        self.assertContains(response, post.title)
+
+    def test_should_show_most_viewed_posts_tsv(self):
+        # Given
+        self.login()
+        self.create_posts(10)
+        post = Post.objects.filter()[0]
+        self.client.get('/post/{}/view/'.format(post.slug))
+
+        # When
+        response = self.client.get('/most_viewed/?tsv=1', follow=True)
+
+        # Then
+        self.assertEqual(response['Content-Type'], 'text/tab-separated-values')
+        self.assertContains(response, post.title)
+
+    def test_should_show_most_viewed_posts_tsv_n_days(self):
+        # Given
+        self.login()
+        self.create_posts(10)
+        post = Post.objects.filter()[0]
+        self.client.get('/post/{}/view/'.format(post.slug))
+
+        # When
+        response = self.client.get('/most_viewed/30/?tsv=1', follow=True)
+
+        # Then
+        self.assertEqual(response['Content-Type'], 'text/tab-separated-values')
+        self.assertContains(response, post.title)
