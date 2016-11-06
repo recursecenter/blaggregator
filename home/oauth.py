@@ -137,19 +137,13 @@ class HackerSchoolOAuth2(BaseOAuth2):
 
     def get_user_details(self, response):
         """Return user details."""
-        first_name = response.get('first_name') or ''
-        last_name = response.get('last_name') or ''
-        username = first_name + last_name
-        return {
-            'id': response.get('id'),
-            'email': response.get('email'),
-            'first_name': first_name,
-            'last_name': last_name,
-            'username': username,
-            'avatar_url': response.get('image'),
-            'twitter': response.get('twitter') or '',
-            'github': response.get('github') or '',
-        }
+        first_name = response.setdefault('first_name', '')
+        last_name = response.setdefault('last_name', '')
+        response['username'] = first_name + last_name
+        response['avatar_url'] = response.get('image')
+        response.setdefault('github', '')
+        response.setdefault('twitter', '')
+        return response
 
     def get_user_id(self, details, response):
         """Return a unique ID for the current user, by default from server
