@@ -11,7 +11,7 @@ install:
 script:
   # ensure README.md changes all synced to about.html
   - ./scripts/readme_to_about && git diff --exit-code
-  - coverage run manage.py test home
+  - python manage.py test -v 3 home
   - flake8 --ignore=E501 --exclude=migrations,wsgi.py
 
 after_script:
