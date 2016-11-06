@@ -278,3 +278,6 @@ ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'
 # huge feed and forcing users to update feed super-frequently, a good value for
 # this would be around twice the average number of posts in a week.
 MAX_FEED_ENTRIES = 100
+
+# Max number of posts per blog to announce on Zulip per crawl
+MAX_POST_ANNOUNCE = 2

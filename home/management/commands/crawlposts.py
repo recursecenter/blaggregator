@@ -6,6 +6,7 @@ import os
 
 # 3rd-party library
 from django.core.management.base import NoArgsCommand
+from django.conf import settings
 from django.db import transaction
 from django.utils import timezone
 import requests
@@ -19,7 +20,6 @@ log = logging.getLogger("blaggregator")
 ROOT_URL = 'https://blaggregator.recurse.com/'
 
 STREAM = 'blogging'
-MAX_POST_ANNOUNCE = 2
 
 ZULIP_KEY = os.environ.get('ZULIP_KEY')
 ZULIP_EMAIL = os.environ.get('ZULIP_EMAIL')
@@ -52,6 +52,7 @@ class Command(NoArgsCommand):
 
         log.debug('Crawled %s blogs from %s', len(crawled), blog.feed_url)
 
+        created_count = 0
         for link, title, date, content in crawled:
             date = timezone.make_aware(date, timezone.get_default_timezone())
             title = cleantitle(title)
@@ -60,15 +61,14 @@ class Command(NoArgsCommand):
             post, created = get_or_create_post(blog, title, link, date, content)
 
             if created:
-                created_count = 0
+                created_count += 1
                 log.debug("Created '%s' from blog '%s'", title, blog.feed_url)
 
                 # Throttle the amount of new posts that can be announced per
                 # user per crawl.
-                if created_count < MAX_POST_ANNOUNCE:
+                if created_count <= settings.MAX_POST_ANNOUNCE:
                     post_page = ROOT_URL + 'post/' + post.slug
                     self.enqueue_zulip(blog.user, post_page, title, blog.stream)
-                    created_count += 1
 
             # if title changes, update the post
             elif title != post.title or content != post.content:
