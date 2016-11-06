@@ -1,14 +1,85 @@
+"""Utilities for tests."""
 from django.utils import timezone
 import factory
+import feedgenerator
+from hypothesis import strategies as st
+from hypothesis.extra.datetime import datetimes
+from hypothesis.extra.fakefactory import fake_factory
 
 from home.models import Blog, Post, User
 
 tzinfo = timezone.get_default_timezone()
 
 
+def _valid_text():
+    char = st.text(min_size=1, max_size=1).filter(lambda x: u'\x1f' < x)
+    return st.lists(char).map(lambda x: ''.join(x))
+
+
+def _optional(s):
+    return st.one_of(s, st.none())
+
+
+def _generate_feed(atom=False):
+    feed = {
+        'title': _valid_text(),
+        'link': fake_factory('url'),
+        'description': _valid_text(),
+    }
+    optional = {
+        'language': fake_factory('locale').map(lambda x: x.replace('_', '-')),
+        'author_email': fake_factory('email'),
+        'author_name': fake_factory('name'),
+        'author_link': fake_factory('url'),
+        'subtitle': _valid_text(),
+        'categories': st.lists(_valid_text()),
+        'feed_url': fake_factory('url'),
+        'feed_copyright': _valid_text(),
+        'id': fake_factory('url') if atom else _valid_text(),
+        'ttl': st.integers(min_value=0),
+    }
+    feed.update([(k, _optional(v)) for (k, v) in optional.items()])
+    return feed
+
+
+def _generate_item(atom=False):
+    link = fake_factory('url')
+    item = {
+        'title': _valid_text(),
+        'link': link,
+        'description': _valid_text(),
+    }
+    optional = {
+        'content': _valid_text(),
+        'author_email': fake_factory('email'),
+        'author_name': fake_factory('name'),
+        'author_link': fake_factory('url'),
+        'pubdate': datetimes(),
+        'updateddate': datetimes(),
+        # 'comments': to_unicode(comments),
+        'unique_id': link if atom else _valid_text(),
+        # # 'enclosure': enclosure,
+        # # 'categories': st.lists(_valid_text()),
+        'item_copyright': _valid_text(),
+        'ttl': st.integers(min_value=0),
+    }
+    item.update([(k, _optional(v)) for (k, v) in optional.items()])
+    return item
+
+
 def create_posts(n):
     """Create the specified number of posts."""
     return PostFactory.create_batch(n)
+
+
+def generate_feed():
+    rss = st.builds(feedgenerator.Rss201rev2Feed, **_generate_feed())
+    atom = st.builds(feedgenerator.Atom1Feed, **_generate_feed(atom=True))
+    return st.one_of(rss, atom)
+
+
+def generate_items():
+    return st.lists(st.builds(dict, **_generate_item()), max_size=20)
 
 
 class UserFactory(factory.DjangoModelFactory):

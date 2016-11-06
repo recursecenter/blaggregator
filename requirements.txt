@@ -8,10 +8,12 @@ enum34==1.1.6
 factory-boy==2.7.0
 fake-factory==0.7.2
 Faker==0.7.3
+feedgenerator==1.9
 feedparser==5.1.3
 flake8==3.0.4
 funcsigs==1.0.2
 gunicorn==0.17.2
+hypothesis==3.6.0
 ipaddress==1.0.17
 Markdown==2.6.7
 mccabe==0.5.2
