@@ -78,8 +78,16 @@ def generate_feed():
     return st.one_of(rss, atom)
 
 
-def generate_items():
-    return st.lists(st.builds(dict, **_generate_item()), max_size=20)
+def generate_full_feed(min_items=0, max_items=20):
+    def _create_feed(feed, items):
+        for item in items:
+            feed.add_item(**item)
+        return feed
+    return st.builds(_create_feed, generate_feed(), generate_items(min_size=min_items, max_size=max_items))
+
+
+def generate_items(min_size=0, max_size=20):
+    return st.lists(st.builds(dict, **_generate_item()), min_size=min_size, max_size=max_size)
 
 
 class UserFactory(factory.DjangoModelFactory):
@@ -94,6 +102,7 @@ class BlogFactory(factory.DjangoModelFactory):
         model = Blog
 
     user = factory.SubFactory(UserFactory)
+    feed_url = factory.Faker('uri')
 
 
 # FIXME: hypothesis doesn't work with this version of Django, if not we

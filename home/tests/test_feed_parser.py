@@ -8,17 +8,14 @@ from hypothesis import given, HealthCheck, note, settings
 from mock import patch
 
 from home.feedergrabber27 import feedergrabber
-from home.tests.utils import generate_feed, generate_items
+from home.tests.utils import generate_full_feed
 
 
 class FeedParserTestCase(TestCase):
 
-    @given(generate_feed(), generate_items())
+    @given(generate_full_feed())
     @settings(max_examples=1000, suppress_health_check=[HealthCheck.too_slow])
-    def test_parsing_valid_feeds(self, feed, items):
-
-        for item in items:
-            feed.add_item(**item)
+    def test_parsing_valid_feeds(self, feed):
 
         note(feed.feed)
         note(feed.items)
@@ -32,7 +29,6 @@ class FeedParserTestCase(TestCase):
                 self.assertIn('Parsing methods not successful', errors[0][0])
 
             else:
-                self.assertEqual(len(items), len(feed.items))
                 for i, (link, title, date, content) in enumerate(contents):
                     item = feed.items[i]
                     self.assertEqual(link, item['link'])
@@ -44,12 +40,9 @@ class FeedParserTestCase(TestCase):
                         datetime.datetime.now().utctimetuple(), date.utctimetuple()
                     )
 
-    @given(generate_feed(), generate_items())
+    @given(generate_full_feed())
     @settings(max_examples=1000, suppress_health_check=[HealthCheck.too_slow])
-    def test_parsing_broken_feeds(self, feed, items):
-
-        for item in items:
-            feed.add_item(**item)
+    def test_parsing_broken_feeds(self, feed):
 
         note(feed.feed)
         note(feed.items)
