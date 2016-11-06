@@ -27,7 +27,7 @@ class BaseViewTestCase(TestCase):
         User.objects.all().delete()
 
     def create_posts(self, n):
-        create_posts(1)
+        create_posts(n)
         for blog in Blog.objects.filter():
             blog.user = self.user
             blog.save()
@@ -483,3 +483,37 @@ class MostViewedViewTestCase(BaseViewTestCase):
         # Then
         self.assertEqual(response['Content-Type'], 'text/tab-separated-values')
         self.assertContains(response, post.title)
+
+
+class NewViewTestCase(BaseViewTestCase):
+
+    def test_should_show_new_posts(self):
+        # Given
+        self.login()
+        self.create_posts(5)
+
+        # When
+        response = self.client.get('/new/', follow=True)
+
+        # Then
+        for post in Post.objects.all():
+            self.assertContains(response, post.title)
+            self.assertContains(response, post.slug)
+
+    def test_should_paginate_new_posts(self):
+        # Given
+        self.login()
+        self.create_posts(15)
+
+        # When
+        response_1 = self.client.get('/new/', follow=True)
+        response_2 = self.client.get('/new/2/', follow=True)
+
+        # Then
+        for post in Post.objects.all():
+            if post.title in response_1.content:
+                self.assertContains(response_1, post.slug)
+                self.assertNotContains(response_2, post.title)
+            else:
+                self.assertContains(response_2, post.title)
+                self.assertContains(response_2, post.slug)
