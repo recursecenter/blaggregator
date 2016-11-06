@@ -11,9 +11,9 @@ from home.models import Blog, Post, User
 tzinfo = timezone.get_default_timezone()
 
 
-def _valid_text():
+def _valid_text(allow_empty=True):
     char = st.text(min_size=1, max_size=1).filter(lambda x: u'\x1f' < x)
-    return st.lists(char).map(lambda x: ''.join(x))
+    return st.lists(char).map(lambda x: ''.join(x) + ('.' if not allow_empty else ''))
 
 
 def _optional(s):
@@ -45,7 +45,7 @@ def _generate_feed(atom=False):
 def _generate_item(atom=False):
     link = fake_factory('url')
     item = {
-        'title': _valid_text(),
+        'title': _valid_text(allow_empty=False),
         'link': link,
         'description': _valid_text(),
     }

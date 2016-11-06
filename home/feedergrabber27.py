@@ -92,19 +92,16 @@ def feedergrabber(url=None, suggest_feed_url=False):
     # Gather links, titles, and dates
     for i in file_contents.entries:
         # Link
-        try:
-            link = i.link
-        except AttributeError:
-            errors.append([url +
-                           ': A link was unexpectedly not returned by feedparse.'])
+        link = getattr(i, 'link', '')
+        if not link:
+            errors.append([url + ': A link was unexpectedly not returned by feedparse.'])
             continue
 
         # Title
-        try:
-            title = i.title
-        except AttributeError:
-            errors.append([url +
-                           ':A title was unexpectedly not returned by feedparse.'])
+        title = getattr(i, 'title', '')
+        if not title:
+            errors.append([url + ':A title was unexpectedly not returned by feedparse.'])
+            continue
 
         # Unescaping HTML entities
         h = HTMLParser.HTMLParser()
