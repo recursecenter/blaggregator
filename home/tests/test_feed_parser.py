@@ -41,7 +41,7 @@ class FeedParserTestCase(TestCase):
                     )
 
     @given(generate_full_feed())
-    @settings(max_examples=1000, suppress_health_check=[HealthCheck.too_slow])
+    @settings(max_examples=1000, suppress_health_check=[HealthCheck.too_slow, HealthCheck.filter_too_much])
     def test_parsing_broken_feeds(self, feed):
 
         note(feed.feed)
