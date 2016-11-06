@@ -3,7 +3,6 @@ from datetime import datetime
 from django.conf import settings
 from django.test import TestCase
 from django.test.utils import override_settings
-from django.utils import timezone
 import feedparser
 from mock import patch
 
@@ -390,14 +389,9 @@ class UpdatedAvatarViewTestCase(BaseViewTestCase):
     def test_should_not_update_unknown_hacker_avatar_url(self):
         # Given
         self.login()
-        expected_url = 'foo.bar'
-
-        def update_user_details(user_id, user):
-            self.user.hacker.avatar_url = expected_url
-            self.user.hacker.save()
 
         # When
-        with patch('home.views.update_user_details', new=update_user_details):
+        with patch('home.views.update_user_details', new=lambda x, y: None):
             response = self.client.get('/updated_avatar/200/', follow=True)
 
         self.assertEqual(404, response.status_code)
