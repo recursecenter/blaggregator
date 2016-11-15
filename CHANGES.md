@@ -7,6 +7,12 @@ this project doesn't really have releases (or even versioning, until now), it
 is a project that effects Recursers in "real ways".  It would be nice to have a
 place to quickly see the latest changes that the project has undergone.
 
+## 2016-11
+
+### Changed
+
+- [#106] Upgraded to Django 1.10 -- @punchagan
+
 ## 2016-10
 
 ### Added
