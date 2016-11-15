@@ -1,13 +1,11 @@
 # Standard library
 from collections import deque
 import logging
-from optparse import make_option
 import os
 
 # 3rd-party library
-from django.core.management.base import NoArgsCommand
+from django.core.management.base import BaseCommand
 from django.conf import settings
-from django.db import transaction
 from django.utils import timezone
 import requests
 
@@ -26,16 +24,9 @@ ZULIP_EMAIL = os.environ.get('ZULIP_EMAIL')
 ZULIP_URL = 'https://recurse.zulipchat.com/api/v1/messages'
 
 
-class Command(NoArgsCommand):
+class Command(BaseCommand):
 
     help = 'Periodically crawls all blogs for new posts.'
-
-    option_list = NoArgsCommand.option_list + (
-        make_option('--dry-run',
-                    action='store_true',
-                    default=False,
-                    help="Don't actually touch the database"),
-    )
 
     # Queue up the messages for Zulip so they aren't sent until after the
     #   blog post instance is created in the database
@@ -81,21 +72,16 @@ class Command(NoArgsCommand):
                 # Any other updates are ignored, as of now
                 pass
 
-    @transaction.commit_manually
-    def handle_noargs(self, **options):
+    def handle(self, **options):
         for blog in Blog.objects.all():
             try:
                 self.crawlblog(blog)
             except Exception as e:
                 log.exception(e)
-        if options['dry_run']:
-            transaction.rollback()
-            print "\nDON'T FORGET TO RUN THIS FOR REAL\n"
-        else:
-            for message in self.zulip_queue:
-                user, link, title, stream = message
-                send_message_zulip(user, link, title, stream)
-            transaction.commit()
+
+        for message in self.zulip_queue:
+            user, link, title, stream = message
+            send_message_zulip(user, link, title, stream)
 
     def enqueue_zulip(self, user, link, title, stream=STREAM):
         self.zulip_queue.append((user, link, title, stream))

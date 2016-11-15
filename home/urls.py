@@ -1,11 +1,10 @@
-from django.conf.urls import include, patterns, url
+from django.conf.urls import include, url
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 
 from home import views
 
-urlpatterns = patterns(
-    '',  # prefix
+urlpatterns = [
     url(r'^$', lambda x: HttpResponseRedirect(reverse('new'))),
     url(r'^login/$', views.log_in_oauth),
     url(r'^profile/(?P<user_id>\d+)/$', views.profile, name='profile'),
@@ -25,4 +24,4 @@ urlpatterns = patterns(
     url(r'^most_viewed/(?P<ndays>\d+)/$', views.most_viewed, name='most_viewed_days'),
     url(r'^updated_avatar/(?P<user_id>\d+)/$', views.updated_avatar, name='updated_avatar'),
     url('', include('social.apps.django_app.urls', namespace='social')),
-)
+]

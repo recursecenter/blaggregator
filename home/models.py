@@ -15,12 +15,17 @@ STREAM_CHOICES = (
 )
 
 
+def token_default():
+    return uuid.uuid4().hex
+
+
 class Hacker(models.Model):
+
     user = models.OneToOneField(User)
     avatar_url = models.TextField(blank=True)
     github = models.TextField(blank=True)
     twitter = models.TextField(blank=True)
-    token = models.SlugField(max_length=40, default=lambda: uuid.uuid4().hex, unique=True)
+    token = models.SlugField(max_length=40, default=token_default, unique=True)
 
 
 class Blog(models.Model):
@@ -58,5 +63,5 @@ class LogEntry(models.Model):
 
     date = models.DateTimeField()
     referer = models.URLField(blank=True, null=True)
-    remote_addr = models.IPAddressField(blank=True, null=True)
+    remote_addr = models.GenericIPAddressField(blank=True, null=True)
     user_agent = models.TextField(blank=True, null=True)

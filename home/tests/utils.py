@@ -10,10 +10,11 @@ from home.models import Blog, Post, User
 
 tzinfo = timezone.get_default_timezone()
 
+alphabet = ''.join([unichr(i) for i in range(32, 2 ** 10)])
+
 
 def _valid_text(allow_empty=True):
-    char = st.text(min_size=1, max_size=1).filter(lambda x: u'\x1f' < x)
-    return st.lists(char).map(lambda x: ''.join(x) + ('.' if not allow_empty else ''))
+    return st.text(alphabet).map(lambda x: ('.' if not allow_empty else '') + x)
 
 
 def _optional(s):

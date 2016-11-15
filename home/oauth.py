@@ -86,7 +86,8 @@ def create_or_update_hacker(strategy, details, response, user, *args, **kwargs):
 def update_user_details(hacker_id, user):
     social_auth = DjangoUserMixin.get_social_auth_for_user(user)[0]
     backend = social_auth.get_backend_instance()
-    social_auth.refresh_token(DjangoStrategy())
+    # FIXME: storage??
+    social_auth.refresh_token(DjangoStrategy(None))
     url = backend.HACKER_SCHOOL_ROOT + '/api/v1/people/%s?' % hacker_id + urlencode({
         'access_token': social_auth.extra_data['access_token']
     })

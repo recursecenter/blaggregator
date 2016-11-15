@@ -14,8 +14,7 @@ from django.db.models import Count
 from django.forms import TextInput
 from django.forms.models import modelform_factory
 from django.http import HttpResponse, HttpResponseRedirect, Http404
-from django.shortcuts import render_to_response, render
-from django.template import Context, RequestContext
+from django.shortcuts import render
 from django.utils import timezone
 
 from home.models import Blog, Hacker, LogEntry, Post
@@ -169,7 +168,7 @@ def add_blog(request):
             messages.error(request, "No feed URL provided.")
             return HttpResponseRedirect(reverse('add_blog'))
     else:
-        return render_to_response('home/add_blog.html', {}, context_instance=RequestContext(request))
+        return render(request, 'home/add_blog.html')
 
 
 @login_required
@@ -201,19 +200,8 @@ def edit_blog(request, blog_id):
             return HttpResponseRedirect(reverse('profile', kwargs={'user_id': user.id}))
 
     form = BlogForm(instance=blog)
-
-    context = Context({
-        'blog': blog,
-        'form': form
-    })
-
-    response = render_to_response(
-        'home/edit_blog.html',
-        context,
-        context_instance=RequestContext(request)
-    )
-
-    return response
+    context = {'blog': blog, 'form': form}
+    return render(request, 'home/edit_blog.html', context)
 
 
 @login_required
@@ -226,21 +214,14 @@ def profile(request, user_id):
     for post in post_list:
         post.stream = post.blog.get_stream_display()
 
-    context = Context({
+    context = {
         'hacker': request.hacker,
         'blogs': added_blogs,
         'owner': owner,
         'post_list': post_list,
         'show_avatars': False,
-    })
-
-    response = render_to_response(
-        'home/profile.html',
-        context,
-        context_instance=RequestContext(request)
-    )
-
-    return response
+    }
+    return render(request, 'home/profile.html', context)
 
 
 @login_required
@@ -264,16 +245,13 @@ def new(request, page=1):
         post.avatar = user.hacker.avatar_url
         post.stream = post.blog.get_stream_display()
 
-    context = Context({
+    context = {
         "post_list": post_list,
         "page": int(page),
         "pages": pages,
         'show_avatars': True,
-    })
-
-    return render_to_response('home/new.html',
-                              context,
-                              context_instance=RequestContext(request))
+    }
+    return render(request, 'home/new.html', context)
 
 
 @login_required
@@ -349,9 +327,7 @@ def most_viewed(request, ndays='7'):
             'from': since.date(),
             'to': now.date(),
         }
-        response = render_to_response(
-            'home/most_viewed.html', context
-        )
+        response = render(request, 'home/most_viewed.html', context)
 
     return response
 
