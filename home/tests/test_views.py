@@ -162,7 +162,7 @@ class AddBlogViewTestCase(BaseViewTestCase):
         response = self.client.get('/add_blog/', follow=True)
 
         # Then
-        self.assertRedirects(response, '/login/?next=%2Fadd_blog%2F')
+        self.assertRedirects(response, '/login/?next=/add_blog/')
 
     def test_get_add_blog_works(self):
         # Given
@@ -326,7 +326,7 @@ class EditBlogViewTestCase(BaseViewTestCase):
         response = self.client.get('/edit_blog/%s/' % blog.id, follow=True)
 
         # Then
-        self.assertRedirects(response, '/login/?next=%2Fedit_blog%2F1%2F')
+        self.assertRedirects(response, '/login/?next=/edit_blog/1/')
 
     def test_should_edit_blog(self):
         # Given
@@ -428,7 +428,7 @@ class MostViewedViewTestCase(BaseViewTestCase):
         response = self.client.get('/most_viewed/', follow=True)
 
         # Then
-        self.assertRedirects(response, '/login/?next=%2Fmost_viewed%2F')
+        self.assertRedirects(response, '/login/?next=/most_viewed/')
 
     def test_should_show_most_viewed_posts(self):
         # Given
