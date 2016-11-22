@@ -5,7 +5,6 @@ SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 # True: heroku config:set DJANGO_DEBUG=True
 # False: heroku config:unset DJANGO_DEBUG
 DEBUG = 'DJANGO_DEBUG' in os.environ
-TEMPLATE_DEBUG = DEBUG
 
 if os.environ.get('PROD', None):
     print "** DETECTED PRODUCTION ENVIRONMENT"
@@ -132,13 +131,6 @@ STATICFILES_FINDERS = (
 SECRET_KEY = os.environ.get('BLAGGREGATOR_SECRET_KEY',
                             '%dut3)!1f(nm0x8bm@tuj!*!2oe=+3+bsw2lf0)%(4l8d2^z8s')
 
-# List of callables that know how to import templates from various sources.
-TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-    #     'django.template.loaders.eggs.Loader',
-)
-
 MIDDLEWARE_CLASSES = (
     'home.middleware.RecurseSubdomainMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -147,8 +139,6 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'social.apps.django_app.middleware.SocialAuthExceptionMiddleware',
-    # Uncomment the next line for simple clickjacking protection:
-    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
 ROOT_URLCONF = 'blaggregator.urls'
@@ -156,22 +146,29 @@ ROOT_URLCONF = 'blaggregator.urls'
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'blaggregator.wsgi.application'
 
-TEMPLATE_CONTEXT_PROCESSORS = (
-    'django.contrib.messages.context_processors.messages',
-    'django.contrib.auth.context_processors.auth',
-    'django.core.context_processors.static',
-    'django.core.context_processors.request',
-    'social.apps.django_app.context_processors.backends',
-    'social.apps.django_app.context_processors.login_redirect',
-    'home.context_processors.primary_blog',
-)
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'debug': DEBUG,
+            'context_processors': [
+                'django.template.context_processors.request',
+                'django.template.context_processors.debug',
+                'django.contrib.auth.context_processors.auth',
+                'django.template.context_processors.i18n',
+                'django.template.context_processors.media',
+                'django.template.context_processors.csrf',
+                'django.contrib.messages.context_processors.messages',
+                'social.apps.django_app.context_processors.backends',
+                'social.apps.django_app.context_processors.login_redirect',
+                'home.context_processors.primary_blog',
+            ]
+        }
+    },
+]
 
-TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-    os.path.join(SITE_ROOT, 'templates'),
-)
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -182,7 +179,6 @@ INSTALLED_APPS = (
     'home',
     'django.contrib.admin',
     'storages',
-    'south',
     'django.contrib.humanize',
     'social.apps.django_app.default',
 )
@@ -192,7 +188,7 @@ AUTHENTICATION_BACKENDS = (
     'home.token_auth.TokenAuthBackend',
 )
 
-LOGIN_URL = '/login'
+LOGIN_URL = '/login/'
 SOCIAL_AUTH_HACKERSCHOOL_KEY = os.environ.get('SOCIAL_AUTH_HS_KEY', None)
 SOCIAL_AUTH_HACKERSCHOOL_SECRET = os.environ.get('SOCIAL_AUTH_HS_SECRET', None)
 SOCIAL_AUTH_HACKERSCHOOL_LOGIN_URL = '/login'
@@ -278,3 +274,6 @@ ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'
 # huge feed and forcing users to update feed super-frequently, a good value for
 # this would be around twice the average number of posts in a week.
 MAX_FEED_ENTRIES = 100
+
+# Max number of posts per blog to announce on Zulip per crawl
+MAX_POST_ANNOUNCE = 2

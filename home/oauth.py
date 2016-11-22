@@ -86,7 +86,8 @@ def create_or_update_hacker(strategy, details, response, user, *args, **kwargs):
 def update_user_details(hacker_id, user):
     social_auth = DjangoUserMixin.get_social_auth_for_user(user)[0]
     backend = social_auth.get_backend_instance()
-    social_auth.refresh_token(DjangoStrategy())
+    # FIXME: storage??
+    social_auth.refresh_token(DjangoStrategy(None))
     url = backend.HACKER_SCHOOL_ROOT + '/api/v1/people/%s?' % hacker_id + urlencode({
         'access_token': social_auth.extra_data['access_token']
     })
@@ -137,19 +138,13 @@ class HackerSchoolOAuth2(BaseOAuth2):
 
     def get_user_details(self, response):
         """Return user details."""
-        first_name = response.get('first_name') or ''
-        last_name = response.get('last_name') or ''
-        username = first_name + last_name
-        return {
-            'id': response.get('id'),
-            'email': response.get('email'),
-            'first_name': first_name,
-            'last_name': last_name,
-            'username': username,
-            'avatar_url': response.get('image'),
-            'twitter': response.get('twitter') or '',
-            'github': response.get('github') or '',
-        }
+        first_name = response.setdefault('first_name', '')
+        last_name = response.setdefault('last_name', '')
+        response['username'] = first_name + last_name
+        response['avatar_url'] = response.get('image')
+        response.setdefault('github', '')
+        response.setdefault('twitter', '')
+        return response
 
     def get_user_id(self, details, response):
         """Return a unique ID for the current user, by default from server

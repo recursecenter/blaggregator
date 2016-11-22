@@ -1,5 +1,6 @@
 from collections import namedtuple
 import datetime
+from functools import wraps
 import math
 import re
 import uuid
@@ -13,14 +14,37 @@ from django.db.models import Count
 from django.forms import TextInput
 from django.forms.models import modelform_factory
 from django.http import HttpResponse, HttpResponseRedirect, Http404
-from django.shortcuts import render_to_response, render
-from django.template import Context, RequestContext
+from django.shortcuts import render
 from django.utils import timezone
 
 from home.models import Blog, Hacker, LogEntry, Post
 from home.oauth import update_user_details
 from home.feeds import LatestEntriesFeed
 import feedergrabber27
+
+
+def ensure_blog_exists(f):
+    @wraps(f)
+    def wrapper(request, blog_id):
+        try:
+            blog = Blog.objects.get(id=blog_id, user=request.user)
+            request.blog = blog
+        except Blog.DoesNotExist:
+            raise Http404
+        return f(request, blog_id)
+    return wrapper
+
+
+def ensure_hacker_exists(f):
+    @wraps(f)
+    def wrapper(request, user_id):
+        try:
+            hacker = Hacker.objects.get(user=user_id)
+        except Hacker.DoesNotExist:
+            raise Http404
+        request.hacker = hacker
+        return f(request, user_id)
+    return wrapper
 
 
 def get_post_info(slug):
@@ -78,10 +102,8 @@ def add_blog(request):
     ''' Adds a new blog to a user's profile. '''
 
     if request.method == 'POST':
-        if request.POST['feed_url']:
-
-            feed_url = request.POST['feed_url']
-
+        feed_url = request.POST.get('feed_url', None)
+        if feed_url:
             # add http:// prefix if missing
             if feed_url[:4] != "http":
                 feed_url = "http://" + feed_url
@@ -138,60 +160,33 @@ def add_blog(request):
                         content=post_content,
                         date_posted_or_crawled=post_date,
                     )
-            except:
-                pass
+            except Exception as e:
+                print e
 
             return HttpResponseRedirect(reverse('new'))
         else:
             messages.error(request, "No feed URL provided.")
             return HttpResponseRedirect(reverse('add_blog'))
     else:
-        return render_to_response('home/add_blog.html', {}, context_instance=RequestContext(request))
+        return render(request, 'home/add_blog.html')
 
 
 @login_required
-def profile(request, user_id):
+@ensure_blog_exists
+def delete_blog(request, blog_id):
 
-    try:
-        hacker = Hacker.objects.get(user=user_id)
-
-    except Hacker.DoesNotExist:
-        raise Http404
-
-    else:
-        added_blogs = Blog.objects.filter(user=user_id)
-        owner = True if int(user_id) == request.user.id else False
-
-        post_list = Post.objects.filter(blog__user=user_id).order_by('-date_posted_or_crawled')
-        for post in post_list:
-            post.stream = post.blog.get_stream_display()
-
-        context = Context({
-            'hacker': hacker,
-            'blogs': added_blogs,
-            'owner': owner,
-            'post_list': post_list,
-            'show_avatars': False,
-        })
-
-        response = render_to_response(
-            'home/profile.html',
-            context,
-            context_instance=RequestContext(request)
-        )
-
-        return response
+    blog = request.blog
+    user = request.user
+    blog.delete()
+    return HttpResponseRedirect(reverse('profile', kwargs={'user_id': user.id}))
 
 
 @login_required
+@ensure_blog_exists
 def edit_blog(request, blog_id):
 
-    try:
-        user = request.user
-        blog = Blog.objects.get(id=blog_id, user=user)
-    except Blog.DoesNotExist:
-        raise Http404
-
+    blog = request.blog
+    user = request.user
     BlogForm = modelform_factory(
         Blog,
         fields=("feed_url", "stream"),
@@ -205,33 +200,28 @@ def edit_blog(request, blog_id):
             return HttpResponseRedirect(reverse('profile', kwargs={'user_id': user.id}))
 
     form = BlogForm(instance=blog)
-
-    context = Context({
-        'blog': blog,
-        'form': form
-    })
-
-    response = render_to_response(
-        'home/edit_blog.html',
-        context,
-        context_instance=RequestContext(request)
-    )
-
-    return response
+    context = {'blog': blog, 'form': form}
+    return render(request, 'home/edit_blog.html', context)
 
 
 @login_required
-def delete_blog(request, blog_id):
+@ensure_hacker_exists
+def profile(request, user_id):
+    added_blogs = Blog.objects.filter(user=user_id)
+    owner = True if int(user_id) == request.user.id else False
 
-    try:
-        user = request.user
-        blog = Blog.objects.get(id=blog_id, user=user)
-    except Blog.DoesNotExist:
-        raise Http404
+    post_list = Post.objects.filter(blog__user=user_id).order_by('-date_posted_or_crawled')
+    for post in post_list:
+        post.stream = post.blog.get_stream_display()
 
-    blog.delete()
-
-    return HttpResponseRedirect(reverse('profile', kwargs={'user_id': user.id}))
+    context = {
+        'hacker': request.hacker,
+        'blogs': added_blogs,
+        'owner': owner,
+        'post_list': post_list,
+        'show_avatars': False,
+    }
+    return render(request, 'home/profile.html', context)
 
 
 @login_required
@@ -255,30 +245,20 @@ def new(request, page=1):
         post.avatar = user.hacker.avatar_url
         post.stream = post.blog.get_stream_display()
 
-    context = Context({
+    context = {
         "post_list": post_list,
         "page": int(page),
         "pages": pages,
         'show_avatars': True,
-    })
-
-    return render_to_response('home/new.html',
-                              context,
-                              context_instance=RequestContext(request))
+    }
+    return render(request, 'home/new.html', context)
 
 
 @login_required
+@ensure_hacker_exists
 def updated_avatar(request, user_id):
-    try:
-        Hacker.objects.get(user=user_id)
-
-    except Hacker.DoesNotExist:
-        raise Http404
-
-    else:
-        update_user_details(user_id, request.user)
-        hacker = Hacker.objects.get(user=user_id)
-
+    update_user_details(user_id, request.user)
+    hacker = Hacker.objects.get(user=user_id)
     return HttpResponse(hacker.avatar_url)
 
 
@@ -347,9 +327,7 @@ def most_viewed(request, ndays='7'):
             'from': since.date(),
             'to': now.date(),
         }
-        response = render_to_response(
-            'home/most_viewed.html', context
-        )
+        response = render(request, 'home/most_viewed.html', context)
 
     return response
 
