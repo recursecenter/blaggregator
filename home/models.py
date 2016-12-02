@@ -23,8 +23,8 @@ class Hacker(models.Model):
 
     user = models.OneToOneField(User)
     avatar_url = models.TextField(blank=True)
-    github = models.TextField(blank=True)
-    twitter = models.TextField(blank=True)
+    github = models.TextField(blank=True, null=True)
+    twitter = models.TextField(blank=True, null=True)
     token = models.SlugField(max_length=40, default=token_default, unique=True)
 
 
