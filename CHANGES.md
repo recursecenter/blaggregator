@@ -7,6 +7,13 @@ this project doesn't really have releases (or even versioning, until now), it
 is a project that effects Recursers in "real ways".  It would be nice to have a
 place to quickly see the latest changes that the project has undergone.
 
+## 2016-12
+
+### Fixed
+
+- [#132] OAuth account creation fails if user does not have 'twitter' or
+  'github' details in their profile -- @punchagan
+
 ## 2016-11
 
 ### Changed
