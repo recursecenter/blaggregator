@@ -159,4 +159,4 @@ charity the group hates (added incentive to hit the publish button!).
 
 The Fall 2013 batch ran a very successful Iron Blogger program. Mike
 Walker
-[wrote a very nice article on how it worked](http://blog.lazerwalker.com/blog/2013/12/24/one-post-a-week-running-an-iron-blogger-challenge/).
+[wrote a very nice article on how it worked](http://blog.lazerwalker.com/2013/12/24/one-post-a-week-running-an-iron-blogger-challenge).
