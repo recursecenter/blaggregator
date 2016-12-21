@@ -27,7 +27,7 @@ launched their blog.</p>
 Copyright © 2013-2016 Sasha Laundy and others.
 
 This software is licensed under the terms of the AGPL, Version 3. The complete
-license can be found at http://www.gnu.org/licenses/agpl-3.0.html.
+license can be found at https://www.gnu.org/licenses/agpl-3.0.html.
 
 ## FAQ
 
@@ -148,7 +148,7 @@ writing.
     fucks](http://www.garann.com/dev/2013/how-to-blog-about-code-and-give-zero-fucks/).
     (Garann Means)
 -   Please add your fave inspiration with a [pull
-    request](http://github.com/recursecenter/blaggregator/pulls).
+    request](https://github.com/recursecenter/blaggregator/pulls).
 
 ### I need some accountability!
 

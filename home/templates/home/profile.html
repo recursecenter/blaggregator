@@ -6,7 +6,7 @@
     {% if owner %}
         Your
     {% else %}
-        <a class="avatar media-object pull-left" target="_blank" href="http://recurse.com/people/{{hacker.user.id}}">
+        <a class="avatar media-object pull-left" target="_blank" href="https://recurse.com/people/{{hacker.user.id}}">
             <img data-author-id="{{ hacker.user.id }}" src="{{ hacker.avatar_url }}" width="80px" height="80px" style="margin-bottom:1em; margin-right:0.5em;">
         </a>
         {{ hacker.user.first_name }} {{ hacker.user.last_name }}'s
