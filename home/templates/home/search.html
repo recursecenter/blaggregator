@@ -1,0 +1,23 @@
+{% extends "home/base.html" %}
+{% load customtags %}
+
+{% block pagetitle %}Blaggregator{% endblock %}
+
+{% block title %}
+
+{% endblock %}
+
+{% block content %}
+
+      <h2 style="margin-bottom:30px">Search results for '{{ query }}'</h2>
+      {% if not post_list %}
+      No results found!
+      {% else %}
+      <p>Found {{ count }} result(s)</p>
+
+      {% endif %}
+
+
+{% include 'home/postlist.html' %}
+
+{% endblock %}
