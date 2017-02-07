@@ -6,6 +6,28 @@ get started with the code.
 
 ## Installation:
 
+# Docker Setup
+Requires Docker and Docker-compose to simplify setup of development environment.
+
+In `settings.py` use use the default [postgres settings](https://hub.docker.com/_/postgres/):
+```
+name: postgres
+user: postgres
+password: postgres
+database: postgres
+host: db
+````
+
+In `web-variables.env` fill out your credentials from the [recurse oauth page](https://www.recurse.com/settings/oauth).
+
+
+```
+#`runs python manage.py web` and handles migrations
+docker-compose up
+#can ssh into box to run other commands like `python manage.py collectstatic`
+```
+
+# Traditional Setup
 - Set up your virtual environment
 
 - Install dependencies:
