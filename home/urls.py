@@ -23,5 +23,7 @@ urlpatterns = [
     url(r'^most_viewed/$', views.most_viewed, name='most_viewed'),
     url(r'^most_viewed/(?P<ndays>\d+)/$', views.most_viewed, name='most_viewed_days'),
     url(r'^updated_avatar/(?P<user_id>\d+)/$', views.updated_avatar, name='updated_avatar'),
+    url(r'^search/(?P<page>\d+)/$', views.search, name='search'),
+    url(r'^search/$', views.search, name='search'),
     url('', include('social.apps.django_app.urls', namespace='social')),
 ]
