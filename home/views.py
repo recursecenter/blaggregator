@@ -292,7 +292,6 @@ def search(request, page=1):
     return render(request, 'home/search.html', context)
 
 
-
 @login_required
 @ensure_hacker_exists
 def updated_avatar(request, user_id):
