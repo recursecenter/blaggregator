@@ -22,9 +22,12 @@ launched their blog.</p>
 
 </div>
 
+[These awesome people](https://github.com/recursecenter/blaggregator/graphs/contributors) have
+helped make Blaggregator better!
+
 ## License
 
-Copyright © 2013-2016 Sasha Laundy and others.
+Copyright © 2013-2017 Sasha Laundy and others.
 
 This software is licensed under the terms of the AGPL, Version 3. The complete
 license can be found at https://www.gnu.org/licenses/agpl-3.0.html.
