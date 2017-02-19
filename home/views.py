@@ -250,8 +250,46 @@ def new(request, page=1):
         "page": int(page),
         "pages": pages,
         'show_avatars': True,
+        "page_view": "new"
     }
     return render(request, 'home/new.html', context)
+
+
+@login_required
+def search(request, page=1):
+    ''' Search blog posts based on query - main app view. '''
+
+    # pagination handling
+    items_per_page = 10
+    query = request.GET.get('q', '')
+    if page is None or int(page) <= 0:
+        start = 0
+    else:
+        start = (int(page) - 1) * items_per_page
+    end = start + items_per_page
+
+    raw_post_list = Post.objects.filter(title__search=query)
+    count = raw_post_list.count()
+    pages = int(math.ceil(count / float(items_per_page)))
+    post_list = Post.objects.filter(title__search=query)[start:end]
+    for post in post_list:
+        user = User.objects.get(blog__id__exact=post.blog_id)
+        post.author = user.first_name + " " + user.last_name
+        post.authorid = user.id
+        post.avatar = user.hacker.avatar_url
+        post.stream = post.blog.get_stream_display()
+
+    context = {
+        "count": count,
+        "query": query,
+        "post_list": post_list,
+        "page": int(page),
+        "pages": pages,
+        'show_avatars': True,
+        "page_view": "search"
+    }
+
+    return render(request, 'home/search.html', context)
 
 
 @login_required
