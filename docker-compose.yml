@@ -1,0 +1,26 @@
+ version: '2'
+ services:
+   db:
+     image: postgres
+   web:
+     build: .
+     command: python manage.py runserver 0.0.0.0:8000
+     depends_on:
+       - db
+       - migration
+     env_file:
+      - web-variables.env
+     ports:
+       - "8000:8000"
+     volumes:
+       - .:/code
+   migration:
+      build: .
+      image: app
+      command: python manage.py migrate
+      volumes:
+        - .:/code
+      links:
+        - db
+      depends_on:
+        - db
