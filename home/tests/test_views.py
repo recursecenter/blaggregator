@@ -507,7 +507,7 @@ class NewViewTestCase(BaseViewTestCase):
 
         # When
         response_1 = self.client.get('/new/', follow=True)
-        response_2 = self.client.get('/new/2/', follow=True)
+        response_2 = self.client.get('/new/?page=2', follow=True)
 
         # Then
         for post in Post.objects.all():

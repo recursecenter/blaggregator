@@ -9,7 +9,6 @@ urlpatterns = [
     url(r'^login/$', views.log_in_oauth),
     url(r'^profile/(?P<user_id>\d+)/$', views.profile, name='profile'),
     url(r'^new/$', views.new, name='new'),
-    url(r'^new/(?P<page>\d+)/$', views.new),
     url(r'^add_blog/$', views.add_blog, name='add_blog'),
     url(r'^edit_blog/(?P<blog_id>\d+)/$', views.edit_blog, name='edit_blog'),
     url(r'^delete_blog/(?P<blog_id>\d+)/$', views.delete_blog, name='delete_blog'),
@@ -23,7 +22,6 @@ urlpatterns = [
     url(r'^most_viewed/$', views.most_viewed, name='most_viewed'),
     url(r'^most_viewed/(?P<ndays>\d+)/$', views.most_viewed, name='most_viewed_days'),
     url(r'^updated_avatar/(?P<user_id>\d+)/$', views.updated_avatar, name='updated_avatar'),
-    url(r'^search/(?P<page>\d+)/$', views.search, name='search'),
     url(r'^search/$', views.search, name='search'),
     url('', include('social.apps.django_app.urls', namespace='social')),
 ]

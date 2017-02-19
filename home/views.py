@@ -10,6 +10,7 @@ from django.contrib.auth import authenticate, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Count
 from django.forms import TextInput
 from django.forms.models import modelform_factory
@@ -62,6 +63,20 @@ def get_post_info(slug):
         raise Http404('Post does not exist.')
 
     return post
+
+
+def paginator(queryset, page_number, page_size=10):
+    paginator = Paginator(queryset, page_size)
+    try:
+        items = paginator.page(page_number)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        items = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        items = paginator.page(paginator.num_pages)
+
+    return items
 
 
 def view_post(request, slug):
@@ -225,19 +240,13 @@ def profile(request, user_id):
 
 
 @login_required
-def new(request, page=1):
+def new(request):
     ''' Newest blog posts - main app view. '''
 
-    # pagination handling
-    items_per_page = 10
-    if page is None or int(page) <= 0:
-        start = 0
-    else:
-        start = (int(page) - 1) * items_per_page
-    end = start + items_per_page
-    pages = int(math.ceil(Post.objects.count() / float(items_per_page)))
+    posts = Post.objects.order_by('-date_posted_or_crawled')
+    page = request.GET.get('page', 1)
+    post_list = paginator(posts, page)
 
-    post_list = Post.objects.order_by('-date_posted_or_crawled')[start:end]
     for post in post_list:
         user = User.objects.get(blog__id__exact=post.blog_id)
         post.author = user.first_name + " " + user.last_name
@@ -247,8 +256,6 @@ def new(request, page=1):
 
     context = {
         "post_list": post_list,
-        "page": int(page),
-        "pages": pages,
         'show_avatars': True,
         "page_view": "new"
     }
@@ -256,22 +263,15 @@ def new(request, page=1):
 
 
 @login_required
-def search(request, page=1):
+def search(request):
     ''' Search blog posts based on query - main app view. '''
 
-    # pagination handling
-    items_per_page = 10
     query = request.GET.get('q', '')
-    if page is None or int(page) <= 0:
-        start = 0
-    else:
-        start = (int(page) - 1) * items_per_page
-    end = start + items_per_page
+    posts = Post.objects.filter(title__search=query)
+    count = posts.count()
+    page = request.GET.get('page', 1)
+    post_list = paginator(posts, page)
 
-    raw_post_list = Post.objects.filter(title__search=query)
-    count = raw_post_list.count()
-    pages = int(math.ceil(count / float(items_per_page)))
-    post_list = Post.objects.filter(title__search=query)[start:end]
     for post in post_list:
         user = User.objects.get(blog__id__exact=post.blog_id)
         post.author = user.first_name + " " + user.last_name
@@ -283,8 +283,6 @@ def search(request, page=1):
         "count": count,
         "query": query,
         "post_list": post_list,
-        "page": int(page),
-        "pages": pages,
         'show_avatars': True,
         "page_view": "search"
     }
