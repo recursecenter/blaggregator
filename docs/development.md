@@ -6,10 +6,15 @@ get started with the code.
 
 ## Installation:
 
-# Docker Setup
-Requires Docker and Docker-compose to simplify setup of development environment.
+### Docker Setup
+Requires Docker and [Docker-compose](https://docs.docker.com/compose/install/)
+to simplify setup of development environment. See
+the [traditional setup section](#traditional-setup) if you don't wish to use
+docker.
 
-In `settings.py` use use the default [postgres settings](https://hub.docker.com/_/postgres/):
+In `settings.py` use use the
+default [postgres settings](https://hub.docker.com/_/postgres/):
+
 ```
 name: postgres
 user: postgres
@@ -18,16 +23,21 @@ database: postgres
 host: db
 ````
 
-In `web-variables.env` fill out your credentials from the [recurse oauth page](https://www.recurse.com/settings/oauth).
+In `web-variables.env` fill out your credentials from
+the [recurse oauth page](https://www.recurse.com/settings/oauth).
 
-
+```bash
+SOCIAL_AUTH_HS_KEY=1201200abcaaf971
+SOCIAL_AUTH_HS_SECRET=abc31212aaaae2123
 ```
-#`runs python manage.py web` and handles migrations
+
+```bash
 docker-compose up
-#can ssh into box to run other commands like `python manage.py collectstatic`
+# Runs migrations and the app using runserver
+# You can ssh into box to run other commands
 ```
 
-# Traditional Setup
+### Traditional Setup
 - Set up your virtual environment
 
 - Install dependencies:
