@@ -26,8 +26,8 @@ class BaseViewTestCase(TestCase):
     def clear_db(self):
         User.objects.all().delete()
 
-    def create_posts(self, n):
-        create_posts(n)
+    def create_posts(self, n, **kwargs):
+        create_posts(n, **kwargs)
         for blog in Blog.objects.filter():
             blog.user = self.user
             blog.save()
@@ -517,3 +517,28 @@ class NewViewTestCase(BaseViewTestCase):
             else:
                 self.assertContains(response_2, post.title)
                 self.assertContains(response_2, post.slug)
+
+
+class SearchViewTestCase(BaseViewTestCase):
+
+    def test_should_show_matching_posts(self):
+        # Given
+        self.login()
+        query = 'python'
+        n = 5
+        matching_title = 'Python is awesome'
+        non_matching_title = 'Django rocks'
+        self.create_posts(n, title=matching_title)
+        self.create_posts(n, title=non_matching_title)
+
+        # When
+        response = self.client.get('/search/?q={}'.format(query), follow=True)
+
+        # Then
+        for post in Post.objects.all():
+            if post.title == matching_title:
+                self.assertContains(response, post.title)
+                self.assertContains(response, post.slug)
+
+            else:
+                self.assertNotContains(response, post.slug)
