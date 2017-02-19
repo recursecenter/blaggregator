@@ -27,6 +27,10 @@ class Hacker(models.Model):
     twitter = models.TextField(blank=True, null=True)
     token = models.SlugField(max_length=40, default=token_default, unique=True)
 
+    @property
+    def full_name(self):
+        return '{} {}'.format(self.user.first_name, self.user.last_name)
+
 
 class Blog(models.Model):
 
@@ -52,6 +56,22 @@ class Post(models.Model):
     content = models.TextField()
     date_posted_or_crawled = models.DateTimeField('date updated')
     slug = models.CharField(max_length=6, default=generate_random_id, unique=True)
+
+    @property
+    def author(self):
+        return self.blog.user.hacker.full_name
+
+    @property
+    def authorid(self):
+        return self.blog.user.id
+
+    @property
+    def avatar(self):
+        return self.blog.user.hacker.avatar_url
+
+    @property
+    def stream(self):
+        return self.blog.get_stream_display()
 
 
 class LogEntry(models.Model):

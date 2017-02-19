@@ -1,7 +1,6 @@
 from collections import namedtuple
 import datetime
 from functools import wraps
-import math
 import re
 import uuid
 
@@ -48,23 +47,6 @@ def ensure_hacker_exists(f):
     return wrapper
 
 
-def get_post_info(slug):
-    """ Gets the post object at a given slug. """
-
-    try:
-        post = Post.objects.get(slug=slug)
-        user = User.objects.get(blog__id__exact=post.blog_id)
-        post.author = user.first_name + " " + user.last_name
-        post.authorid = user.id
-        post.avatar = Hacker.objects.get(user=user.id).avatar_url
-        post.slug = slug
-
-    except Post.DoesNotExist:
-        raise Http404('Post does not exist.')
-
-    return post
-
-
 def paginator(queryset, page_number, page_size=10):
     paginator = Paginator(queryset, page_size)
     try:
@@ -87,7 +69,12 @@ def view_post(request, slug):
 
     """
 
-    post = get_post_info(slug)
+    try:
+        post = Post.objects.get(slug=slug)
+
+    except Post.DoesNotExist:
+        raise Http404('Post does not exist.')
+
     LogEntry.objects.create(
         post=post,
         date=timezone.now(),
@@ -247,13 +234,6 @@ def new(request):
     page = request.GET.get('page', 1)
     post_list = paginator(posts, page)
 
-    for post in post_list:
-        user = User.objects.get(blog__id__exact=post.blog_id)
-        post.author = user.first_name + " " + user.last_name
-        post.authorid = user.id
-        post.avatar = user.hacker.avatar_url
-        post.stream = post.blog.get_stream_display()
-
     context = {
         "post_list": post_list,
         'show_avatars': True,
@@ -271,13 +251,6 @@ def search(request):
     count = posts.count()
     page = request.GET.get('page', 1)
     post_list = paginator(posts, page)
-
-    for post in post_list:
-        user = User.objects.get(blog__id__exact=post.blog_id)
-        post.author = user.first_name + " " + user.last_name
-        post.authorid = user.id
-        post.avatar = user.hacker.avatar_url
-        post.stream = post.blog.get_stream_display()
 
     context = {
         "count": count,
