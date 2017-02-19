@@ -26,7 +26,8 @@
                 <ul class="nav pull-right">
                   {% if user.is_authenticated %}
                     <li>
-                        <form id="searchbox" class="navbar-form" role="search" method="GET">
+                        <form id="searchbox" class="navbar-form" role="search"
+                              method="GET" action="/search">
                             <div class="form-group">
                                 <label for="GET_search"></label>
                                 <input id="GET_search" name="q" type="text" >
