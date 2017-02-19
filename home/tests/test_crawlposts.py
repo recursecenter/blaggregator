@@ -2,7 +2,7 @@ from cStringIO import StringIO
 
 from django.core.management import execute_from_command_line
 from django.conf import settings
-from django.test import TestCase
+from django.test import TransactionTestCase
 from mock import patch
 
 from home.models import Blog, Post, User
@@ -17,15 +17,17 @@ def random_feed(url=None, data=None, timeout=None):
 
 @patch('urllib2.OpenerDirector.open', new=random_feed)
 @patch('requests.post')
-class CrawlPostsTestCase(TestCase):
+class CrawlPostsTestCase(TransactionTestCase):
 
     def setUp(self):
         # Setup the db with blogs
         BlogFactory.create_batch(2)
         self.blogs = Blog.objects.all()
+        super(CrawlPostsTestCase, self).setUp()
 
     def tearDown(self):
         self.clear_db()
+        super(CrawlPostsTestCase, self).tearDown()
 
     def clear_db(self):
         User.objects.all().delete()
@@ -41,5 +43,6 @@ class CrawlPostsTestCase(TestCase):
             # posts are unique by blog and title
             post_titles = Post.objects.filter(blog=blog).values_list('title', flat=True)
             self.assertEqual(len(set(post_titles)), len(post_titles))
+
         # Number of announcements are correctly throttled
         self.assertLessEqual(mock.call_count, settings.MAX_POST_ANNOUNCE * self.blogs.count())

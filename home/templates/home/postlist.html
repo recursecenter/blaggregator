@@ -22,16 +22,18 @@
     </div>
     {% endfor %}
 
-    {% if pages > 1 %}
     <div class="pagination pagination-centered">
         <ul>
-            <li{% if page == 1 %} class="disabled"{% endif %}><a href="/new/{{ page|add:-1 }}">Prev</a></li>
-            {% for i in pages|pagination:page %}
-            <li {% if page == i %} class="active"{% endif %}><a href="/new/{{ i }}/">{{ i }}</a></li>
-            {% endfor %}
-            <li{% if page == pages %} class="disabled"{% endif %}><a href="/new/{{ page|add:1}}">Next</a></li>
+            {% if post_list.has_previous %}
+            <li><a href="?page={{ post_list.previous_page_number }}{% if query %}&q={{query}}{% endif %}">previous</a></li>
+            {% endif %}
+
+            <li><a>Page {{ post_list.number }} of {{ post_list.paginator.num_pages }}.</a></li>
+
+            {% if post_list.has_next %}
+            <li><a href="?page={{ post_list.next_page_number }}{% if query %}&q={{query}}{% endif %}">next</a></li>
+            {% endif %}
         </ul>
     </div>
-    {% endif %}
 
 </div>

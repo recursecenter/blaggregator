@@ -26,8 +26,8 @@ class BaseViewTestCase(TestCase):
     def clear_db(self):
         User.objects.all().delete()
 
-    def create_posts(self, n):
-        create_posts(n)
+    def create_posts(self, n, **kwargs):
+        create_posts(n, **kwargs)
         for blog in Blog.objects.filter():
             blog.user = self.user
             blog.save()
@@ -326,7 +326,7 @@ class EditBlogViewTestCase(BaseViewTestCase):
         response = self.client.get('/edit_blog/%s/' % blog.id, follow=True)
 
         # Then
-        self.assertRedirects(response, '/login/?next=/edit_blog/1/')
+        self.assertRedirects(response, '/login/?next=/edit_blog/%s/' % blog.id)
 
     def test_should_edit_blog(self):
         # Given
@@ -381,7 +381,7 @@ class UpdatedAvatarViewTestCase(BaseViewTestCase):
 
         # When
         with patch('home.views.update_user_details', new=update_user_details):
-            response = self.client.get('/updated_avatar/1/', follow=True)
+            response = self.client.get('/updated_avatar/%s/' % self.user.id, follow=True)
 
         self.assertEqual(200, response.status_code)
         self.assertEqual(expected_url, response.content)
@@ -507,7 +507,7 @@ class NewViewTestCase(BaseViewTestCase):
 
         # When
         response_1 = self.client.get('/new/', follow=True)
-        response_2 = self.client.get('/new/2/', follow=True)
+        response_2 = self.client.get('/new/?page=2', follow=True)
 
         # Then
         for post in Post.objects.all():
@@ -517,3 +517,28 @@ class NewViewTestCase(BaseViewTestCase):
             else:
                 self.assertContains(response_2, post.title)
                 self.assertContains(response_2, post.slug)
+
+
+class SearchViewTestCase(BaseViewTestCase):
+
+    def test_should_show_matching_posts(self):
+        # Given
+        self.login()
+        query = 'python'
+        n = 5
+        matching_title = 'Python is awesome'
+        non_matching_title = 'Django rocks'
+        self.create_posts(n, title=matching_title)
+        self.create_posts(n, title=non_matching_title)
+
+        # When
+        response = self.client.get('/search/?q={}'.format(query), follow=True)
+
+        # Then
+        for post in Post.objects.all():
+            if post.title == matching_title:
+                self.assertContains(response, post.title)
+                self.assertContains(response, post.slug)
+
+            else:
+                self.assertNotContains(response, post.slug)

@@ -68,9 +68,9 @@ def _generate_item(atom=False):
     return item
 
 
-def create_posts(n):
+def create_posts(n, **kwargs):
     """Create the specified number of posts."""
-    return PostFactory.create_batch(n)
+    return PostFactory.create_batch(n, **kwargs)
 
 
 def generate_feed():
