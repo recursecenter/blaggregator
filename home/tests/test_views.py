@@ -326,7 +326,7 @@ class EditBlogViewTestCase(BaseViewTestCase):
         response = self.client.get('/edit_blog/%s/' % blog.id, follow=True)
 
         # Then
-        self.assertRedirects(response, '/login/?next=/edit_blog/1/')
+        self.assertRedirects(response, '/login/?next=/edit_blog/%s/' % blog.id)
 
     def test_should_edit_blog(self):
         # Given
@@ -381,7 +381,7 @@ class UpdatedAvatarViewTestCase(BaseViewTestCase):
 
         # When
         with patch('home.views.update_user_details', new=update_user_details):
-            response = self.client.get('/updated_avatar/1/', follow=True)
+            response = self.client.get('/updated_avatar/%s/' % self.user.id, follow=True)
 
         self.assertEqual(200, response.status_code)
         self.assertEqual(expected_url, response.content)
