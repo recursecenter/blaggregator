@@ -73,6 +73,9 @@ class Post(models.Model):
     def stream(self):
         return self.blog.get_stream_display()
 
+    class Meta:
+        ordering = ['-date_posted_or_crawled']
+
 
 class LogEntry(models.Model):
 

@@ -212,7 +212,7 @@ def profile(request, user_id):
     added_blogs = Blog.objects.filter(user=user_id)
     owner = True if int(user_id) == request.user.id else False
 
-    post_list = Post.objects.filter(blog__user=user_id).order_by('-date_posted_or_crawled')
+    post_list = Post.objects.filter(blog__user=user_id)
 
     context = {
         'hacker': request.hacker,
@@ -228,7 +228,7 @@ def profile(request, user_id):
 def new(request):
     ''' Newest blog posts - main app view. '''
 
-    posts = Post.objects.order_by('-date_posted_or_crawled')
+    posts = Post.objects.all()
     page = request.GET.get('page', 1)
     post_list = paginator(posts, page)
 
