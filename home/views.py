@@ -213,8 +213,6 @@ def profile(request, user_id):
     owner = True if int(user_id) == request.user.id else False
 
     post_list = Post.objects.filter(blog__user=user_id).order_by('-date_posted_or_crawled')
-    for post in post_list:
-        post.stream = post.blog.get_stream_display()
 
     context = {
         'hacker': request.hacker,
