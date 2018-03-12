@@ -14,10 +14,12 @@ import urlparse
 import feedparser
 import datetime
 import HTMLParser
+import requests
 
 http_pattern = re.compile('^https?://')
 reference_pattern = re.compile('^#')
 illformed_slash_pattern = re.compile('/\.*(\.|/)+/*')
+MEDIUM_COMMENT_RE = re.compile('"inResponseToPostId":"\w+"')
 
 
 def retrieve_file_contents(url, errors):
@@ -97,6 +99,10 @@ def feedergrabber(url=None, suggest_feed_url=False):
             errors.append([url + ': A link was unexpectedly not returned by feedparse.'])
             continue
 
+        elif is_medium_comment(link):
+            errors.append([url + ': A link was unexpectedly not returned by feedparse.'])
+            continue
+
         # Title
         title = getattr(i, 'title', '')
         if not title:
@@ -136,3 +142,19 @@ def feedergrabber(url=None, suggest_feed_url=False):
         errors.append([url + ': Parsing methods not successful.'])
 
     return post_links_and_titles, errors
+
+
+def is_medium_comment(link):
+    """Check if a link is a medium comment."""
+
+    if 'medium.com' not in link:
+        return False
+
+    try:
+        content = requests.get(link).content
+        is_comment = re.search(MEDIUM_COMMENT_RE, content) is not None
+
+    except Exception:
+        is_comment = False
+
+    return is_comment
