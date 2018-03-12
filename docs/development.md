@@ -12,7 +12,7 @@ to simplify setup of development environment. See
 the [traditional setup section](#traditional-setup) if you don't wish to use
 docker.
 
-In `settings.py` use use the
+In `settings.py` use the
 default [postgres settings](https://hub.docker.com/_/postgres/):
 
 ```
@@ -119,12 +119,12 @@ page, you'll need to give your user account superuser privileges:
 3. `>>> from django.contrib.auth.models import User` import the User model
    (should you need the other models defined in `models.py`, import from
    `home.models`. User uses Django's built-in User model)
-4. 	`>>> u = User.objects.get(first_name="Sasha")` or whatever your first name
+4.  `>>> u = User.objects.get(first_name="Sasha")` or whatever your first name
        is. Grab your user object from the db.
-5. 	`>>> u.is_superuser = True` make your account a superuser so you can access
+5.  `>>> u.is_superuser = True` make your account a superuser so you can access
        the admin
-6. 	`>>> u.save()` Save these changes to the db.
-7. 	You should now be able to access localhost:8000/admin while logged in!
+6.  `>>> u.save()` Save these changes to the db.
+7.  You should now be able to access localhost:8000/admin while logged in!
 
 ## Code overview
 

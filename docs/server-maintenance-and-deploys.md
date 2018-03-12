@@ -54,7 +54,7 @@ Blaggregator is hosted on Heroku and here is how to get the latest db dump
 Create new backup and download it.
 
 ```bash
-$ heroku pg:backups public-url --app blaggregator
+$ heroku pg:backups:capture HEROKU_POSTGRESQL_GREEN --app blaggregator
 $ curl -o latest.dump `heroku pg:backups public-url --app blaggregator`
 ```
 
