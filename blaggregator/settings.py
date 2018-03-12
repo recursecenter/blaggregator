@@ -48,7 +48,7 @@ DATABASES = {
         'NAME': 'blaggregator_dev',
         # The following settings are not used with sqlite3:
         'USER': 'sasha',
-        'PASSWORD': '',
+        'PASSWORD': 'sasha',
         'HOST': '127.0.0.1',
         'PORT': '5432',
     }
