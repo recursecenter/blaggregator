@@ -41,7 +41,7 @@ class Command(BaseCommand):
             log.debug(str(errors))
             return
 
-        log.debug('Crawled %s blogs from %s', len(crawled), blog.feed_url)
+        log.debug('Crawled %s posts from %s', len(crawled), blog.feed_url)
 
         created_count = 0
         for link, title, date, content in crawled:

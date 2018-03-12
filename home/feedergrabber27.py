@@ -100,7 +100,7 @@ def feedergrabber(url=None, suggest_feed_url=False):
             continue
 
         elif is_medium_comment(link):
-            errors.append([url + ': A link was unexpectedly not returned by feedparse.'])
+            errors.append([url + ': A medium comment link was skipped.'])
             continue
 
         # Title
