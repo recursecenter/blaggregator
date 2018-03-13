@@ -100,10 +100,12 @@ def log_out(request):
     return HttpResponseRedirect('/')
 
 
-@require_POST
 @login_required
 def add_blog(request):
     ''' Adds a new blog to a user's profile. '''
+
+    if request.method == 'GET':
+        return HttpResponseRedirect(reverse('profile', kwargs={'user_id': request.user.id}))
 
     feed_url = request.POST.get('feed_url', None)
     if feed_url:
