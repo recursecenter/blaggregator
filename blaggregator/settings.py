@@ -142,7 +142,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'social.apps.django_app.middleware.SocialAuthExceptionMiddleware',
+    'social_django.middleware.SocialAuthExceptionMiddleware',
 )
 
 ROOT_URLCONF = 'blaggregator.urls'
@@ -164,8 +164,8 @@ TEMPLATES = [
                 'django.template.context_processors.media',
                 'django.template.context_processors.csrf',
                 'django.contrib.messages.context_processors.messages',
-                'social.apps.django_app.context_processors.backends',
-                'social.apps.django_app.context_processors.login_redirect',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
                 'home.context_processors.primary_blog',
             ]
         }
@@ -185,7 +185,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'storages',
     'django.contrib.humanize',
-    'social.apps.django_app.default',
+    'social_django',
 )
 
 AUTHENTICATION_BACKENDS = (
@@ -208,16 +208,16 @@ else:
     SOCIAL_AUTH_HACKERSCHOOL_REDIRECT_URL = 'http://localhost:8000/complete/hackerschool'
 
 SOCIAL_AUTH_PIPELINE = (
-    'social.pipeline.social_auth.social_details',
-    'social.pipeline.social_auth.social_uid',
-    'social.pipeline.social_auth.auth_allowed',
-    'social.pipeline.social_auth.social_user',
+    'social_core.pipeline.social_auth.social_details',
+    'social_core.pipeline.social_auth.social_uid',
+    'social_core.pipeline.social_auth.auth_allowed',
+    'social_core.pipeline.social_auth.social_user',
     'home.oauth.find_legacy_user',
-    'social.pipeline.user.get_username',
+    'social_core.pipeline.user.get_username',
     'home.oauth.create_user',
-    'social.pipeline.social_auth.associate_user',
-    'social.pipeline.social_auth.load_extra_data',
-    'social.pipeline.user.user_details',
+    'social_core.pipeline.social_auth.associate_user',
+    'social_core.pipeline.social_auth.load_extra_data',
+    'social_core.pipeline.user.user_details',
     'home.oauth.create_or_update_hacker'
 )
 

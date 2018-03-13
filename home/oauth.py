@@ -1,8 +1,8 @@
 import os
 
-from social.backends.oauth import BaseOAuth2
-from social.storage.django_orm import DjangoUserMixin
-from social.strategies.django_strategy import DjangoStrategy
+from social_core.backends.oauth import BaseOAuth2
+from social_django.models import UserSocialAuth
+from social_django.strategy import DjangoStrategy
 from urllib import urlencode
 
 from models import User, Hacker
@@ -84,10 +84,11 @@ def create_or_update_hacker(strategy, details, response, user, *args, **kwargs):
 
 
 def update_user_details(hacker_id, user):
-    social_auth = DjangoUserMixin.get_social_auth_for_user(user)[0]
-    backend = social_auth.get_backend_instance()
+    social_auth = UserSocialAuth.get_social_auth_for_user(user).first()
+    strategy = DjangoStrategy(None)
+    backend = social_auth.get_backend_instance(strategy)
     try:
-        social_auth.refresh_token(DjangoStrategy(None))
+        social_auth.refresh_token(strategy)
     except Exception:
         pass  # Ignore failures to refresh token
     url = backend.HACKER_SCHOOL_ROOT + '/api/v1/people/%s?' % hacker_id + urlencode({
