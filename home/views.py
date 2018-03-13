@@ -16,6 +16,7 @@ from django.forms.models import modelform_factory
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render
 from django.utils import timezone
+from django.views.decorators.http import require_POST
 
 from home.models import Blog, Hacker, LogEntry, Post
 from home.oauth import update_user_details
@@ -99,50 +100,50 @@ def log_out(request):
     return HttpResponseRedirect('/')
 
 
+@require_POST
 @login_required
 def add_blog(request):
     ''' Adds a new blog to a user's profile. '''
 
-    if request.method == 'POST':
-        feed_url = request.POST.get('feed_url', None)
-        if feed_url:
-            # add http:// prefix if missing
-            if feed_url[:4] != "http":
-                feed_url = "http://" + feed_url
+    feed_url = request.POST.get('feed_url', None)
+    if feed_url:
+        # add http:// prefix if missing
+        if feed_url[:4] != "http":
+            feed_url = "http://" + feed_url
 
-            # pull out human-readable url from feed_url
-            # (naively - later we will crawl blog url for feed url)
-            if re.search('atom.xml/*$', feed_url):
-                url = re.sub('atom.xml/*$', '', feed_url)
-            elif re.search('rss/*$', feed_url):
-                url = re.sub('rss/*$', '', feed_url)
-            else:
-                url = feed_url
+        # pull out human-readable url from feed_url
+        # (naively - later we will crawl blog url for feed url)
+        if re.search('atom.xml/*$', feed_url):
+            url = re.sub('atom.xml/*$', '', feed_url)
+        elif re.search('rss/*$', feed_url):
+            url = re.sub('rss/*$', '', feed_url)
+        else:
+            url = feed_url
 
-            # janky short circuit if they've already added this url
-            for blog in Blog.objects.filter(user=request.user.id):
-                if url == blog.url:
-                    print "FOUND %s which matches %s" % (blog.url, url)
-                    return HttpResponseRedirect(reverse('new'))
+        # janky short circuit if they've already added this url
+        for blog in Blog.objects.filter(user=request.user.id):
+            if url == blog.url:
+                print "FOUND %s which matches %s" % (blog.url, url)
+                return HttpResponseRedirect(reverse('profile', kwargs={'user_id': request.user.id}))
 
-            # Feedergrabber returns ( [(link, title, date)], [errors])
-            # We're not handling the errors returned for right now
-            # Returns None if there was an exception when parsing the content.
-            crawled, errors = feedergrabber27.feedergrabber(feed_url, suggest_feed_url=True)
-            if crawled is None:
-                message = (
-                    "This url does not seem to contain valid atom/rss feed xml. "
-                    "Please use your blog's feed url! "
-                )
+        # Feedergrabber returns ( [(link, title, date)], [errors])
+        # We're not handling the errors returned for right now
+        # Returns None if there was an exception when parsing the content.
+        crawled, errors = feedergrabber27.feedergrabber(feed_url, suggest_feed_url=True)
+        if crawled is None:
+            message = (
+                "This url does not seem to contain valid atom/rss feed xml. "
+                "Please use your blog's feed url! "
+            )
 
-                if errors and len(errors) == 1 and isinstance(errors[0], dict) and 'feed_url' in errors[0]:
-                    feed_url = errors[0]['feed_url']
-                    if feed_url is not None:
-                        message += 'It may be this -- {}'.format(feed_url)
+            if errors and len(errors) == 1 and isinstance(errors[0], dict) and 'feed_url' in errors[0]:
+                feed_url = errors[0]['feed_url']
+                if feed_url is not None:
+                    message += 'It may be this -- {}'.format(feed_url)
 
-                messages.error(request, message)
-                return HttpResponseRedirect(reverse('add_blog'))
+            messages.error(request, message)
 
+        else:
             # create new blog record in db
             blog = Blog.objects.create(
                 user=User.objects.get(id=request.user.id),
@@ -165,12 +166,10 @@ def add_blog(request):
             except Exception as e:
                 print e
 
-            return HttpResponseRedirect(reverse('new'))
-        else:
-            messages.error(request, "No feed URL provided.")
-            return HttpResponseRedirect(reverse('add_blog'))
     else:
-        return render(request, 'home/add_blog.html')
+        messages.error(request, "No feed URL provided.")
+
+    return HttpResponseRedirect(reverse('profile', kwargs={'user_id': request.user.id}))
 
 
 @login_required

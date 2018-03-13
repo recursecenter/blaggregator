@@ -1,40 +1,28 @@
-{% extends "home/base.html" %}
+{% load customtags %}
 
-{% block pagetitle %}Blaggregator{% endblock %}
+<h4>{% if blogs %} Add another blog {% else %} Add your blog {% endif %}</h4>
+<p>Please add your blog's <span style="color:red">feed (atom/RSS) </span> url.</p>
 
-{% block title %}
-    Don't be shy - we'd love to see your blog!
-{% endblock %}
+<ul>
+    <li><strong>All</strong> your blog posts (in this feed) will show up on
+        <a href="{% url 'new' %}" target="_blank">Blaggregator</a></li>
+    <li>All your <strong>future</strong> blog posts (in this feed) will be notified on Zulip in
+        <a href="{{ ""|zulip_url:"blogging" }}" target="_blank">#blogging</a>
+     </li>
+</ul>
 
-{% block content %}
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+<form action="{% url 'add_blog' %}" method="post">
+    {% csrf_token %}
 
-    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-
-    <form action="" method="post">
-
-      {% csrf_token %}
-
-      <p>Please add your blog's <span style="color:red">FEED (atom/RSS) </span> url.</p>
-
-      <ul>
-          <li><strong>All</strong> your blog posts (in this feed) will show up on Blaggregator</li>
-          <li>All your <strong>future</strong> blog posts (in this feed) will be notified on Zulip</li>
-      </ul>
-
-
-      {% if messages %}
+    {% if messages %}
         {% for message in messages %}
-          <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
         {% endfor %}
-      {% endif %}
+    {% endif %}
 
-      <div class="input-append">
-        <input class="span6" name="feed_url" type="url" placeholder="Feed URL">
+    <div class="input-append">
+        <input class="span6" name="feed_url" type="url" placeholder="Feed URL" required>
         <button class="btn" type="button submit">Add Your Blog</button>
-      </div>
-
-      <p><a href="/new">or do this later</a></p>
-
-    </form>
-
-{% endblock %}
+    </div>
+</form>

@@ -39,9 +39,7 @@
     </table>
 
     {% if owner %}
-        <a href="/add_blog" class="btn btn-success">
-            {% if blogs %} Add another blog {% else %} Add your blog {% endif %}
-        </a>
+        {% include 'home/add_blog.html' %}
 
         <div class="alert-block">
         <h2>Blaggregator RSS feed</h2>
