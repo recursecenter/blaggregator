@@ -7,6 +7,16 @@ this project doesn't really have releases (or even versioning, until now), it
 is a project that effects Recursers in "real ways".  It would be nice to have a
 place to quickly see the latest changes that the project has undergone.
 
+## 2018-03
+
+### Fixed
+
+- [#143,#144] Don't add medium comments as posts -- @punchagan
+
+### Changed
+
+- [2d6d3986f019b10f67616054c0a2fb8287c9f345] Remove the add_blog page, and move the form to the profile page -- @punchagan
+
 ## 2017-02
 
 ### Added
