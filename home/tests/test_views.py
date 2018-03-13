@@ -159,20 +159,10 @@ class AddBlogViewTestCase(BaseViewTestCase):
 
     def test_get_add_blog_requires_login(self):
         # When
-        response = self.client.get('/add_blog/', follow=True)
+        response = self.client.post('/add_blog/', follow=True)
 
         # Then
         self.assertRedirects(response, '/login/?next=/add_blog/')
-
-    def test_get_add_blog_works(self):
-        # Given
-        self.login()
-
-        # When
-        response = self.client.get('/add_blog/')
-
-        # Then
-        self.assertEqual(response.status_code, 200)
 
     def test_post_add_blog_without_blog_url_barfs(self):
         # Given
@@ -194,7 +184,7 @@ class AddBlogViewTestCase(BaseViewTestCase):
         response = self.client.post('/add_blog/', data=data, follow=True)
 
         # Then
-        self.assertRedirects(response, '/new/')
+        self.assertRedirects(response, '/profile/{}/'.format(self.user.id))
         self.assertEqual(response.status_code, 200)
         self.assertIsNotNone(Blog.objects.get(feed_url=data['feed_url']))
 
@@ -207,7 +197,7 @@ class AddBlogViewTestCase(BaseViewTestCase):
         response = self.client.post('/add_blog/', data=data, follow=True)
 
         # Then
-        self.assertRedirects(response, '/new/')
+        self.assertRedirects(response, '/profile/{}/'.format(self.user.id))
         self.assertEqual(response.status_code, 200)
         self.assertIsNotNone(Blog.objects.get(feed_url='http://{}'.format(data['feed_url'])))
 
@@ -222,7 +212,7 @@ class AddBlogViewTestCase(BaseViewTestCase):
         response = self.client.post('/add_blog/', data=data_, follow=True)
 
         # Then
-        self.assertRedirects(response, '/new/')
+        self.assertRedirects(response, '/profile/{}/'.format(self.user.id))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(1, Blog.objects.count())
 
@@ -237,7 +227,7 @@ class AddBlogViewTestCase(BaseViewTestCase):
         response = self.client.post('/add_blog/', data=data_, follow=True)
 
         # Then
-        self.assertRedirects(response, '/new/')
+        self.assertRedirects(response, '/profile/{}/'.format(self.user.id))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(2, Blog.objects.count())
         self.assertIsNotNone(Blog.objects.get(feed_url=data['feed_url']))
@@ -253,7 +243,7 @@ class AddBlogViewTestCase(BaseViewTestCase):
 
         # Then
         self.assertEqual(0, Blog.objects.count())
-        self.assertRedirects(response, '/add_blog/')
+        self.assertRedirects(response, '/profile/{}/'.format(self.user.id))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Please use your blog&#39;s feed url")
         self.assertContains(response, "It may be this -- http://jvns.ca/atom.xml")
@@ -270,7 +260,7 @@ class AddBlogViewTestCase(BaseViewTestCase):
         # Then
         self.assertEqual(1, Blog.objects.count())
         self.assertEqual(5, Post.objects.count())
-        self.assertRedirects(response, '/new/')
+        self.assertRedirects(response, '/profile/{}/'.format(self.user.id))
         self.assertEqual(response.status_code, 200)
 
 
