@@ -16,7 +16,6 @@ from django.forms.models import modelform_factory
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render
 from django.utils import timezone
-from django.views.decorators.http import require_POST
 
 from home.models import Blog, Hacker, LogEntry, Post
 from home.oauth import update_user_details
