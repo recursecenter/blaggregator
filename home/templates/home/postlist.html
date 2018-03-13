@@ -22,6 +22,7 @@
     </div>
     {% endfor %}
 
+    {% if post_list.paginator %}
     <div class="pagination pagination-centered">
         <ul>
             {% if post_list.has_previous %}
@@ -35,5 +36,6 @@
             {% endif %}
         </ul>
     </div>
+    {% endif %}
 
 </div>
