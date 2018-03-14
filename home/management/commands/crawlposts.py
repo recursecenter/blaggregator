@@ -71,6 +71,9 @@ class Command(BaseCommand):
                 # Any other updates are ignored, as of now
                 pass
 
+        blog.last_crawled = timezone.now()
+        blog.save(update_fields=['last_crawled'])
+
     def handle(self, **options):
         for blog in Blog.objects.all():
             try:

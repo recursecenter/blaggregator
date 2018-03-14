@@ -82,11 +82,11 @@ def feedergrabber(url, suggest_feed_url=False):
 
         # Date
         post_date = getattr(entry, 'published_parsed', getattr(entry, 'updated_parsed', None))
-        now = datetime.datetime.now()
         if post_date == datetime.datetime.min:
             errors.append([url + ': No valid post date, could be a page.'])
             continue
 
+        now = datetime.datetime.now()
         if post_date is None:
             # No date posts are marked as crawled now
             post_date = now
