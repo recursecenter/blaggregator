@@ -78,7 +78,7 @@ def feedergrabber(url, suggest_feed_url=False):
         if not title:
             errors.append([url + ':A title was unexpectedly not returned by feedparse.'])
             continue
-        title = h.unescape(title)
+        title = h.unescape(title).replace('\n', ' ')
 
         # Date
         post_date = getattr(entry, 'published_parsed', getattr(entry, 'updated_parsed', None))

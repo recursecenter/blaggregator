@@ -46,7 +46,6 @@ class Command(BaseCommand):
         created_count = 0
         for link, title, date, content in crawled:
             date = timezone.make_aware(date, timezone.get_default_timezone())
-            title = cleantitle(title)
 
             # create the post instance if it doesn't already exist
             post, created = get_or_create_post(blog, title, link, date, content)
@@ -85,18 +84,6 @@ class Command(BaseCommand):
 
     def enqueue_zulip(self, user, link, title, stream=STREAM):
         self.zulip_queue.append((user, link, title, stream))
-
-
-def cleantitle(title):
-    ''' Strip the blog title of newlines. '''
-
-    newtitle = ''
-
-    for char in title:
-        if char != '\n':
-            newtitle += char
-
-    return newtitle
 
 
 def get_or_create_post(blog, title, link, date, content):
