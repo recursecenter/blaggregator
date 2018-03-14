@@ -10,10 +10,9 @@ from django.utils import timezone
 # Local library
 from home import feedergrabber27
 from home.models import Blog, Post
-from home.zulip_helpers import send_message_zulip
+from home.zulip_helpers import announce_new_post
 
 log = logging.getLogger("blaggregator")
-ROOT_URL = 'https://blaggregator.recurse.com/'
 
 
 class Command(BaseCommand):
@@ -41,10 +40,7 @@ class Command(BaseCommand):
                 # Throttle the amount of new posts that can be announced per
                 # user per crawl.
                 if created_count <= settings.MAX_POST_ANNOUNCE:
-                    post_page = ROOT_URL + 'post/' + post.slug
-                    self.enqueue_zulip(
-                        blog.user, post_page, title, blog.get_stream_display()
-                    )
+                    self.zulip_queue.append(post)
             else:
                 update_post(post, title, link, content)
         blog.last_crawled = timezone.now()
@@ -56,12 +52,8 @@ class Command(BaseCommand):
                 self.crawlblog(blog)
             except Exception as e:
                 log.exception(e)
-        for message in self.zulip_queue:
-            user, link, title, stream = message
-            send_message_zulip(user, link, title, stream)
-
-    def enqueue_zulip(self, user, link, title, stream):
-        self.zulip_queue.append((user, link, title, stream))
+        for post in self.zulip_queue:
+            announce_new_post(post, debug=settings.DEBUG)
 
 
 def get_or_create_post(blog, title, link, content):

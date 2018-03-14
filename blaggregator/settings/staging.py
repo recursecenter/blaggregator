@@ -2,6 +2,7 @@ import os
 import dj_database_url
 from .base import ALLOWED_HOSTS, DATABASES
 
+ROOT_URL = 'https://blag.recurse.com/'
 # Allowed hostnames
 ALLOWED_HOSTS += ['blaggregator-staging.herokuapp.com', 'blag.recurse.com']
 # Parse database configuration from $DATABASE_URL
