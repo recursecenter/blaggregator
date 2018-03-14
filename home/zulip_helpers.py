@@ -31,7 +31,7 @@ def announce_new_post(post, debug=True):
     subject = title if len(title) <= 60 else title[:57] + "..."
     path = reverse('view_post', kwargs={'slug': post.slug})
     url = '{}/{}'.format(settings.ROOT_URL.rstrip('/'), path.lstrip('/'))
-    content = "**{}** has a new blog post: [{}]({})".format(post.author, title, url)
+    content = u"**{}** has a new blog post: [{}]({})".format(post.author, title, url)
     send_message_zulip(to, subject, content, type_='stream')
 
 
@@ -55,7 +55,7 @@ def notify_uncrawlable_blog(blog, debug=True):
     subject = 'Action required from Blaggregator'
     profile_path = reverse('profile', kwargs={'user_id': blog.user.id})
     profile_url = '{}/{}'.format(settings.ROOT_URL.rstrip('/'), profile_path.lstrip('/'))
-    message = dedent("""
+    message = dedent(u"""
     Hi {author},
 
     You added {url} as a Blaggregator feed. We are unable to parse it.
@@ -69,7 +69,7 @@ def notify_uncrawlable_blog(blog, debug=True):
     to = blog.user.email
     type_ = 'private'
     if debug:
-        log.debug('Sending message \n\n%s\n\n to %s (%s)', content, to, type_)
+        log.debug(u'Sending message \n\n%s\n\n to %s (%s)', content, to, type_)
 
     else:
         send_message_zulip(to, subject, content, type_=type_)
@@ -86,9 +86,9 @@ def send_message_zulip(to, subject, content, type_='private'):
     }
 
     try:
-        log.debug('Sending message "%s" to %s (%s)', content, to, type_)
+        log.debug(u'Sending message "%s" to %s (%s)', content, to, type_)
         response = requests.post(ZULIP_URL, data=data, auth=(ZULIP_EMAIL, ZULIP_KEY))
-        log.debug('Post returned with %s: %s', response.status_code, response.content)
+        log.debug(u'Post returned with %s: %s', response.status_code, response.content)
         return response
 
     except Exception as e:
