@@ -41,6 +41,22 @@ class FeedParserTestCase(TestCase):
                     )
 
     @given(generate_full_feed())
+    @settings(max_examples=10, suppress_health_check=[HealthCheck.too_slow])
+    def test_parsing_feeds_with_min_dates(self, feed):
+
+        note(feed.feed)
+        note(feed.items)
+
+        with patch('urllib2.OpenerDirector.open', new=partial(self.patch_date, feed)):
+            contents, errors = feedergrabber(feed.feed['link'])
+            note(errors)
+            self.assertIsNone(contents)
+            self.assertEqual(len(feed.items) + 1, len(errors))
+            self.assertIn('Parsing methods not successful', errors[-1][0])
+            for i, _ in enumerate(feed.items):
+                self.assertIn('No valid post date', errors[i][0])
+
+    @given(generate_full_feed())
     @settings(max_examples=1000, suppress_health_check=[HealthCheck.too_slow])
     def test_parsing_broken_feeds(self, feed):
 
@@ -54,6 +70,15 @@ class FeedParserTestCase(TestCase):
             self.assertIsNone(contents)
             self.assertEqual(len(feed.items) + 1, len(errors))
             self.assertIn('Parsing methods not successful', errors[-1][0])
+
+    @staticmethod
+    def patch_date(feed, url, data=None, timeout=None):
+        for item in feed.items:
+            item['pubdate'] = datetime.datetime.min
+            note(item)
+        xml = feed.writeString('utf8')
+        note(xml)
+        return StringIO(xml)
 
     @staticmethod
     def patch_open(feed, url, data=None, timeout=None):
