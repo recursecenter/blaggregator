@@ -8,17 +8,16 @@
 """Retrieves the links and titles of recent posts from blog feeds."""
 
 from __future__ import print_function
+
+import datetime
+import HTMLParser
 import re
 import urllib2
 import urlparse
+
 import feedparser
-import datetime
-import HTMLParser
 import requests
 
-http_pattern = re.compile('^https?://')
-reference_pattern = re.compile('^#')
-illformed_slash_pattern = re.compile('/\.*(\.|/)+/*')
 MEDIUM_COMMENT_RE = re.compile('"inResponseToPostId":"\w+"')
 
 
