@@ -1,8 +1,5 @@
 #!/usr/bin/python2,7
 # feedergrabber27.py
-# 20130615, works. See long comment about postprocess; needs fixing with
-#    link = u'http://organicdonut.com/?p=224'
-# as test.
 # David Prager Branner
 
 """Retrieves the links and titles of recent posts from blog feeds."""
@@ -20,12 +17,12 @@ import requests
 MEDIUM_COMMENT_RE = re.compile('"inResponseToPostId":"\w+"')
 
 
-def retrieve_file_contents(url, errors):
+def retrieve_file_contents(url):
     '''Retrieve file contents from a given URL and log any errors.'''
+    errors = []
     try:
         file_contents = feedparser.parse(url)
     except (urllib2.URLError, urllib2.HTTPError) as e:
-        # For later: do logging and report at end, along with domain affected
         errors.append([url, e])
         file_contents = None
     return file_contents, errors
@@ -47,23 +44,25 @@ def feedergrabber(url, suggest_feed_url=False):
     """The main function of the module."""
 
     # Initialize some variables
-    errors = []
     post_links_and_titles = []
+    # HTML parser to unescape HTML entities
+    h = HTMLParser.HTMLParser()
 
     # Get file contents
-    file_contents, _ = retrieve_file_contents(url, errors)
+    file_contents, errors = retrieve_file_contents(url)
 
     if file_contents is None:
         return None, errors
 
     elif file_contents.bozo and not isinstance(file_contents.bozo_exception, feedparser.CharacterEncodingOverride):
         feed_url = find_feed_url(file_contents) if suggest_feed_url else None
-        return None, [{'feed_url': feed_url, 'url': url, 'error': file_contents.bozo_exception}]
+        suggestion = [{'feed_url': feed_url, 'url': url, 'error': file_contents.bozo_exception}]
+        return None, suggestion
 
     # Gather links, titles, and dates
-    for i in file_contents.entries:
+    for entry in file_contents.entries:
         # Link
-        link = getattr(i, 'link', '')
+        link = getattr(entry, 'link', '')
         if not link:
             errors.append([url + ': A link was unexpectedly not returned by feedparse.'])
             continue
@@ -73,22 +72,14 @@ def feedergrabber(url, suggest_feed_url=False):
             continue
 
         # Title
-        title = getattr(i, 'title', '')
+        title = getattr(entry, 'title', '')
         if not title:
             errors.append([url + ':A title was unexpectedly not returned by feedparse.'])
             continue
-
-        # Unescaping HTML entities
-        h = HTMLParser.HTMLParser()
-        i.title = h.unescape(title)
+        title = h.unescape(title)
 
         # Date
-        post_date = None
-        for name in ('published_parsed', 'updated_parsed'):
-            if name in i:
-                post_date = getattr(i, name)
-                break
-
+        post_date = getattr(entry, 'published_parsed', getattr(entry, 'updated_parsed', None))
         now = datetime.datetime.now()
         if post_date is None:
             # No date posts are marked as crawled now
@@ -101,10 +92,10 @@ def feedergrabber(url, suggest_feed_url=False):
                 post_date = now
 
         # Post content
-        content = getattr(i, 'summary', '')
+        content = getattr(entry, 'summary', '')
 
         # Append
-        post_links_and_titles.append((link, i.title, post_date, content))
+        post_links_and_titles.append((link, title, post_date, content))
 
     if len(post_links_and_titles) == 0:
         post_links_and_titles = None
