@@ -13,7 +13,6 @@ import datetime
 import HTMLParser
 import re
 import urllib2
-import urlparse
 
 import feedparser
 import requests
@@ -32,27 +31,6 @@ def retrieve_file_contents(url, errors):
     return file_contents, errors
 
 
-def parse_domain(url):
-    '''Divide a URL into its three principal parts.
-
-    Test with no slash at all, multiple slashes. Slashes within remainder
-    should *not* be removed.
-
-    '''
-
-    ParseResult = urlparse.urlparse(url)
-    return ParseResult.scheme, ParseResult.netloc, ParseResult.path
-
-
-def check_wellformed(url):
-    '''Fix some common minor problems in URL formatting.'''
-    # remove any spaces
-    url = url.replace(' ', '')
-    # make all lower case
-    url = url.lower()
-    return url
-
-
 def find_feed_url(parsed_content):
     """Try to find the feed url from parsed content."""
     try:
@@ -65,16 +43,8 @@ def find_feed_url(parsed_content):
             return link.href
 
 
-def feedergrabber(url=None, suggest_feed_url=False):
+def feedergrabber(url, suggest_feed_url=False):
     """The main function of the module."""
-
-    # Initial checks on the URL.
-    if not url:
-        return None, ['Empty URL.']
-    url = check_wellformed(url)  # ggg should we include parse_domain here?
-    scheme, domain, path = parse_domain(url)
-    if not (scheme and domain):
-        return None, ['URL malformed: ' + scheme + domain + path]
 
     # Initialize some variables
     errors = []
