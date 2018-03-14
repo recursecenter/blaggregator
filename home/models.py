@@ -29,7 +29,7 @@ class Hacker(models.Model):
 
     @property
     def full_name(self):
-        return '{} {}'.format(self.user.first_name, self.user.last_name)
+        return self.user.get_full_name()
 
 
 class Blog(models.Model):
@@ -43,6 +43,10 @@ class Blog(models.Model):
     last_crawled = models.DateTimeField('last crawled', blank=True, null=True)
     created = models.DateTimeField('date created', auto_now_add=True)
     stream = models.CharField(max_length=100, default=STREAM_CHOICES[0][0], choices=STREAM_CHOICES)
+
+    @property
+    def author(self):
+        return self.user.get_full_name()
 
 
 class Post(models.Model):
@@ -59,7 +63,7 @@ class Post(models.Model):
 
     @property
     def author(self):
-        return self.blog.user.hacker.full_name
+        return self.blog.author
 
     @property
     def authorid(self):

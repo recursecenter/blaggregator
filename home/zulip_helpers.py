@@ -1,10 +1,16 @@
 # Standard library
-import os
 import logging
+import os
+from textwrap import dedent
+
 
 # 3rd-party library
+from django.conf import settings
 from django.core.urlresolvers import reverse
 import requests
+
+# Local imports
+from home.models import User
 
 ZULIP_KEY = os.environ.get('ZULIP_KEY')
 ZULIP_EMAIL = os.environ.get('ZULIP_EMAIL')
@@ -27,6 +33,46 @@ def announce_new_post(post, debug=True):
     url = '{}/{}'.format(settings.ROOT_URL.rstrip('/'), path.lstrip('/'))
     content = "**{}** has a new blog post: [{}]({})".format(post.author, title, url)
     send_message_zulip(to, subject, content, type_='stream')
+
+
+def get_contact_info():
+    """Returns contact info of staff, if present."""
+
+    staff = [
+        user.get_full_name() for user in User.objects.filter(is_staff=True).exclude(hacker=None)
+    ]
+    names = ' or '.join(filter(None, [', '.join(staff[:-1]), staff[-1]])) if staff else ''
+    message = (
+        'get in touch with {}'.format(names) if names else
+        'file an issue [here](https://github.com/recursecenter/blaggregator/issues)'
+    )
+    return message
+
+
+def notify_uncrawlable_blog(blog, debug=True):
+    """Notify blog owner about a blog that is failing crawls."""
+
+    subject = 'Action required from Blaggregator'
+    profile_path = reverse('profile', kwargs={'user_id': blog.user.id})
+    profile_url = '{}/{}'.format(settings.ROOT_URL.rstrip('/'), profile_path.lstrip('/'))
+    message = dedent("""
+    Hi {author},
+
+    You added {url} as a Blaggregator feed. We are unable to parse it.
+    Could you please update/remove it from [here]({profile_url})?
+
+    If this appears to be a problem with Blaggregator, or you need help fixing
+    this, please {contact}""")
+    content = message.format(
+        author=blog.author, url=blog.feed_url, profile_url=profile_url, contact=get_contact_info()
+    )
+    to = blog.user.email
+    type_ = 'private'
+    if debug:
+        log.debug('Sending message \n\n%s\n\n to %s (%s)', content, to, type_)
+
+    else:
+        send_message_zulip(to, subject, content, type_=type_)
 
 
 def send_message_zulip(to, subject, content, type_='private'):
