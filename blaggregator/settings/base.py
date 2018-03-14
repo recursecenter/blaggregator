@@ -6,6 +6,7 @@ SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 DEBUG = 'DJANGO_DEBUG' in os.environ
 
 STATIC_URL = '/static/'
+ROOT_URL = 'http://localhost:8000/'
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
@@ -88,8 +89,9 @@ STATICFILES_FINDERS = (
 )
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = os.environ.get('BLAGGREGATOR_SECRET_KEY',
-                            '%dut3)!1f(nm0x8bm@tuj!*!2oe=+3+bsw2lf0)%(4l8d2^z8s')
+SECRET_KEY = os.environ.get(
+    'BLAGGREGATOR_SECRET_KEY',
+    '%dut3)!1f(nm0x8bm@tuj!*!2oe=+3+bsw2lf0)%(4l8d2^z8s')
 
 MIDDLEWARE_CLASSES = (
     'home.middleware.RecurseSubdomainMiddleware',
@@ -111,7 +113,8 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'APP_DIRS': True,
         'OPTIONS': {
-            'debug': DEBUG,
+            'debug':
+            DEBUG,
             'context_processors': [
                 'django.template.context_processors.request',
                 'django.template.context_processors.debug',
@@ -158,19 +161,17 @@ SOCIAL_AUTH_LOGIN_ERROR_URL = '/login-error/'
 
 SOCIAL_AUTH_HACKERSCHOOL_REDIRECT_URL = 'http://localhost:8000/complete/hackerschool'
 
-SOCIAL_AUTH_PIPELINE = (
-    'social_core.pipeline.social_auth.social_details',
-    'social_core.pipeline.social_auth.social_uid',
-    'social_core.pipeline.social_auth.auth_allowed',
-    'social_core.pipeline.social_auth.social_user',
-    'home.oauth.find_legacy_user',
-    'social_core.pipeline.user.get_username',
-    'home.oauth.create_user',
-    'social_core.pipeline.social_auth.associate_user',
-    'social_core.pipeline.social_auth.load_extra_data',
-    'social_core.pipeline.user.user_details',
-    'home.oauth.create_or_update_hacker'
-)
+SOCIAL_AUTH_PIPELINE = ('social_core.pipeline.social_auth.social_details',
+                        'social_core.pipeline.social_auth.social_uid',
+                        'social_core.pipeline.social_auth.auth_allowed',
+                        'social_core.pipeline.social_auth.social_user',
+                        'home.oauth.find_legacy_user',
+                        'social_core.pipeline.user.get_username',
+                        'home.oauth.create_user',
+                        'social_core.pipeline.social_auth.associate_user',
+                        'social_core.pipeline.social_auth.load_extra_data',
+                        'social_core.pipeline.user.user_details',
+                        'home.oauth.create_or_update_hacker')
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

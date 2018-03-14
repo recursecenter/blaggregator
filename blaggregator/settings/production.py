@@ -2,8 +2,13 @@ import os
 import dj_database_url
 from .base import ALLOWED_HOSTS, DATABASES
 
+ROOT_URL = 'https://blaggregator.recurse.com/'
 # Allowed hostnames
-ALLOWED_HOSTS += ['blaggregator.herokuapp.com', 'www.blaggregator.us', 'blaggregator.recurse.com']
+ALLOWED_HOSTS += [
+    'blaggregator.herokuapp.com',
+    'www.blaggregator.us',
+    'blaggregator.recurse.com',
+]
 # Parse database configuration from $DATABASE_URL
 DATABASES['default'] = dj_database_url.config()
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
