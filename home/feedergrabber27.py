@@ -43,6 +43,8 @@ def find_feed_url(parsed_content):
 def feedergrabber(url, suggest_feed_url=False):
     """The main function of the module."""
 
+    print('Trying to fetch feed from {}'.format(url))
+
     # Initialize some variables
     post_links_and_titles = []
     # HTML parser to unescape HTML entities
@@ -81,6 +83,10 @@ def feedergrabber(url, suggest_feed_url=False):
         # Date
         post_date = getattr(entry, 'published_parsed', getattr(entry, 'updated_parsed', None))
         now = datetime.datetime.now()
+        if post_date == datetime.datetime.min:
+            errors.append([url + ': No valid post date, could be a page.'])
+            continue
+
         if post_date is None:
             # No date posts are marked as crawled now
             post_date = now
