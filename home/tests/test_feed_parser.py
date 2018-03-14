@@ -11,6 +11,26 @@ from home.feedergrabber27 import feedergrabber
 from home.tests.utils import generate_full_feed
 
 
+MIN_DATE_FEED = """
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Max.Computer</title>
+    <link>http://max.computer/</link>
+    <language>en-US</language>
+    <atom:link href="http://max.computer/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>About</title>
+      <link>http://max.computer/about/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://max.computer/about/</guid>
+      <description>About me</description>
+    </item>
+  </channel>
+</rss>
+"""
+
+
 class FeedParserTestCase(TestCase):
 
     @given(generate_full_feed())
@@ -40,21 +60,13 @@ class FeedParserTestCase(TestCase):
                         datetime.datetime.now().utctimetuple(), date.utctimetuple()
                     )
 
-    @given(generate_full_feed())
-    @settings(max_examples=10, suppress_health_check=[HealthCheck.too_slow])
-    def test_parsing_feeds_with_min_dates(self, feed):
-
-        note(feed.feed)
-        note(feed.items)
-
-        with patch('urllib2.OpenerDirector.open', new=partial(self.patch_date, feed)):
-            contents, errors = feedergrabber(feed.feed['link'])
-            note(errors)
+    def test_parsing_feeds_with_min_dates(self):
+        with patch('urllib2.OpenerDirector.open', new=self.min_date_feed):
+            contents, errors = feedergrabber('http://max.computer/index.html')
             self.assertIsNone(contents)
-            self.assertEqual(len(feed.items) + 1, len(errors))
+            self.assertEqual(2, len(errors))
             self.assertIn('Parsing methods not successful', errors[-1][0])
-            for i, _ in enumerate(feed.items):
-                self.assertIn('No valid post date', errors[i][0])
+            self.assertIn('No valid post date', errors[0][0])
 
     @given(generate_full_feed())
     @settings(max_examples=1000, suppress_health_check=[HealthCheck.too_slow])
@@ -72,13 +84,8 @@ class FeedParserTestCase(TestCase):
             self.assertIn('Parsing methods not successful', errors[-1][0])
 
     @staticmethod
-    def patch_date(feed, url, data=None, timeout=None):
-        for item in feed.items:
-            item['pubdate'] = datetime.datetime.min
-            note(item)
-        xml = feed.writeString('utf8')
-        note(xml)
-        return StringIO(xml)
+    def min_date_feed(*args, **kwargs):
+        return StringIO(MIN_DATE_FEED.strip())
 
     @staticmethod
     def patch_open(feed, url, data=None, timeout=None):
