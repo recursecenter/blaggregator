@@ -30,6 +30,8 @@ class Command(BaseCommand):
             return
 
         log.debug('Crawled %s posts from %s', len(crawled), blog.feed_url)
+        blog.last_crawled = timezone.now()
+        blog.save(update_fields=['last_crawled'])
         created_count = 0
         for link, title, content in crawled:
             # create the post instance if it doesn't already exist
@@ -43,8 +45,6 @@ class Command(BaseCommand):
                     self.zulip_queue.append(post)
             else:
                 update_post(post, title, link, content)
-        blog.last_crawled = timezone.now()
-        blog.save(update_fields=['last_crawled'])
 
     def handle(self, **options):
         for blog in Blog.objects.all():
