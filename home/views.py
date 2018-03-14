@@ -129,20 +129,22 @@ def add_blog(request):
                 print "FOUND %s which matches %s" % (blog.url, url)
                 return HttpResponseRedirect(reverse('profile', kwargs={'user_id': request.user.id}))
 
-        # Feedergrabber returns ( [(link, title, date)], [errors])
-        # We're not handling the errors returned for right now
-        # Returns None if there was an exception when parsing the content.
-        crawled, errors = feedergrabber27.feedergrabber(feed_url, suggest_feed_url=True)
-        if crawled is None:
+        contents, errors = feedergrabber27.retrieve_file_contents(feed_url)
+        if contents is None:  # URLError or HTTPError
+            message = 'Could not fetch content from this URL: {}'.format(feed_url)
+            messages.error(request, message)
+
+        elif (
+                contents.bozo and
+                not isinstance(contents.bozo_exception, feedergrabber27.CharacterEncodingOverride)
+        ):  # Content failed to parse
             message = (
                 "This url does not seem to contain valid atom/rss feed xml. "
                 "Please use your blog's feed url! "
             )
-
-            if errors and len(errors) == 1 and isinstance(errors[0], dict) and 'feed_url' in errors[0]:
-                feed_url = errors[0]['feed_url']
-                if feed_url is not None:
-                    message += 'It may be this -- {}'.format(feed_url)
+            feed_url = feedergrabber27.find_feed_url(contents)
+            if feed_url is not None:
+                message += 'It may be this -- {}'.format(feed_url)
 
             messages.error(request, message)
 
@@ -153,21 +155,8 @@ def add_blog(request):
                 feed_url=feed_url,
                 url=url,
             )
-
-            # FIXME: this try/except is a janky bugfix. Use celery instead?
-            # FIXME: very similar to code in crawlposts.get_or_create_post
-            try:
-                for post_url, post_title, post_date, post_content in crawled:
-                    post_date = timezone.make_aware(post_date, timezone.get_default_timezone())
-                    Post.objects.create(
-                        blog=blog,
-                        url=post_url,
-                        title=post_title,
-                        content=post_content,
-                        date_posted_or_crawled=post_date,
-                    )
-            except Exception as e:
-                print e
+            message = 'Your blog has been added successfully. Next crawl will fetch your posts.'
+            messages.info(request, message)
 
     else:
         messages.error(request, "No feed URL provided.")
