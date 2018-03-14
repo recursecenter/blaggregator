@@ -8,6 +8,7 @@ from __future__ import print_function
 from datetime import datetime
 import HTMLParser
 import re
+import socket
 import urllib2
 
 import feedparser
@@ -15,6 +16,8 @@ import requests
 
 MEDIUM_COMMENT_RE = re.compile('"inResponseToPostId":"\w+"')
 CharacterEncodingOverride = feedparser.CharacterEncodingOverride
+# Set a timeout of 60 seconds for sockets - useful when crawling some blogs
+socket.setdefaulttimeout(60)
 
 
 def retrieve_file_contents(url):
