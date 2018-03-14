@@ -1,4 +1,4 @@
-from datetime import datetime
+from cStringIO import StringIO
 
 from django.conf import settings
 from django.test import TestCase
@@ -133,28 +133,43 @@ class FeedsViewTestCase(BaseViewTestCase):
         self.assertGreaterEqual(min_included_date, max_excluded_date)
 
 
-def empty_feed(url, suggest_feed_url=False):
-    return ([], [])
+EMPTY_FEED = """
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>My Site</title>
+    <link>http://localhost:1313/</link>
+    <language>en-us</language>
+    <atom:link href="http://localhost:1313/index.xml" rel="self" type="application/rss+xml" />
+  </channel>
+</rss>
+"""
+
+HTML_PAGE = """
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>My Site</title>
+        <link href="/favicon.ico" rel="icon">
+        <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+        <link href="https://jvns.ca/atom.xml" rel="alternate" type="application/atom+xml">
+    </head>
+    <body>
+    </body>
+</html>
+"""
 
 
-def incorrect_url(url, suggest_feed_url=True):
-    return None, [{'feed_url': 'http://jvns.ca/atom.xml'}]
+def empty_feed(*args, **kwargs):
+    return StringIO(EMPTY_FEED.strip())
 
 
-def feed_with_posts(url, suggest_feed_url=True):
-    posts = [
-        # (post_url, post_title, post_date, post_content),
-        ('', 'What happens when you run a rkt container?', datetime(2016, 11, 3), ''),
-        ('', 'Service discovery at Stripe', datetime(2016, 10, 31), ''),
-        ('', 'A few questions about open source', datetime(2016, 10, 26, 10, 0), ''),
-        ('', 'Running containers without Docker', datetime(2016, 10, 26, 21, 0), ''),
-        ('', 'A litmus test for job descriptions', datetime(2016, 10, 21), ''),
-    ]
-
-    return posts, []
+def html_page(*args, **kwargs):
+    return StringIO(HTML_PAGE.strip())
 
 
-@patch('home.feedergrabber27.feedergrabber', new=empty_feed)
+@patch('urllib2.OpenerDirector.open', new=empty_feed)
 class AddBlogViewTestCase(BaseViewTestCase):
 
     def test_get_add_blog_requires_login(self):
@@ -187,6 +202,7 @@ class AddBlogViewTestCase(BaseViewTestCase):
         self.assertRedirects(response, '/profile/{}/'.format(self.user.id))
         self.assertEqual(response.status_code, 200)
         self.assertIsNotNone(Blog.objects.get(feed_url=data['feed_url']))
+        self.assertContains(response, 'blog has been added successfully')
 
     def test_post_add_blog_adds_blog_without_schema(self):
         # Given
@@ -238,7 +254,7 @@ class AddBlogViewTestCase(BaseViewTestCase):
         data = {'feed_url': 'https://jvns.ca/'}
 
         # When
-        with patch('home.feedergrabber27.feedergrabber', new=incorrect_url):
+        with patch('urllib2.OpenerDirector.open', new=html_page):
             response = self.client.post('/add_blog/', data=data, follow=True)
 
         # Then
@@ -246,22 +262,7 @@ class AddBlogViewTestCase(BaseViewTestCase):
         self.assertRedirects(response, '/profile/{}/'.format(self.user.id))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Please use your blog&#39;s feed url")
-        self.assertContains(response, "It may be this -- http://jvns.ca/atom.xml")
-
-    def test_post_add_blog_creates_posts(self):
-        # Given
-        self.login()
-        data = {'feed_url': 'https://jvns.ca/'}
-
-        # When
-        with patch('home.feedergrabber27.feedergrabber', new=feed_with_posts):
-            response = self.client.post('/add_blog/', data=data, follow=True)
-
-        # Then
-        self.assertEqual(1, Blog.objects.count())
-        self.assertEqual(5, Post.objects.count())
-        self.assertRedirects(response, '/profile/{}/'.format(self.user.id))
-        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "It may be this -- https://jvns.ca/atom.xml")
 
 
 class DeleteBlogViewTestCase(BaseViewTestCase):

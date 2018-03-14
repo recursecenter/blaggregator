@@ -15,6 +15,7 @@ import feedparser
 import requests
 
 MEDIUM_COMMENT_RE = re.compile('"inResponseToPostId":"\w+"')
+CharacterEncodingOverride = feedparser.CharacterEncodingOverride
 
 
 def retrieve_file_contents(url):
@@ -40,7 +41,7 @@ def find_feed_url(parsed_content):
             return link.href
 
 
-def feedergrabber(url, suggest_feed_url=False):
+def feedergrabber(url):
     """The main function of the module."""
 
     # Initialize some variables
@@ -53,11 +54,6 @@ def feedergrabber(url, suggest_feed_url=False):
 
     if file_contents is None:
         return None, errors
-
-    elif file_contents.bozo and not isinstance(file_contents.bozo_exception, feedparser.CharacterEncodingOverride):
-        feed_url = find_feed_url(file_contents) if suggest_feed_url else None
-        suggestion = [{'feed_url': feed_url, 'url': url, 'error': file_contents.bozo_exception}]
-        return None, suggestion
 
     # Gather links, titles, and dates
     for entry in file_contents.entries:

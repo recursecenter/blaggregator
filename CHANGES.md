@@ -19,6 +19,9 @@ place to quickly see the latest changes that the project has undergone.
 
 - [#145] Change Django to 1.11.11 (LTS) -- @punchagan
 
+- [#148] Don't add posts when a new blog is added. Also clean up how feed URL
+  suggestions are done -- @punchagan
+
 ## 2017-02
 
 ### Added
