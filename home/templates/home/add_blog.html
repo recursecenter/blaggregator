@@ -11,13 +11,18 @@
      </li>
 </ul>
 
-{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 <form action="{% url 'add_blog' %}" method="post">
     {% csrf_token %}
 
     {% if messages %}
         {% for message in messages %}
-            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            <div class="alert alert-{{ message.level_tag }}">
+                {% if 'safe' in message.tags %}
+                    {{ message | safe }}
+                {% else %}
+                    {{ message }}
+                {% endif %}
+            </div>
         {% endfor %}
     {% endif %}
 

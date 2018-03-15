@@ -22,6 +22,24 @@ from home.oauth import update_user_details
 from home.feeds import LatestEntriesFeed
 import feedergrabber27
 
+EXISTING_FEED_MESSAGE = (
+    'This feed has already been added!'
+)
+NO_CONTENT_MESSAGE = (
+    'Could not fetch feed from <a href="{url}">{url}</a>. Is the website up?'
+)
+INVALID_FEED_MESSAGE = (
+    "This does not seem to be a valid feed. "
+    "Please use your blog's feed url (not the web url)!"
+)
+SUGGEST_FEED_URL_MESSAGE = INVALID_FEED_MESSAGE + (
+    ' It could be -- <a href="{url}">{url}</a>'
+)
+SUCCESS_MESSAGE = (
+    'Your blog (<a href="{url}">{url}</a>) has been added successfully. '
+    'The next crawl (hourly) will fetch your posts.'
+)
+
 
 def ensure_blog_exists(f):
     @wraps(f)
@@ -124,39 +142,30 @@ def add_blog(request):
             url = feed_url
 
         # janky short circuit if they've already added this url
-        for blog in Blog.objects.filter(user=request.user.id):
-            if url == blog.url:
-                print "FOUND %s which matches %s" % (blog.url, url)
-                return HttpResponseRedirect(reverse('profile', kwargs={'user_id': request.user.id}))
+        if Blog.objects.filter(user=request.user.id, url=url).exists():
+            messages.info(request, EXISTING_FEED_MESSAGE)
+            return HttpResponseRedirect(reverse('profile', kwargs={'user_id': request.user.id}))
 
         contents, errors = feedergrabber27.retrieve_file_contents(feed_url)
         if contents is None:  # URLError or HTTPError
-            message = 'Could not fetch content from this URL: {}'.format(feed_url)
-            messages.error(request, message)
+            messages.error(request, NO_CONTENT_MESSAGE.format(url=feed_url), extra_tags='safe')
 
         elif (
                 contents.bozo and
                 not isinstance(contents.bozo_exception, feedergrabber27.CharacterEncodingOverride)
         ):  # Content failed to parse
-            message = (
-                "This url does not seem to contain valid atom/rss feed xml. "
-                "Please use your blog's feed url! "
-            )
-            feed_url = feedergrabber27.find_feed_url(contents)
-            if feed_url is not None:
-                message += 'It may be this -- {}'.format(feed_url)
-
-            messages.error(request, message)
+            guessed_url = feedergrabber27.find_feed_url(contents)
+            message = SUGGEST_FEED_URL_MESSAGE if guessed_url is not None else INVALID_FEED_MESSAGE
+            messages.error(request, message.format(url=guessed_url), extra_tags='safe')
 
         else:
             # create new blog record in db
-            blog = Blog.objects.create(
+            Blog.objects.create(
                 user=User.objects.get(id=request.user.id),
                 feed_url=feed_url,
                 url=url,
             )
-            message = 'Your blog has been added successfully. Next crawl will fetch your posts.'
-            messages.info(request, message)
+            messages.success(request, SUCCESS_MESSAGE.format(url=feed_url), extra_tags='safe')
 
     else:
         messages.error(request, "No feed URL provided.")
