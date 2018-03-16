@@ -60,16 +60,8 @@ class Command(BaseCommand):
                     post_page = ROOT_URL + 'post/' + post.slug
                     self.enqueue_zulip(blog.user, post_page, title, blog.stream)
 
-            # if title changes, update the post
-            elif title != post.title or content != post.content:
-                post.title = title
-                post.content = content
-                print "Updated %s in %s." % (title, blog.feed_url)
-                post.save()
-
             else:
-                # Any other updates are ignored, as of now
-                pass
+                update_post(post, title, link, date, content)
 
         blog.last_crawled = timezone.now()
         blog.save(update_fields=['last_crawled'])
@@ -87,7 +79,6 @@ class Command(BaseCommand):
 
     def enqueue_zulip(self, user, link, title, stream=STREAM):
         self.zulip_queue.append((user, link, title, stream))
-
 
 def get_or_create_post(blog, title, link, date, content):
     try:
@@ -110,6 +101,25 @@ def get_or_create_post(blog, title, link, date, content):
     )
 
     return post, created
+
+
+def update_post(post, title, link, date, content):
+    """Update a post with the new content.
+
+    Updates if title, link or content has changed. Date is ignored since it may
+    not always be parsed correctly, and we sometimes just use datetime.now()
+    when parsing feeds.
+
+    """
+
+    if post.title == title and post.url == link and post.content == content:
+        return
+
+    post.title = title
+    post.url = link
+    post.content = content
+    post.save()
+    log.debug("Updated %s - %s.", title, link)
 
 
 def send_message_zulip(user, link, title, stream=STREAM):
