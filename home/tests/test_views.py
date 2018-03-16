@@ -202,7 +202,7 @@ class AddBlogViewTestCase(BaseViewTestCase):
         self.assertRedirects(response, '/profile/{}/'.format(self.user.id))
         self.assertEqual(response.status_code, 200)
         self.assertIsNotNone(Blog.objects.get(feed_url=data['feed_url']))
-        self.assertContains(response, 'blog has been added successfully')
+        self.assertContains(response, 'has been added successfully')
 
     def test_post_add_blog_adds_blog_without_schema(self):
         # Given
@@ -261,8 +261,9 @@ class AddBlogViewTestCase(BaseViewTestCase):
         self.assertEqual(0, Blog.objects.count())
         self.assertRedirects(response, '/profile/{}/'.format(self.user.id))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Please use your blog&#39;s feed url")
-        self.assertContains(response, "It may be this -- https://jvns.ca/atom.xml")
+        self.assertContains(response, "Please use your blog's feed url")
+        self.assertContains(response, "It could be -- ")
+        self.assertContains(response, 'https://jvns.ca/atom.xml')
 
 
 class DeleteBlogViewTestCase(BaseViewTestCase):
