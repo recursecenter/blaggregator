@@ -99,20 +99,15 @@ def get_or_create_post(blog, title, link, date, content):
     except Post.DoesNotExist:
         pass
 
-    try:
-        post = Post.objects.get(blog=blog, url=link)
-        return post, False
-
-    except Post.DoesNotExist:
-        post, created = Post.objects.get_or_create(
-            blog=blog,
-            url=link,
-            defaults={
-                'title': title,
-                'date_posted_or_crawled': date,
-                'content': content,
-            }
-        )
+    post, created = Post.objects.get_or_create(
+        blog=blog,
+        url=link,
+        defaults={
+            'title': title,
+            'date_posted_or_crawled': date,
+            'content': content,
+        }
+    )
 
     return post, created
 
