@@ -121,18 +121,6 @@ class FeedsViewTestCase(BaseViewTestCase):
         if n < 1:
             return
 
-        self.assertGreaterEqual(entries[0].updated_parsed,
-                                entries[-1].updated_parsed)
-        included, excluded = self.get_included_excluded_posts(posts, entries)
-        self.assertEqual(len(included), len(entries))
-        if not excluded:
-            return
-
-        max_excluded_date = max(excluded, key=lambda x: x.date_posted_or_crawled).date_posted_or_crawled
-        min_included_date = min(included, key=lambda x: x.date_posted_or_crawled).date_posted_or_crawled
-        self.assertGreaterEqual(min_included_date, max_excluded_date)
-
-
 EMPTY_FEED = """
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">

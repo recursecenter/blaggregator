@@ -113,7 +113,6 @@ class PostFactory(factory.DjangoModelFactory):
         model = Post
 
     url = factory.Faker('uri')
-    date_posted_or_crawled = factory.Faker('date_time_this_decade', after_now=True, tzinfo=tzinfo)
     title = factory.Faker('sentence')
     content = factory.Faker('text')
     blog = factory.SubFactory(BlogFactory)
