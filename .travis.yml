@@ -20,7 +20,7 @@ script:
   # ensure README.md changes all synced to about.html
   - ./scripts/readme_to_about && git diff --exit-code
   - coverage run manage.py test home
-  - flake8 --ignore=E501 --exclude=migrations,wsgi.py
+  - flake8 --ignore=E501 --exclude=migrations,wsgi.py,blaggregator/settings/__init__.py
 
 after_script:
   - coverage report -m
