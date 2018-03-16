@@ -33,7 +33,7 @@ class Command(BaseCommand):
     zulip_queue = deque()
 
     def crawlblog(self, blog):
-        # Feedergrabber returns ( [(link, title, date)], [errors])
+        # Feedergrabber returns ( [(link, title, content)], [errors])
         # We're ignoring the errors returned for right now
         crawled, errors = feedergrabber27.feedergrabber(blog.feed_url)
 
@@ -44,11 +44,9 @@ class Command(BaseCommand):
         log.debug('Crawled %s posts from %s', len(crawled), blog.feed_url)
 
         created_count = 0
-        for link, title, date, content in crawled:
-            date = timezone.make_aware(date, timezone.get_default_timezone())
-
+        for link, title, content in crawled:
             # create the post instance if it doesn't already exist
-            post, created = get_or_create_post(blog, title, link, date, content)
+            post, created = get_or_create_post(blog, title, link, content)
 
             if created:
                 created_count += 1
@@ -61,7 +59,7 @@ class Command(BaseCommand):
                     self.enqueue_zulip(blog.user, post_page, title, blog.stream)
 
             else:
-                update_post(post, title, link, date, content)
+                update_post(post, title, link, content)
 
         blog.last_crawled = timezone.now()
         blog.save(update_fields=['last_crawled'])
@@ -80,12 +78,13 @@ class Command(BaseCommand):
     def enqueue_zulip(self, user, link, title, stream=STREAM):
         self.zulip_queue.append((user, link, title, stream))
 
-def get_or_create_post(blog, title, link, date, content):
+
+def get_or_create_post(blog, title, link, content):
     try:
         # The previous code checked only for url, and therefore, the db can
         # have posts with duplicate titles. So, we check if there is atleast
         # one post with the title -- using `filter.latest` instead of `get`.
-        post = Post.objects.filter(blog=blog, title=title).latest('date_posted_or_crawled')
+        post = Post.objects.filter(blog=blog, title=title).latest('created_at')
         return post, False
     except Post.DoesNotExist:
         pass
@@ -95,7 +94,6 @@ def get_or_create_post(blog, title, link, date, content):
         url=link,
         defaults={
             'title': title,
-            'date_posted_or_crawled': date,
             'content': content,
         }
     )
@@ -103,14 +101,8 @@ def get_or_create_post(blog, title, link, date, content):
     return post, created
 
 
-def update_post(post, title, link, date, content):
-    """Update a post with the new content.
-
-    Updates if title, link or content has changed. Date is ignored since it may
-    not always be parsed correctly, and we sometimes just use datetime.now()
-    when parsing feeds.
-
-    """
+def update_post(post, title, link, content):
+    """Update a post with the new content."""
 
     if post.title == title and post.url == link and post.content == content:
         return

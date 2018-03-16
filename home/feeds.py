@@ -13,7 +13,7 @@ class LatestEntriesFeed(Feed):
     description_template = 'home/feed_item.tmpl'
 
     def items(self):
-        return Post.objects.order_by('-date_posted_or_crawled')[:settings.MAX_FEED_ENTRIES]
+        return Post.objects.all()[:settings.MAX_FEED_ENTRIES]
 
     def item_title(self, item):
         return item.title
@@ -24,6 +24,3 @@ class LatestEntriesFeed(Feed):
     def item_author_name(self, item):
         user = item.blog.user
         return user.first_name + " " + user.last_name
-
-    def item_pubdate(self, item):
-        return item.date_posted_or_crawled

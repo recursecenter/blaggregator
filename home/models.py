@@ -54,8 +54,8 @@ class Post(models.Model):
     url = models.TextField()
     title = models.TextField(blank=True)
     content = models.TextField()
-    date_posted_or_crawled = models.DateTimeField('date updated')
     slug = models.CharField(max_length=6, default=generate_random_id, unique=True)
+    created_at = models.DateTimeField('creation timestamp', auto_now_add=True)
 
     @property
     def author(self):
@@ -74,7 +74,7 @@ class Post(models.Model):
         return self.blog.get_stream_display()
 
     class Meta:
-        ordering = ['-date_posted_or_crawled']
+        ordering = ['-created_at']
 
 
 class LogEntry(models.Model):
