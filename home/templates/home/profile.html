@@ -21,13 +21,22 @@
     <table class="table">
         {% if blogs %}
             <tr>
-                <th>Feed URL</th> <th>Stream</th> <th>&nbsp;</th>
+                <th>Feed URL</th> <th>Crawling?</th> <th>Stream</th> <th>&nbsp;</th>
             </tr>
         {% endif %}
         {% for blog in blogs %}
             <tr>
-                <td><a href="{{blog.feed_url}}" target="_blank">{{blog.feed_url}}</a></td>
-                <td><a href="https://zulip.com/#narrow/stream/{{blog.stream|stream_name}}" target="_blank">{{blog.stream|stream_name}}</a></td>
+                <td>
+                    <a href="{{blog.feed_url}}" target="_blank">{{blog.feed_url}}</a>
+                </td>
+                <td>
+                    {% if blog.skip_crawl %}
+                        <span class="label label-warning">Disabled</span>
+                    {% else %}
+                        <span class="label label-info">Active</span>
+                    {% endif %}
+                </td>
+                <td><a href="https://zulip.com/#narrow/stream/{{blog.get_stream_display}}" target="_blank">{{blog.get_stream_display}}</a></td>
                 {% if owner %}
                     <td><a href="{% url "edit_blog" blog_id=blog.id %}">Edit <i class="icon-pencil"></i></a></td>
                 {% endif %}
