@@ -4,8 +4,8 @@
     {% for post in post_list %}
     <div class="media post">
         {% if show_avatars %}
-        <a class="pull-left" href="{% url 'profile' post.authorid %}">
-            <img class="media-object" data-author-id="{{post.authorid}}" src="{{ post.avatar }}" width="40px" height="40px">
+        <a class="float-left" href="{% url 'profile' post.authorid %}">
+            <img class="media-object" data-author-id="{{post.authorid}}" src="{{ post.avatar }}" width="40px" height="40pxsx">
         </a>
         {% endif %}
 
@@ -23,19 +23,31 @@
     {% endfor %}
 
     {% if post_list.paginator %}
-    <div class="pagination pagination-centered">
-        <ul>
-            {% if post_list.has_previous %}
-            <li><a href="?page={{ post_list.previous_page_number }}{% if query %}&q={{query}}{% endif %}">previous</a></li>
-            {% endif %}
+        <nav aria="Pages">
+            <ul class="pagination pagination-sm justify-content-center">
+                {% if post_list.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ post_list.previous_page_number }}{% if query %}&q={{query}}{% endif %}">
+                            previous
+                        </a>
+                    </li>
+                {% endif %}
 
-            <li><a>Page {{ post_list.number }} of {{ post_list.paginator.num_pages }}.</a></li>
+                <li class="page-item disabled">
+                    <a class="page-link">
+                        Page {{ post_list.number }} of {{ post_list.paginator.num_pages }}
+                    </a>
+                </li>
 
-            {% if post_list.has_next %}
-            <li><a href="?page={{ post_list.next_page_number }}{% if query %}&q={{query}}{% endif %}">next</a></li>
-            {% endif %}
-        </ul>
-    </div>
+                {% if post_list.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ post_list.next_page_number }}{% if query %}&q={{query}}{% endif %}">
+                            next
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
     {% endif %}
 
 </div>
