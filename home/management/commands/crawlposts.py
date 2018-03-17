@@ -22,8 +22,7 @@ class Command(BaseCommand):
     zulip_queue = deque()
 
     def crawlblog(self, blog):
-        # Feedergrabber returns ( [(link, title, content)], [errors])
-        # We're ignoring the errors returned for right now
+        # Feedergrabber returns ( [(link, title, date, content)], [errors])
         crawled, errors = feedergrabber27.feedergrabber(blog.feed_url)
         if not crawled:
             log.debug(str(errors))
@@ -33,9 +32,12 @@ class Command(BaseCommand):
         blog.last_crawled = timezone.now()
         blog.save(update_fields=['last_crawled'])
         created_count = 0
-        for link, title, content in crawled:
+        for link, title, date, content in crawled:
+            date = timezone.make_aware(date, timezone.get_default_timezone())
             # create the post instance if it doesn't already exist
-            post, created = get_or_create_post(blog, title, link, content)
+            post, created = get_or_create_post(
+                blog, title, link, date, content
+            )
             if created:
                 created_count += 1
                 log.debug("Created '%s' from blog '%s'", title, blog.feed_url)
@@ -56,24 +58,32 @@ class Command(BaseCommand):
             announce_new_post(post, debug=settings.DEBUG)
 
 
-def get_or_create_post(blog, title, link, content):
+def get_or_create_post(blog, title, link, date, content):
     try:
         # The previous code checked only for url, and therefore, the db can
         # have posts with duplicate titles. So, we check if there is atleast
         # one post with the title -- using `filter.latest` instead of `get`.
-        post = Post.objects.filter(blog=blog, title=title).latest('created_at')
+        post = Post.objects.filter(blog=blog, title=title).latest('posted_at')
         return post, False
 
     except Post.DoesNotExist:
         pass
     post, created = Post.objects.get_or_create(
-        blog=blog, url=link, defaults={'title': title, 'content': content}
+        blog=blog,
+        url=link,
+        defaults={'title': title, 'posted_at': date, 'content': content},
     )
     return post, created
 
 
 def update_post(post, title, link, content):
-    """Update a post with the new content."""
+    """Update a post with the new content.
+
+    Updates if title, link or content has changed. Date is ignored since it may
+    not always be parsed correctly, and we sometimes just use datetime.now()
+    when parsing feeds.
+
+    """
     if post.title == title and post.url == link and post.content == content:
         return
 

@@ -1,4 +1,5 @@
 from cStringIO import StringIO
+import datetime
 from functools import partial
 import re
 
@@ -48,9 +49,16 @@ class FeedParserTestCase(TestCase):
                 self.assertIn('Parsing methods not successful', errors[0][0])
 
             else:
-                for i, (link, title, content) in enumerate(contents):
+                for i, (link, title, date, content) in enumerate(contents):
                     item = feed.items[i]
                     self.assertEqual(link, item['link'])
+                    item_date = item.get('pubdate', item.get('updateddate'))
+                    note(item_date)
+                    note(date)
+                    self.assertIsNotNone(date)
+                    self.assertGreaterEqual(
+                        datetime.datetime.now().utctimetuple(), date.utctimetuple()
+                    )
 
     def test_parsing_feeds_with_min_dates(self):
         with patch('urllib2.OpenerDirector.open', new=self.min_date_feed):
@@ -58,7 +66,7 @@ class FeedParserTestCase(TestCase):
             self.assertIsNone(contents)
             self.assertEqual(2, len(errors))
             self.assertIn('Parsing methods not successful', errors[-1][0])
-            self.assertIn('Ignoring post with date 0001-01-01', errors[0][0])
+            self.assertIn('No valid post date', errors[0][0])
 
     @given(generate_full_feed())
     @settings(max_examples=1000, suppress_health_check=[HealthCheck.too_slow])

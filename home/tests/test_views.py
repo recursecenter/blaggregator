@@ -12,7 +12,12 @@ from .utils import create_posts
 N_MAX = settings.MAX_FEED_ENTRIES
 
 
-@override_settings(AUTHENTICATION_BACKENDS=('django.contrib.auth.backends.ModelBackend', 'home.token_auth.TokenAuthBackend'))
+@override_settings(
+    AUTHENTICATION_BACKENDS=(
+        'django.contrib.auth.backends.ModelBackend',
+        'home.token_auth.TokenAuthBackend',
+    )
+)
 class BaseViewTestCase(TestCase):
 
     def setUp(self):
@@ -22,7 +27,6 @@ class BaseViewTestCase(TestCase):
         self.clear_db()
 
     # Helper methods ####
-
     def clear_db(self):
         User.objects.all().delete()
 
@@ -49,7 +53,6 @@ class FeedsViewTestCase(BaseViewTestCase):
     def test_should_enforce_authentication(self):
         response = self.client.get('/atom.xml')
         self.assertEqual(response.status_code, 404)
-
         response = self.client.get('/atom.xml', data={'token': ''})
         self.assertEqual(response.status_code, 404)
 
@@ -57,13 +60,10 @@ class FeedsViewTestCase(BaseViewTestCase):
         self.login()
         response = self.client.get('/new/')
         self.assertEqual(response.status_code, 200)
-
         response = self.client.get('/atom.xml')
         self.assertEqual(response.status_code, 404)
-
         response = self.client.get('/atom.xml', data={'token': ''})
         self.assertEqual(response.status_code, 404)
-
         response = self.client.get('/atom.xml', data={'token': 'BOGUS-TOKEN'})
         self.assertEqual(response.status_code, 404)
 
@@ -77,7 +77,6 @@ class FeedsViewTestCase(BaseViewTestCase):
         self.verify_feed_generation(N_MAX * 5)
 
     # Helper methods ####
-
     def parse_feed(self, content):
         """Parse feed content and return entries."""
         # FIXME: Would it be a good idea to use feedergrabber?
@@ -85,7 +84,6 @@ class FeedsViewTestCase(BaseViewTestCase):
 
     def get_included_excluded_posts(self, posts, entries):
         """Returns the set of included and excluded posts."""
-
         entry_links = {(entry.title, entry.link) for entry in entries}
         included = []
         excluded = []
@@ -94,7 +92,6 @@ class FeedsViewTestCase(BaseViewTestCase):
                 included.append(post)
             else:
                 excluded.append(post)
-
         return included, excluded
 
     # @given(st.integers(min_value=0, max_value=N_MAX * 10))
@@ -107,10 +104,10 @@ class FeedsViewTestCase(BaseViewTestCase):
         self.login()
         self.setup_test_user()
         posts = create_posts(n)
-
         # When
-        response = self.client.get('/atom.xml', data={'token': self.hacker.token})
-
+        response = self.client.get(
+            '/atom.xml', data={'token': self.hacker.token}
+        )
         # Then
         self.assertEqual(n, Post.objects.count())
         self.assertEqual(n, len(posts))
@@ -120,6 +117,19 @@ class FeedsViewTestCase(BaseViewTestCase):
         self.assertEqual(min(n, N_MAX), len(entries))
         if n < 1:
             return
+
+        self.assertGreaterEqual(
+            entries[0].updated_parsed, entries[-1].updated_parsed
+        )
+        included, excluded = self.get_included_excluded_posts(posts, entries)
+        self.assertEqual(len(included), len(entries))
+        if not excluded:
+            return
+
+        max_excluded_date = max(excluded, key=lambda x: x.posted_at).posted_at
+        min_included_date = min(included, key=lambda x: x.posted_at).posted_at
+        self.assertGreaterEqual(min_included_date, max_excluded_date)
+
 
 EMPTY_FEED = """
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
@@ -132,7 +142,6 @@ EMPTY_FEED = """
   </channel>
 </rss>
 """
-
 HTML_PAGE = """
 <!DOCTYPE html>
 <html lang="en">
@@ -163,17 +172,14 @@ class AddBlogViewTestCase(BaseViewTestCase):
     def test_get_add_blog_requires_login(self):
         # When
         response = self.client.post('/add_blog/', follow=True)
-
         # Then
         self.assertRedirects(response, '/login/?next=/add_blog/')
 
     def test_post_add_blog_without_blog_url_barfs(self):
         # Given
         self.login()
-
         # When
         response = self.client.post('/add_blog/', follow=True)
-
         # Then
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'No feed URL provided')
@@ -182,10 +188,8 @@ class AddBlogViewTestCase(BaseViewTestCase):
         # Given
         self.login()
         data = {'feed_url': 'https://jvns.ca/atom.xml'}
-
         # When
         response = self.client.post('/add_blog/', data=data, follow=True)
-
         # Then
         self.assertRedirects(response, '/profile/{}/'.format(self.user.id))
         self.assertEqual(response.status_code, 200)
@@ -196,14 +200,14 @@ class AddBlogViewTestCase(BaseViewTestCase):
         # Given
         self.login()
         data = {'feed_url': 'jvns.ca/atom.xml'}
-
         # When
         response = self.client.post('/add_blog/', data=data, follow=True)
-
         # Then
         self.assertRedirects(response, '/profile/{}/'.format(self.user.id))
         self.assertEqual(response.status_code, 200)
-        self.assertIsNotNone(Blog.objects.get(feed_url='http://{}'.format(data['feed_url'])))
+        self.assertIsNotNone(
+            Blog.objects.get(feed_url='http://{}'.format(data['feed_url']))
+        )
 
     def test_post_add_blog_adds_only_once(self):
         # Given
@@ -211,10 +215,8 @@ class AddBlogViewTestCase(BaseViewTestCase):
         data = {'feed_url': 'https://jvns.ca/atom.xml'}
         self.client.post('/add_blog/', data=data, follow=True)
         data_ = {'feed_url': 'https://jvns.ca/rss'}
-
         # When
         response = self.client.post('/add_blog/', data=data_, follow=True)
-
         # Then
         self.assertRedirects(response, '/profile/{}/'.format(self.user.id))
         self.assertEqual(response.status_code, 200)
@@ -229,10 +231,8 @@ class AddBlogViewTestCase(BaseViewTestCase):
         blog.skip_crawl = True
         blog.save()
         data_ = {'feed_url': 'https://jvns.ca/atom.xml'}
-
         # When
         response = self.client.post('/add_blog/', data=data_, follow=True)
-
         # Then
         self.assertRedirects(response, '/profile/{}/'.format(self.user.id))
         self.assertEqual(response.status_code, 200)
@@ -246,10 +246,8 @@ class AddBlogViewTestCase(BaseViewTestCase):
         data = {'feed_url': 'https://jvns.ca/atom.xml'}
         self.client.post('/add_blog/', data=data, follow=True)
         data_ = {'feed_url': 'https://jvns.ca/tags/blaggregator.xml'}
-
         # When
         response = self.client.post('/add_blog/', data=data_, follow=True)
-
         # Then
         self.assertRedirects(response, '/profile/{}/'.format(self.user.id))
         self.assertEqual(response.status_code, 200)
@@ -260,11 +258,9 @@ class AddBlogViewTestCase(BaseViewTestCase):
         # Given
         self.login()
         data = {'feed_url': 'https://jvns.ca/'}
-
         # When
         with patch('urllib2.OpenerDirector.open', new=html_page):
             response = self.client.post('/add_blog/', data=data, follow=True)
-
         # Then
         self.assertEqual(0, Blog.objects.count())
         self.assertRedirects(response, '/profile/{}/'.format(self.user.id))
@@ -280,10 +276,8 @@ class DeleteBlogViewTestCase(BaseViewTestCase):
         # Given
         feed_url = 'https://jvns.ca/atom.xml'
         blog = Blog.objects.create(user=self.user, feed_url=feed_url)
-
         # When
         self.client.get('/delete_blog/%s/' % blog.id)
-
         # Then
         self.assertEqual(1, Blog.objects.count())
 
@@ -292,10 +286,8 @@ class DeleteBlogViewTestCase(BaseViewTestCase):
         self.login()
         feed_url = 'https://jvns.ca/atom.xml'
         blog = Blog.objects.create(user=self.user, feed_url=feed_url)
-
         # When
         self.client.get('/delete_blog/%s/' % blog.id)
-
         # Then
         self.assertEqual(0, Blog.objects.count())
         with self.assertRaises(Blog.DoesNotExist):
@@ -307,10 +299,8 @@ class DeleteBlogViewTestCase(BaseViewTestCase):
         feed_url = 'https://jvns.ca/atom.xml'
         blog = Blog.objects.create(user=self.user, feed_url=feed_url)
         self.client.get('/delete_blog/%s/' % blog.id)
-
         # When
         response = self.client.get('/delete_blog/%s/' % blog.id)
-
         # Then
         self.assertEqual(404, response.status_code)
 
@@ -321,10 +311,8 @@ class EditBlogViewTestCase(BaseViewTestCase):
         # Given
         feed_url = 'https://jvns.ca/atom.xml'
         blog = Blog.objects.create(user=self.user, feed_url=feed_url)
-
         # When
         response = self.client.get('/edit_blog/%s/' % blog.id, follow=True)
-
         # Then
         self.assertRedirects(response, '/login/?next=/edit_blog/%s/' % blog.id)
 
@@ -334,10 +322,10 @@ class EditBlogViewTestCase(BaseViewTestCase):
         feed_url = 'https://jvns.ca/atom.xml'
         blog = Blog.objects.create(user=self.user, feed_url=feed_url)
         data = {'feed_url': 'https://jvns.ca/rss', 'stream': 'BLOGGING'}
-
         # When
-        response = self.client.post('/edit_blog/%s/' % blog.id, data=data, follow=True)
-
+        response = self.client.post(
+            '/edit_blog/%s/' % blog.id, data=data, follow=True
+        )
         # Then
         self.assertEqual(200, response.status_code)
         with self.assertRaises(Blog.DoesNotExist):
@@ -348,13 +336,15 @@ class EditBlogViewTestCase(BaseViewTestCase):
         # Given
         self.login()
         feed_url = 'https://jvns.ca/atom.xml'
-        blog = Blog.objects.create(user=self.user, feed_url=feed_url, skip_crawl=True)
+        blog = Blog.objects.create(
+            user=self.user, feed_url=feed_url, skip_crawl=True
+        )
         data = {'feed_url': 'https://jvns.ca/rss', 'stream': 'BLOGGING'}
         assert blog.skip_crawl, 'Blog skip crawl should be True'
-
         # When
-        response = self.client.post('/edit_blog/%s/' % blog.id, data=data, follow=True)
-
+        response = self.client.post(
+            '/edit_blog/%s/' % blog.id, data=data, follow=True
+        )
         # Then
         self.assertEqual(200, response.status_code)
         with self.assertRaises(Blog.DoesNotExist):
@@ -368,10 +358,8 @@ class EditBlogViewTestCase(BaseViewTestCase):
         self.login()
         feed_url = 'https://jvns.ca/atom.xml'
         blog = Blog.objects.create(user=self.user, feed_url=feed_url)
-
         # When
         response = self.client.get('/edit_blog/%s/' % blog.id, follow=True)
-
         # Then
         self.assertEqual(200, response.status_code)
 
@@ -379,10 +367,10 @@ class EditBlogViewTestCase(BaseViewTestCase):
         # Given
         self.login()
         data = {'feed_url': 'https://jvns.ca/rss', 'stream': 'BLOGGING'}
-
         # When
-        response = self.client.post('/edit_blog/%s/' % 200, data=data, follow=True)
-
+        response = self.client.post(
+            '/edit_blog/%s/' % 200, data=data, follow=True
+        )
         # Then
         self.assertEqual(404, response.status_code)
 
@@ -400,19 +388,18 @@ class UpdatedAvatarViewTestCase(BaseViewTestCase):
 
         # When
         with patch('home.views.update_user_details', new=update_user_details):
-            response = self.client.get('/updated_avatar/%s/' % self.user.id, follow=True)
-
+            response = self.client.get(
+                '/updated_avatar/%s/' % self.user.id, follow=True
+            )
         self.assertEqual(200, response.status_code)
         self.assertEqual(expected_url, response.content)
 
     def test_should_not_update_unknown_hacker_avatar_url(self):
         # Given
         self.login()
-
         # When
         with patch('home.views.update_user_details', new=lambda x, y: None):
             response = self.client.get('/updated_avatar/200/', follow=True)
-
         self.assertEqual(404, response.status_code)
 
 
@@ -423,10 +410,8 @@ class ViewPostViewTestCase(BaseViewTestCase):
         self.create_posts(1)
         post = Post.objects.filter()[0]
         post_url = post.url
-
         # When
         response = self.client.get('/post/{}/view/'.format(post.slug))
-
         # Then
         self.assertEqual(response['Location'], post_url)
         self.assertEqual(response.status_code, 302)
@@ -435,7 +420,6 @@ class ViewPostViewTestCase(BaseViewTestCase):
     def test_does_not_redirect_to_bogus_post(self):
         # When
         response = self.client.get('/post/BOGUS/view/')
-
         # Then
         self.assertEqual(response.status_code, 404)
 
@@ -445,7 +429,6 @@ class MostViewedViewTestCase(BaseViewTestCase):
     def test_should_enforce_authentication(self):
         # When
         response = self.client.get('/most_viewed/', follow=True)
-
         # Then
         self.assertRedirects(response, '/login/?next=/most_viewed/')
 
@@ -455,10 +438,8 @@ class MostViewedViewTestCase(BaseViewTestCase):
         self.create_posts(10)
         post = Post.objects.filter()[0]
         self.client.get('/post/{}/view/'.format(post.slug))
-
         # When
         response = self.client.get('/most_viewed/', follow=True)
-
         # Then
         self.assertContains(response, post.title)
 
@@ -468,10 +449,8 @@ class MostViewedViewTestCase(BaseViewTestCase):
         self.create_posts(10)
         post = Post.objects.filter()[0]
         self.client.get('/post/{}/view/'.format(post.slug))
-
         # When
         response = self.client.get('/most_viewed/30/', follow=True)
-
         # Then
         self.assertContains(response, post.title)
 
@@ -481,10 +460,8 @@ class MostViewedViewTestCase(BaseViewTestCase):
         self.create_posts(10)
         post = Post.objects.filter()[0]
         self.client.get('/post/{}/view/'.format(post.slug))
-
         # When
         response = self.client.get('/most_viewed/?tsv=1', follow=True)
-
         # Then
         self.assertEqual(response['Content-Type'], 'text/tab-separated-values')
         self.assertContains(response, post.title)
@@ -495,10 +472,8 @@ class MostViewedViewTestCase(BaseViewTestCase):
         self.create_posts(10)
         post = Post.objects.filter()[0]
         self.client.get('/post/{}/view/'.format(post.slug))
-
         # When
         response = self.client.get('/most_viewed/30/?tsv=1', follow=True)
-
         # Then
         self.assertEqual(response['Content-Type'], 'text/tab-separated-values')
         self.assertContains(response, post.title)
@@ -510,10 +485,8 @@ class NewViewTestCase(BaseViewTestCase):
         # Given
         self.login()
         self.create_posts(5)
-
         # When
         response = self.client.get('/new/', follow=True)
-
         # Then
         for post in Post.objects.all():
             self.assertContains(response, post.title)
@@ -523,11 +496,9 @@ class NewViewTestCase(BaseViewTestCase):
         # Given
         self.login()
         self.create_posts(15)
-
         # When
         response_1 = self.client.get('/new/', follow=True)
         response_2 = self.client.get('/new/?page=2', follow=True)
-
         # Then
         for post in Post.objects.all():
             if post.title in response_1.content:
@@ -549,15 +520,12 @@ class SearchViewTestCase(BaseViewTestCase):
         non_matching_title = 'Django rocks'
         self.create_posts(n, title=matching_title)
         self.create_posts(n, title=non_matching_title)
-
         # When
         response = self.client.get('/search/?q={}'.format(query), follow=True)
-
         # Then
         for post in Post.objects.all():
             if post.title == matching_title:
                 self.assertContains(response, post.title)
                 self.assertContains(response, post.slug)
-
             else:
                 self.assertNotContains(response, post.slug)

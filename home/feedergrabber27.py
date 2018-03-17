@@ -5,7 +5,7 @@
 
 from __future__ import print_function
 
-from datetime import datetime
+import datetime
 import HTMLParser
 import re
 import socket
@@ -55,17 +55,8 @@ def feedergrabber(url):
     if file_contents is None:
         return None, errors
 
-    # Gather links, titles, and content
+    # Gather links, titles, dates and content
     for entry in file_contents.entries:
-        # Ignore posts with 0001-01-01 as published date (A common date for
-        # hugo pages)
-        post_date = getattr(
-            entry, 'published_parsed', getattr(entry, 'updated_parsed', None)
-        )
-        if post_date and post_date[:6] == datetime.min.timetuple()[:6]:
-            errors.append([url + ': Ignoring post with date 0001-01-01.'])
-            continue
-
         # Link
         link = getattr(entry, 'link', '')
         if not link:
@@ -87,10 +78,28 @@ def feedergrabber(url):
             continue
 
         title = h.unescape(title).replace('\n', ' ')
+        # Date
+        post_date = getattr(
+            entry, 'published_parsed', getattr(entry, 'updated_parsed', None)
+        )
+        now = datetime.datetime.now()
+        if post_date is None:
+            # No date posts are marked as crawled now
+            post_date = now
+        else:
+            post_date = datetime.datetime(* post_date[:6])
+            # future dated posts are marked as crawled now
+            if post_date > now:
+                post_date = now
+            # posts dated 0001-01-01 are ignored -- common for _pages_ in hugo feeds
+            elif post_date == datetime.datetime.min:
+                errors.append([url + ': No valid post date, could be a page.'])
+                continue
+
         # Post content
         content = getattr(entry, 'summary', '')
         # Append
-        post_links_and_titles.append((link, title, content))
+        post_links_and_titles.append((link, title, post_date, content))
     if len(post_links_and_titles) == 0:
         post_links_and_titles = None
         errors.append([url + ': Parsing methods not successful.'])

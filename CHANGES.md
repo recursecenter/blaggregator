@@ -30,9 +30,6 @@ place to quickly see the latest changes that the project has undergone.
 - [#148] Don't add posts when a new blog is added. Also clean up how feed URL
   suggestions are done -- @punchagan
 
-- [#150] Ignore post publishing and updating dates. Use crawled timestamp to
-  order posts everywhere. -- @punchagan
-
 ## 2017-02
 
 ### Added
