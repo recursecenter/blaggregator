@@ -9,13 +9,18 @@ place to quickly see the latest changes that the project has undergone.
 
 ## 2018-03
 
+### Added
+
+- [#151] Added command to delete posts with duplicate titles -- @punchagan
+
 ### Fixed
 
 - [#143,#144] Don't add medium comments as posts -- @punchagan
 
 ### Changed
 
-- [2d6d3986f019b10f67616054c0a2fb8287c9f345] Remove the add_blog page, and move the form to the profile page -- @punchagan
+- [2d6d3986f019b10f67616054c0a2fb8287c9f345] Remove the add_blog page, and move
+  the form to the profile page -- @punchagan
 
 - [#145] Change Django to 1.11.11 (LTS) -- @punchagan
 
