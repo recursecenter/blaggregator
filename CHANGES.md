@@ -13,6 +13,9 @@ place to quickly see the latest changes that the project has undergone.
 
 - [#151] Added command to delete posts with duplicate titles -- @punchagan
 
+- [#147] Added a skip_crawl flag on blogs to ignore them during crawls. Also,
+  added a command to mark offending blogs and notify their owners. -- @punchagan
+
 ### Fixed
 
 - [#143,#144] Don't add medium comments as posts -- @punchagan
