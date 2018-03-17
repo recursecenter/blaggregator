@@ -53,7 +53,7 @@ def notify_uncrawlable_blogs(user, blogs, debug=True):
         return False
 
     else:
-        send_message_zulip(to, subject, content, type_=type_)
+        return send_message_zulip(to, subject, content, type_=type_)
 
 
 def send_message_zulip(to, subject, content, type_='private'):
