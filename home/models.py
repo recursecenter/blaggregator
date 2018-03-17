@@ -42,7 +42,10 @@ class Blog(models.Model):
     feed_url = models.URLField()
     last_crawled = models.DateTimeField('last crawled', blank=True, null=True)
     created = models.DateTimeField('date created', auto_now_add=True)
-    stream = models.CharField(max_length=100, default=STREAM_CHOICES[0][0], choices=STREAM_CHOICES)
+    stream = models.CharField(
+        max_length=100, default=STREAM_CHOICES[0][0], choices=STREAM_CHOICES
+    )
+    skip_crawl = models.BooleanField('skip crawling this blog', default=False)
 
     @property
     def author(self):
