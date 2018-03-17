@@ -65,7 +65,7 @@ def ensure_hacker_exists(f):
     return wrapper
 
 
-def paginator(queryset, page_number, page_size=10):
+def paginator(queryset, page_number, page_size=30):
     paginator = Paginator(queryset, page_size)
     try:
         items = paginator.page(page_number)

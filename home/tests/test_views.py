@@ -495,7 +495,7 @@ class NewViewTestCase(BaseViewTestCase):
     def test_should_paginate_new_posts(self):
         # Given
         self.login()
-        self.create_posts(15)
+        self.create_posts(35)
         # When
         response_1 = self.client.get('/new/', follow=True)
         response_2 = self.client.get('/new/?page=2', follow=True)
