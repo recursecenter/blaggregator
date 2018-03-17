@@ -353,16 +353,6 @@ class EditBlogViewTestCase(BaseViewTestCase):
         self.assertIsNotNone(blog)
         self.assertFalse(blog.skip_crawl)
 
-    def test_should_show_edit_blog_form(self):
-        # Given
-        self.login()
-        feed_url = 'https://jvns.ca/atom.xml'
-        blog = Blog.objects.create(user=self.user, feed_url=feed_url)
-        # When
-        response = self.client.get('/edit_blog/%s/' % blog.id, follow=True)
-        # Then
-        self.assertEqual(200, response.status_code)
-
     def test_should_not_edit_unknown_blog(self):
         # Given
         self.login()

@@ -51,11 +51,21 @@
                     <td><a href="https://zulip.com/#narrow/stream/{{blog.get_stream_display}}" target="_blank">{{blog.get_stream_display}}</a></td>
                     {% if owner %}
                         <td>
-                            <a class="btn btn-outline-dark btn-sm" href="{% url "edit_blog" blog_id=blog.id %}">
+                            <button type="button"
+                                    class="btn btn-outline-dark btn-sm"
+                                    data-target="#model-edit-{{blog.id}}"
+                                    data-toggle="collapse">
                                 <i class="fa fa-pencil"></i> Edit
-                            </a>
+                            </button>
+                            <button type="button"
+                                    class="btn btn-outline-danger btn-sm"
+                                    data-toggle="modal"
+                                    data-target="#modal-{{blog.id}}">
+                                Delete
+                            </button>
                         </td>
                     {% endif %}
+                    {% include 'home/confirm_delete.html' %}
                 </tr>
             {% endfor %}
         </table>

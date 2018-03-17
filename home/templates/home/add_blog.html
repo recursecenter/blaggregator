@@ -1,5 +1,9 @@
 {% load customtags %}
 
+{% for form in forms %}
+    {% include 'home/edit_blog.html' %}
+{% endfor %}
+
 <div class="card bg-default">
     <div class="card-header">
         <div class="card-title">
@@ -19,17 +23,16 @@
     <div class="card-footer">
         <form class="" action="{% url 'add_blog' %}" method="post">
             {% csrf_token %}
-
             {% if messages %}
-            {% for message in messages %}
-            <div class="alert alert-{{ message.level_tag }}">
-                {% if 'safe' in message.tags %}
-                {{ message | safe }}
-                {% else %}
-                {{ message }}
-                {% endif %}
-            </div>
-            {% endfor %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.level_tag }}">
+                        {% if 'safe' in message.tags %}
+                            {{ message | safe }}
+                        {% else %}
+                            {{ message }}
+                        {% endif %}
+                    </div>
+                {% endfor %}
             {% endif %}
 
             <div class="form-group">
