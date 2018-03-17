@@ -11,6 +11,9 @@ feedgenerator==1.9
 feedparser==5.2.1
 flake8==3.0.4
 funcsigs==1.0.2
+gevent==1.2.2
+greenlet==0.4.13
+grequests==0.3.0
 gunicorn==19.6.0
 hypothesis==3.6.0
 ipaddress==1.0.19
