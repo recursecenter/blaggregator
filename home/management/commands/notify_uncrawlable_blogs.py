@@ -10,7 +10,7 @@ from django.conf import settings
 
 # Local library
 from home.models import Blog
-from home.zulip_helpers import notify_uncrawlable_blog
+from home.zulip_helpers import notify_uncrawlable_blogs
 
 log = logging.getLogger("blaggregator")
 
@@ -38,20 +38,25 @@ class Command(BaseCommand):
         # Skip crawls on these blogs in future, until the feed_url changes
         notified = set()
         notify_failed = set()
-        for blog in flagged_blogs:
-            if notify_uncrawlable_blog(blog, debug=settings.DEBUG):
-                notified.add(blog.id)
+        users = flagged_blogs.order_by('user').distinct('user').values_list(
+            'user', flat=True
+        )
+        for user in users:
+            blogs = flagged_blogs.filter(user=user)
+            user = blogs.first().user
+            if notify_uncrawlable_blogs(user, blogs, debug=settings.DEBUG):
+                notified.add(user.email)
             else:
-                notify_failed.add(blog.id)
+                notify_failed.add(user.email)
+        # Logging about notifications
         if notified:
-            Blog.objects.filter(id__in=notified).update(skip_crawl=True)
+            flagged_blogs.filter(user__email__in=notified).update(
+                skip_crawl=True
+            )
             log.debug(
                 'Notified %s blog owners and turned off crawling',
                 len(notified),
             )
         if notify_failed:
-            emails = Blog.objects.filter(id__in=notify_failed).values_list(
-                'user__email', flat=True
-            )
             log.debug('Failed to notify %s users:', len(notify_failed))
-            log.debug(u'\n'.join(emails))
+            log.debug(u'\n'.join(notify_failed))

@@ -1,17 +1,27 @@
 {% load customtags %}
-Hi {{blog.author}},
+Hi {{user.get_full_name}},
 
-You added {{blog.feed_url}} as a Blaggregator feed. We are unable to parse it.
-Could you please update/remove it from [here]({{base_url}}{% url 'profile' user.id %})?
+Blaggregator bot is unable to parse the following blogs that you own:
+
+{% for blog in blogs %}
+- {{blog.feed_url}}
+{% endfor %}
+
+{% stripnewlines %}
+Crawling has been **disabled** for these blogs. You could re-enable crawling by changing
+the feed url in your [profile]({{base_url}}{% url 'profile' user.id %}).
+{% endstripnewlines %}
 
 {% stripnewlines %}
     If this appears to be a problem with Blaggregator, or you need help fixing
     this, please
     {% if admins %}
-        get in touch with {{admins}}
+        get in touch with {{admins}}.
     {% else %}
         {% spaceless  %}
-            file an issue [here](https://github.com/recursecenter/blaggregator/issues)
+            file an [issue](https://github.com/recursecenter/blaggregator/issues).
         {% endspaceless %}
     {% endif %}
 {% endstripnewlines %}
+
+Happy Blogging!
