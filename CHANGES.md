@@ -30,6 +30,9 @@ place to quickly see the latest changes that the project has undergone.
 - [#148] Don't add posts when a new blog is added. Also clean up how feed URL
   suggestions are done -- @punchagan
 
+- [#154] Upgraded to the latest version of bootstrap 4.0.0 and switched to CDN.
+  Also merged the edit_blog page into the profile page. -- @punchagan
+
 ## 2017-02
 
 ### Added
