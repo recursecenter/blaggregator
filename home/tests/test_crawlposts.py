@@ -35,14 +35,27 @@ class CrawlPostsTestCase(TransactionTestCase):
     def test_crawling_posts(self, mock):
         # When
         execute_from_command_line(['./manage.py', 'crawlposts'])
-
         # Then
         for blog in self.blogs:
             # at least one post per blog
             self.assertGreater(Post.objects.filter(blog=blog).count(), 0)
             # posts are unique by blog and title
-            post_titles = Post.objects.filter(blog=blog).values_list('title', flat=True)
+            post_titles = Post.objects.filter(blog=blog).values_list(
+                'title', flat=True
+            )
             self.assertEqual(len(set(post_titles)), len(post_titles))
-
         # Number of announcements are correctly throttled
-        self.assertLessEqual(mock.call_count, settings.MAX_POST_ANNOUNCE * self.blogs.count())
+        self.assertLessEqual(
+            mock.call_count, settings.MAX_POST_ANNOUNCE * self.blogs.count()
+        )
+
+    def test_crawling_skips_flagged_blogs(self, mock):
+        # Given
+        blog1, blog2 = list(self.blogs)
+        blog1.skip_crawl = True
+        blog1.save()
+        # When
+        execute_from_command_line(['./manage.py', 'crawlposts'])
+        # Then
+        self.assertEqual(0, Post.objects.filter(blog=blog1).count())
+        self.assertLess(0, Post.objects.filter(blog=blog2).count())

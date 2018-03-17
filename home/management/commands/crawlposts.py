@@ -47,7 +47,7 @@ class Command(BaseCommand):
                 update_post(post, title, link, content)
 
     def handle(self, **options):
-        for blog in Blog.objects.all():
+        for blog in Blog.objects.filter(skip_crawl=False):
             try:
                 self.crawlblog(blog)
             except Exception as e:
