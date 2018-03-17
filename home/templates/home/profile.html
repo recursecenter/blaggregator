@@ -38,7 +38,11 @@
                 </td>
                 <td><a href="https://zulip.com/#narrow/stream/{{blog.get_stream_display}}" target="_blank">{{blog.get_stream_display}}</a></td>
                 {% if owner %}
-                    <td><a href="{% url "edit_blog" blog_id=blog.id %}">Edit <i class="icon-pencil"></i></a></td>
+                    <td>
+                        <a class="btn btn-default btn-mini" href="{% url "edit_blog" blog_id=blog.id %}">
+                            <i class="icon-pencil"></i> Edit
+                        </a>
+                    </td>
                 {% endif %}
             </tr>
         {% endfor %}
