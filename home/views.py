@@ -143,6 +143,7 @@ def add_blog(request):
 
         # janky short circuit if they've already added this url
         if Blog.objects.filter(user=request.user.id, url=url).exists():
+            Blog.objects.filter(feed_url=feed_url).update(skip_crawl=False)
             messages.info(request, EXISTING_FEED_MESSAGE)
             return HttpResponseRedirect(reverse('profile', kwargs={'user_id': request.user.id}))
 
@@ -198,6 +199,7 @@ def edit_blog(request, blog_id):
     if request.method == 'POST':
         form = BlogForm(request.POST, instance=blog)
         if form.is_valid():
+            form.instance.skip_crawl = False
             form.save()
             return HttpResponseRedirect(reverse('profile', kwargs={'user_id': user.id}))
 
