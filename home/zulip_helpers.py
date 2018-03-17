@@ -78,6 +78,8 @@ def notify_uncrawlable_blog(blog, debug=True):
     type_ = 'private'
     if debug:
         log.debug(u'Sending message \n\n%s\n\n to %s (%s)', content, to, type_)
+        return True
+
     else:
         send_message_zulip(to, subject, content, type_=type_)
 
@@ -95,5 +97,8 @@ def send_message_zulip(to, subject, content, type_='private'):
             response.status_code,
             response.content,
         )
+        return response.status_code == 200
+
     except Exception as e:
         log.exception(e)
+        return False
