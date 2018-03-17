@@ -11,11 +11,12 @@ from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Count
-from django.forms import TextInput
+from django.forms import Select, TextInput
 from django.forms.models import modelform_factory
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render
 from django.utils import timezone
+from django.views.decorators.http import require_POST
 
 from home.models import Blog, Hacker, LogEntry, Post, STREAM_CHOICES
 from home.oauth import update_user_details
@@ -186,26 +187,15 @@ def delete_blog(request, blog_id):
 
 @login_required
 @ensure_blog_exists
+@require_POST
 def edit_blog(request, blog_id):
-
     blog = request.blog
     user = request.user
-    BlogForm = modelform_factory(
-        Blog,
-        fields=("feed_url", "stream"),
-        widgets={'feed_url': TextInput(attrs={'class': 'span6', 'type': 'url'})}
-    )
-
-    if request.method == 'POST':
-        form = BlogForm(request.POST, instance=blog)
-        if form.is_valid():
-            form.instance.skip_crawl = False
-            form.save()
-            return HttpResponseRedirect(reverse('profile', kwargs={'user_id': user.id}))
-
-    form = BlogForm(instance=blog)
-    context = {'blog': blog, 'form': form}
-    return render(request, 'home/edit_blog.html', context)
+    form = BlogForm(request.POST, instance=blog)
+    if form.is_valid():
+        form.instance.skip_crawl = False
+        form.save()
+    return HttpResponseRedirect(reverse('profile', kwargs={'user_id': user.id}))
 
 
 @login_required
@@ -222,6 +212,7 @@ def profile(request, user_id):
         'owner': owner,
         'post_list': post_list,
         'show_avatars': False,
+        'forms': [BlogForm(instance=blog) for blog in added_blogs],
     }
     return render(request, 'home/profile.html', context)
 
@@ -366,3 +357,13 @@ def _get_most_viewed_entries(since, n=20):
 
 def _get_tsv(entry):
     return u'{post__id}\t{post__title}\t{post__url}\t{total}'.format(**entry)
+
+
+BlogForm = modelform_factory(
+    Blog,
+    fields=("feed_url", "stream"),
+    widgets={
+        'feed_url': TextInput(attrs={'class': 'form-control', 'type': 'url'}),
+        'stream': Select(attrs={'class': 'custom-select'})
+    }
+)

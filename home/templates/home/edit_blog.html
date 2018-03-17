@@ -1,43 +1,13 @@
-{% extends "home/base.html" %}
-
-{% block pagetitle %}Blaggregator{% endblock %}
-
-{% block title %}
-    Editing your blog
-{% endblock %}
-
-{% block content %}
-
-    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-
-    <form action="" method="POST">
-      {% csrf_token %}
-      {% for field in form %}
-      <div id="{{ field.auto_id }}_container">
-	{{ field.help_text }}
-	<div>
-	  {{ field.label_tag }} {{ field }}
-	</div>
-	<div id="{{ field.auto_id }}_errors">
-	  {{ field.errors }}
-	</div>
-      </div>
-      {% endfor %}
-      <div class="input-append">
-        <button class="btn" type="button submit">Save</button>
-        <a id="delete-button" href="#" class="btn btn-warning">Delete</a>
-        <a id="confirm-button" class="btn btn-danger"
-           href="{% url "delete_blog" blog_id=blog.id %}"
-           style="display: none;">
-          Are you sure?
-        </a>
-      </div>
+<div class="collapse" id="model-edit-{{form.instance.id}}">
+    <form class="my-4" action="{% url "edit_blog" blog_id=form.instance.id %}" method="POST">
+        {% csrf_token %}
+        <div class="form-row">
+            {% for field in form %}
+                <div class="col-sm-{% if field.name == 'feed_url' %}8{% else %}3{% endif %}">
+                    {{ field }}
+                </div>
+            {% endfor %}
+            <button class="btn btn-success" type="submit">Save</button>
+        </div>
     </form>
-
-{% endblock %}
-
-    {% block scripts %}
-    {% load static from staticfiles %}
-    {{ block.super }}
-    <script src="{% static "js/confirmation.js" %}"></script>
-    {% endblock %}
+</div>
