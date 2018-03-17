@@ -34,23 +34,23 @@ def announce_new_post(post, debug=True):
     send_message_zulip(to, subject, content, type_='stream')
 
 
-def notify_uncrawlable_blog(blog, debug=True):
-    """Notify blog owner about a blog that is failing crawls."""
-    subject = 'Action required from Blaggregator'
+def notify_uncrawlable_blogs(user, blogs, debug=True):
+    """Notify blog owner about blogs that are failing crawls."""
+    subject = 'Blaggregator: Action required!'
     admins = User.objects.filter(is_staff=True).exclude(hacker=None)
     names = get_text_list([admin.get_full_name() for admin in admins], 'or')
     context = dict(
-        user=blog.user,
-        blog=blog,
+        user=user,
+        blogs=blogs,
         base_url=settings.ROOT_URL.rstrip('/'),
         admins=names,
     )
     content = get_template('home/disabling-crawling.md').render(context)
-    to = blog.user.email
+    to = user.email
     type_ = 'private'
     if debug:
         log.debug(u'Sending message \n\n%s\n\n to %s (%s)', content, to, type_)
-        return True
+        return False
 
     else:
         send_message_zulip(to, subject, content, type_=type_)
