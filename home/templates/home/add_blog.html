@@ -1,15 +1,16 @@
 {% load customtags %}
 
 <h4>{% if blogs %} Add another blog {% else %} Add your blog {% endif %}</h4>
-<p>Please add your blog's <span style="color:red">feed (atom/RSS) </span> url.</p>
-
-<ul>
-    <li><strong>All</strong> your blog posts (in this feed) will show up on
-        <a href="{% url 'new' %}" target="_blank">Blaggregator</a></li>
-    <li>All your <strong>future</strong> blog posts (in this feed) will be notified on Zulip in
-        <a href="{{ ""|zulip_url:"blogging" }}" target="_blank">#blogging</a>
-     </li>
-</ul>
+<div class="well">
+    <p>Please add your blog's <span style="color:red">(Atom/RSS) feed url</span></p>
+    <ul>
+        <li><strong>All</strong> your blog posts (in this feed) will show up on
+            <a href="{% url 'new' %}" target="_blank">Blaggregator</a></li>
+        <li>All your <strong>future</strong> blog posts (in this feed) will be notified on Zulip in
+            <a href="{{ ""|zulip_url:"blogging" }}" target="_blank">#blogging</a>
+        </li>
+    </ul>
+</div>
 
 <form action="{% url 'add_blog' %}" method="post">
     {% csrf_token %}
