@@ -1,74 +1,92 @@
 {% extends "home/base.html" %}
 {% block pagetitle %}Blaggregator{% endblock %}
 
-{% block title %}
-    {% if owner %}
-        Your
-    {% else %}
-        <a class="avatar media-object pull-left" target="_blank" href="https://recurse.com/people/{{hacker.user.id}}">
-            <img data-author-id="{{ hacker.user.id }}" src="{{ hacker.avatar_url }}" width="80px" height="80px" style="margin-bottom:1em; margin-right:0.5em;">
-        </a>
-        {{ hacker.user.first_name }} {{ hacker.user.last_name }}'s
-    {% endif %}
-    Profile
-{% endblock %}
-
-
 {% block content %}
-
-    {% if blogs %}<h2>Blogs</h2> {% endif %}
-
-    <table class="table">
-        {% if blogs %}
-            <tr>
-                <th>Feed URL</th> <th>Crawling?</th> <th>Stream</th> <th>&nbsp;</th>
-            </tr>
-        {% endif %}
-        {% for blog in blogs %}
-            <tr>
-                <td>
-                    <a href="{{blog.feed_url}}" target="_blank">{{blog.feed_url}}</a>
-                </td>
-                <td>
-                    {% if blog.skip_crawl %}
-                        <span class="label label-warning">Disabled</span>
-                    {% else %}
-                        <span class="label label-info">Active</span>
-                    {% endif %}
-                </td>
-                <td><a href="https://zulip.com/#narrow/stream/{{blog.get_stream_display}}" target="_blank">{{blog.get_stream_display}}</a></td>
-                {% if owner %}
-                    <td>
-                        <a class="btn btn-default btn-mini" href="{% url "edit_blog" blog_id=blog.id %}">
-                            <i class="icon-pencil"></i> Edit
-                        </a>
-                    </td>
+    {% if not owner %}
+        <div class="clearfix py-3 mt-10">
+            <div class="float-left">
+            <h1 class="clearfix">{{ hacker.user.get_full_name }}</h1>
+            <span class="clearfix">
+                {% if hacker.github %}
+                    <a class="mr-1 text-dark" target="_blank" href="https://github.com/{{hacker.github}}">
+                        <i class="fa fa-github"></i>
+                    </a>
                 {% endif %}
-            </tr>
-        {% endfor %}
-    </table>
-
-    {% if owner %}
-        {% include 'home/add_blog.html' %}
-
-        <div class="alert-block">
-        <h2>Blaggregator RSS feed</h2>
-            <p>
-                Blaggregator provides an <strong>authenticated</strong>
-                <a href="{% url 'feed' %}?token={{hacker.token}}">RSS feed</a>.  Please keep
-                your feed URL private.  In case you accidentally share the URL, you
-                can reset it using the button below.
-            </p>
-
-            <form action={% url "refresh_token" %}>
-                <input class="btn btn-info" type="submit" value="Create new feed URL">
-            </form>
+                {% if hacker.twitter %}
+                    <a class="mr-1 text-dark" target="_blank" href="https://github.com/{{hacker.twitter}}">
+                        <i class="fa fa-twitter"></i>
+                    </a>
+                {% endif %}
+            </span>
+            </div>
+            <a class="float-right" target="_blank" href="https://recurse.com/people/{{hacker.user.id}}">
+                <img data-author-id="{{ hacker.user.id }}" src="{{ hacker.avatar_url }}" width="80px" height="80px">
+            </a>
         </div>
     {% endif %}
 
-    {% if post_list %}
-        <h2>Blog Posts</h2>
-        {% include 'home/postlist.html' %}
+    <div class="clearfix py-2">
+        {% if blogs %}<h2>Blogs</h2> {% endif %}
+        <table class="table">
+            {% if blogs %}
+                <tr>
+                    <th>Feed URL</th> <th>Crawling?</th> <th>Stream</th>
+                    {% if owner %}
+                        <th>&nbsp;</th>
+                    {% endif %}
+                </tr>
+            {% endif %}
+            {% for blog in blogs %}
+                <tr>
+                    <td>
+                        <a href="{{blog.feed_url}}" target="_blank">{{blog.feed_url}}</a>
+                    </td>
+                    <td>
+                        {% if blog.skip_crawl %}
+                            <span class="badge badge-warning">Disabled</span>
+                        {% else %}
+                            <span class="badge badge-info">Active</span>
+                        {% endif %}
+                    </td>
+                    <td><a href="https://zulip.com/#narrow/stream/{{blog.get_stream_display}}" target="_blank">{{blog.get_stream_display}}</a></td>
+                    {% if owner %}
+                        <td>
+                            <a class="btn btn-outline-dark btn-sm" href="{% url "edit_blog" blog_id=blog.id %}">
+                                <i class="fa fa-pencil"></i> Edit
+                            </a>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </table>
+        {% if owner %}
+            {% include 'home/add_blog.html' %}
+        {% endif %}
+    </div>
+
+    {% if owner %}
+        <div class="clearfix my-4 py-4">
+            <div class="alert-block">
+                <h2>Blaggregator RSS feed</h2>
+                <p>
+                    Blaggregator provides an <strong>authenticated</strong>
+                    <a href="{% url 'feed' %}?token={{hacker.token}}">RSS feed</a>.  Please keep
+                    your feed URL private.  In case you accidentally share the URL, you
+                    can reset it using the button below.
+                </p>
+
+                <form action={% url "refresh_token" %}>
+                    <input class="btn btn-info" type="submit" value="Create new feed URL">
+                </form>
+            </div>
+        </div>
     {% endif %}
+
+    <div class="clearfix">
+        {% if post_list %}
+            <h2>Blog Posts</h2>
+            {% include 'home/postlist.html' %}
+        {% endif %}
+    </div>
 
 {% endblock %}
