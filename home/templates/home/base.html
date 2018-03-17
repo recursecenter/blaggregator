@@ -2,96 +2,96 @@
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <link href="https://maxcdn.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet" integrity="sha384-AfZ+8dl93QPpFmy0Q1kFwfwG1NBplh51QAw7oZCXARa9KWcl9Xx/7vk16PCDna/T" crossorigin="anonymous">
-    <link href="{% static "css/mystyles.css" %}" rel="stylesheet" media="screen">
-    <title>{% block pagetitle %}{% endblock %}</title>
-    <script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    <head>
+        <link href="https://maxcdn.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet" integrity="sha384-AfZ+8dl93QPpFmy0Q1kFwfwG1NBplh51QAw7oZCXARa9KWcl9Xx/7vk16PCDna/T" crossorigin="anonymous">
+        <link href="{% static "css/mystyles.css" %}" rel="stylesheet" media="screen">
+        <title>{% block pagetitle %}{% endblock %}</title>
+        <script>
+         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+             (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                                  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+         })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-      ga('create', 'UA-45572414-1', 'blaggregator.us');
-      ga('send', 'pageview');
-    </script>
-</head>
+         ga('create', 'UA-45572414-1', 'blaggregator.us');
+         ga('send', 'pageview');
+        </script>
+    </head>
 
-<body>
-    <nav class="navbar navbar-fixed-top">
-        <div class="navbar-inner">
-            <div class="container">
+    <body>
+        <nav class="navbar navbar-fixed-top">
+            <div class="navbar-inner">
+                <div class="container">
 
-                <a class="brand" href="/new">Blaggregator<span class="subbrand">.RecurseCenter</span></a>
-                <ul class="nav pull-right">
-                  {% if user.is_authenticated %}
-                    <li class="dropdown">
-                      <a id="navdropdown" href="#" class="dropdown-toggle" data-toggle="dropdown" > Welcome, {{ user.first_name }}! <b class="caret"></b> </a>
-                      <ul class="dropdown-menu" aria-labeledby="navdropdown">
-                        <li><a href="/profile/{{user.id}}">Profile</a></li>
-                        <li><a href="/logout">Log out</a></li>
-                      </ul>
-                    </li>
-                  {% endif %}
-                </ul>
+                    <a class="brand" href="/new">Blaggregator<span class="subbrand">.RecurseCenter</span></a>
+                    <ul class="nav pull-right">
+                        {% if user.is_authenticated %}
+                            <li class="dropdown">
+                                <a id="navdropdown" href="#" class="dropdown-toggle" data-toggle="dropdown" > Welcome, {{ user.first_name }}! <b class="caret"></b> </a>
+                                <ul class="dropdown-menu" aria-labeledby="navdropdown">
+                                    <li><a href="/profile/{{user.id}}">Profile</a></li>
+                                    <li><a href="/logout">Log out</a></li>
+                                </ul>
+                            </li>
+                        {% endif %}
+                    </ul>
 
 
-                {% if user.is_authenticated %}
-                  {% url 'profile' user.id as profile_url %}
-                  {% if not primary_blog_set and profile_url != request.get_full_path%}
-                    <a href="{{profile_url}}"><button class="btn pull-right btn-primary" type="button submit">Add Your Blog</button></a>
-                  {% endif %}
-                {% endif %}
+                    {% if user.is_authenticated %}
+                        {% url 'profile' user.id as profile_url %}
+                        {% if not primary_blog_set and profile_url != request.get_full_path%}
+                            <a href="{{profile_url}}"><button class="btn pull-right btn-primary" type="button submit">Add Your Blog</button></a>
+                        {% endif %}
+                    {% endif %}
 
-            </div>
-        </div>
-    </nav>
-
-    <div class="container">
-
-        <div id="title">
-            <h2>{% block title %}{% endblock %}</h2>
-        </div>
-
-        <div id="content">
-            {% block content %}{% endblock %}
-        </div>
-
-    </div>
-
-    <footer class="navbar navbar-fixed-bottom navbar-inner">
-        <div class="container">
-            {% if user.is_authenticated %}
-            <form id="searchbox" class="form-inline" role="search"
-                  method="GET" action="/search">
-                <div class="form-group">
-                    <label for="GET_search"></label>
-                    <input id="GET_search" name="q" type="text" >
-                    <button type="submit" class="add-on"><i class="icon-search"></i></button>
                 </div>
-            </form>
-            {% endif %}
+            </div>
+        </nav>
 
-            <ul class="pull-right inline">
-                <li><a href="/about">About</a></li>
-                <li><a href="https://github.com/recursecenter/blaggregator/issues">Contribute</a></li>
-                {% if user.is_authenticated %}
-                <li>
-                    <a href="{% url 'feed' %}?token={{user.hacker.token}}" target="_blank">
-                        <img class="feed-icon" src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Rss-feed.svg/24px-Rss-feed.svg.png"/>
-                    </a>
-                </li>
-                {% endif %}
-            </ul>
+        <div class="container">
+
+            <div id="title">
+                <h2>{% block title %}{% endblock %}</h2>
+            </div>
+
+            <div id="content">
+                {% block content %}{% endblock %}
+            </div>
+
         </div>
-    </footer>
+
+        <footer class="navbar navbar-fixed-bottom navbar-inner">
+            <div class="container">
+                {% if user.is_authenticated %}
+                    <form id="searchbox" class="form-inline" role="search"
+                          method="GET" action="/search">
+                        <div class="form-group">
+                            <label for="GET_search"></label>
+                            <input id="GET_search" name="q" type="text" >
+                            <button type="submit" class="add-on"><i class="icon-search"></i></button>
+                        </div>
+                    </form>
+                {% endif %}
+
+                <ul class="pull-right inline">
+                    <li><a href="/about">About</a></li>
+                    <li><a href="https://github.com/recursecenter/blaggregator/issues">Contribute</a></li>
+                    {% if user.is_authenticated %}
+                        <li>
+                            <a href="{% url 'feed' %}?token={{user.hacker.token}}" target="_blank">
+                                <img class="feed-icon" src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Rss-feed.svg/24px-Rss-feed.svg.png"/>
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </footer>
 
 
-    {% block scripts %}
-    <script src="//code.jquery.com/jquery.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js" integrity="sha384-c9p7VJz4n41pctsFNm0SJNtxs1tEtVpbHd6KlMj1gRb5G3hVejCHUMwu+jfyRnNK" crossorigin="anonymous"></script>
-    <script src="{% static "js/update_images.js" %}"></script>
-    {% endblock %}
+        {% block scripts %}
+            <script src="//code.jquery.com/jquery.js"></script>
+            <script src="https://maxcdn.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js" integrity="sha384-c9p7VJz4n41pctsFNm0SJNtxs1tEtVpbHd6KlMj1gRb5G3hVejCHUMwu+jfyRnNK" crossorigin="anonymous"></script>
+            <script src="{% static "js/update_images.js" %}"></script>
+        {% endblock %}
 
-</body>
+    </body>
 </html>
