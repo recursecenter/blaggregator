@@ -3,7 +3,8 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <link href="https://maxcdn.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet" integrity="sha384-AfZ+8dl93QPpFmy0Q1kFwfwG1NBplh51QAw7oZCXARa9KWcl9Xx/7vk16PCDna/T" crossorigin="anonymous">
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
         <link href="{% static "css/mystyles.css" %}" rel="stylesheet" media="screen">
         <title>{% block pagetitle %}{% endblock %}</title>
         <script>
@@ -18,32 +19,30 @@
     </head>
 
     <body>
-        <nav class="navbar navbar-fixed-top">
-            <div class="navbar-inner">
-                <div class="container">
-
-                    <a class="brand" href="/new">Blaggregator<span class="subbrand">.RecurseCenter</span></a>
-                    <ul class="nav pull-right">
-                        {% if user.is_authenticated %}
-                            <li class="dropdown">
-                                <a id="navdropdown" href="#" class="dropdown-toggle" data-toggle="dropdown" > Welcome, {{ user.first_name }}! <b class="caret"></b> </a>
-                                <ul class="dropdown-menu" aria-labeledby="navdropdown">
-                                    <li><a href="/profile/{{user.id}}">Profile</a></li>
-                                    <li><a href="/logout">Log out</a></li>
-                                </ul>
-                            </li>
-                        {% endif %}
-                    </ul>
-
-
+        <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+            <div class="container">
+                <a class="navbar-brand" href="/new">Blaggregator<span class="subbrand">.RecurseCenter</span></a>
+                <ul class="navbar-nav">
                     {% if user.is_authenticated %}
                         {% url 'profile' user.id as profile_url %}
                         {% if not primary_blog_set and profile_url != request.get_full_path%}
-                            <a href="{{profile_url}}"><button class="btn pull-right btn-primary" type="button submit">Add Your Blog</button></a>
+                            <li class="nav-item">
+                                <a href="{{profile_url}}">
+                                    <button class="btn mr-auto btn-primary" type="button submit">Add Your Blog</button>
+                                </a>
+                            </li>
                         {% endif %}
+                        <li class="nav-item dropdown">
+                            <a id="navbarDropdown" role="button" href="#" class="btn btn-outline-secondary nav-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Welcome, {{ user.first_name }}!
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="/profile/{{user.id}}">Profile</a>
+                                <a class="dropdown-item" href="/logout">Log out</a>
+                            </div>
+                        </li>
                     {% endif %}
-
-                </div>
+                </ul>
             </div>
         </nav>
 
@@ -59,37 +58,38 @@
 
         </div>
 
-        <footer class="navbar navbar-fixed-bottom navbar-inner">
+        <footer class="navbar fixed-bottom navbar-light bg-light" role="navigation">
             <div class="container">
-                {% if user.is_authenticated %}
-                    <form id="searchbox" class="form-inline" role="search"
-                          method="GET" action="/search">
-                        <div class="form-group">
-                            <label for="GET_search"></label>
-                            <input id="GET_search" name="q" type="text" >
-                            <button type="submit" class="add-on"><i class="icon-search"></i></button>
-                        </div>
-                    </form>
-                {% endif %}
-
-                <ul class="pull-right inline">
-                    <li><a href="/about">About</a></li>
-                    <li><a href="https://github.com/recursecenter/blaggregator/issues">Contribute</a></li>
+                <ul class="nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/about">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://github.com/recursecenter/blaggregator/issues">Contribute</a>
+                    </li>
                     {% if user.is_authenticated %}
-                        <li>
-                            <a href="{% url 'feed' %}?token={{user.hacker.token}}" target="_blank">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'feed' %}?token={{user.hacker.token}}" target="_blank">
                                 <img class="feed-icon" src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Rss-feed.svg/24px-Rss-feed.svg.png"/>
                             </a>
                         </li>
                     {% endif %}
                 </ul>
+                {% if user.is_authenticated %}
+                    <form class="form-inline pt-0" role="search" method="GET" action="/search">
+                        <input class="form-control mr-sm-2" name="q" type="search" placeholder="Search" aria-label="Search">
+                        <button type="submit" class="btn btn-outline-success">
+                            <i class="fa fa-search" aria-hidden="true"></i>
+                        </button>
+                    </form>
+                {% endif %}
             </div>
         </footer>
 
 
         {% block scripts %}
             <script src="//code.jquery.com/jquery.js"></script>
-            <script src="https://maxcdn.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js" integrity="sha384-c9p7VJz4n41pctsFNm0SJNtxs1tEtVpbHd6KlMj1gRb5G3hVejCHUMwu+jfyRnNK" crossorigin="anonymous"></script>
+            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.bundle.min.js" integrity="sha384-feJI7QwhOS+hwpX2zkaeJQjeiwlhOP+SdQDqhgvvo1DsjtiSQByFdThsxO669S2D" crossorigin="anonymous"></script>
             <script src="{% static "js/update_images.js" %}"></script>
         {% endblock %}
 
