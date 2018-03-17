@@ -1,53 +1,49 @@
 {% load customtags %}
 
-<div class='postlist'>
+<ul class="list-unstyled">
     {% for post in post_list %}
-    <div class="media post">
-        {% if show_avatars %}
-        <a class="float-left" href="{% url 'profile' post.authorid %}">
-            <img class="media-object" data-author-id="{{post.authorid}}" src="{{ post.avatar }}" width="40px" height="40pxsx">
-        </a>
-        {% endif %}
-
-        <div class="media-body">
-            <h4 class="media-heading listing-title">
-                <a href="/post/{{ post.slug }}/view">{{ post.title }}</a>
-            </h4>
-            <div>
-                <a href="{{ post.title|zulip_url:post.stream }}" target="_blank" class="listing-comments">
-                    Join the discussion (on Zulip)
+        <li class="{% if show_avatars %}media my-4{% else %}my-3{% endif %}">
+            {% if show_avatars %}
+                <a class="float-left" href="{% url 'profile' post.authorid %}">
+                    <img class="align-self-center mr-3" data-author-id="{{post.authorid}}" src="{{ post.avatar }}" width="48px" height="48px" />
                 </a>
+            {% endif %}
+            <div class="{% if show_avatars %}media-body{% endif %}">
+                <h5 class="mb-0"><a class="text-dark" href="/post/{{ post.slug }}/view">{{ post.title }}</a></h5>
+                <div>
+                    <a href="{{ post.title|zulip_url:post.stream }}" target="_blank" class="text-muted">
+                        Join the discussion (on Zulip)
+                    </a>
+                </div>
             </div>
-        </div>
-    </div>
+        </li>
     {% endfor %}
+</ul>
 
-    {% if post_list.paginator %}
-        <nav aria="Pages">
-            <ul class="pagination pagination-sm justify-content-center">
-                {% if post_list.has_previous %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ post_list.previous_page_number }}{% if query %}&q={{query}}{% endif %}">
-                            previous
-                        </a>
-                    </li>
-                {% endif %}
-
-                <li class="page-item disabled">
-                    <a class="page-link">
-                        Page {{ post_list.number }} of {{ post_list.paginator.num_pages }}
+{% if post_list.paginator %}
+    <nav aria="Pages">
+        <ul class="pagination pagination-sm justify-content-center">
+            {% if post_list.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ post_list.previous_page_number }}{% if query %}&q={{query}}{% endif %}">
+                        previous
                     </a>
                 </li>
+            {% endif %}
 
-                {% if post_list.has_next %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ post_list.next_page_number }}{% if query %}&q={{query}}{% endif %}">
-                            next
-                        </a>
-                    </li>
-                {% endif %}
-            </ul>
-        </nav>
-    {% endif %}
+            <li class="page-item disabled">
+                <a class="page-link">
+                    Page {{ post_list.number }} of {{ post_list.paginator.num_pages }}
+                </a>
+            </li>
 
-</div>
+            {% if post_list.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ post_list.next_page_number }}{% if query %}&q={{query}}{% endif %}">
+                        next
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+{% endif %}
