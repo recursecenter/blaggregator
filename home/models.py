@@ -7,12 +7,15 @@ from django.db import models
 
 
 def generate_random_id():
-    return ''.join(random.choice(string.ascii_uppercase + string.digits + string.ascii_lowercase) for x in range(6))
+    return ''.join(
+        random.choice(
+            string.ascii_uppercase + string.digits + string.ascii_lowercase
+        )
+        for x in range(6)
+    )
 
-STREAM_CHOICES = (
-    ('BLOGGING', 'blogging'),
-    ('LOGS', 'Daily Logs'),
-)
+
+STREAM_CHOICES = (('BLOGGING', 'blogging'), ('LOGS', 'Daily Logs'))
 
 
 def token_default():
@@ -20,7 +23,6 @@ def token_default():
 
 
 class Hacker(models.Model):
-
     user = models.OneToOneField(User)
     avatar_url = models.TextField(blank=True)
     github = models.TextField(blank=True, null=True)
@@ -61,7 +63,10 @@ class Post(models.Model):
     url = models.TextField()
     title = models.TextField(blank=True)
     content = models.TextField()
-    slug = models.CharField(max_length=6, default=generate_random_id, unique=True)
+    slug = models.CharField(
+        max_length=6, default=generate_random_id, unique=True
+    )
+    posted_at = models.DateTimeField('posted at')
     created_at = models.DateTimeField('creation timestamp', auto_now_add=True)
 
     @property
@@ -81,7 +86,7 @@ class Post(models.Model):
         return self.blog.get_stream_display()
 
     class Meta:
-        ordering = ['-created_at']
+        ordering = ['-posted_at']
 
 
 class LogEntry(models.Model):
@@ -90,7 +95,6 @@ class LogEntry(models.Model):
         return "%s %s" % (self.date, self.post)
 
     post = models.ForeignKey(Post)
-
     date = models.DateTimeField()
     referer = models.URLField(blank=True, null=True)
     remote_addr = models.GenericIPAddressField(blank=True, null=True)
