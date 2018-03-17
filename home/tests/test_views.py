@@ -28,7 +28,7 @@ class BaseViewTestCase(TestCase):
 
     def create_posts(self, n, **kwargs):
         create_posts(n, **kwargs)
-        for blog in Blog.objects.filter():
+        for blog in Blog.objects.all():
             blog.user = self.user
             blog.save()
 
@@ -220,6 +220,26 @@ class AddBlogViewTestCase(BaseViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(1, Blog.objects.count())
 
+    def test_post_add_blog_existing_unsets_skip_crawl(self):
+        # Given
+        self.login()
+        data = {'feed_url': 'https://jvns.ca/atom.xml'}
+        self.client.post('/add_blog/', data=data, follow=True)
+        blog = Blog.objects.get(feed_url=data['feed_url'])
+        blog.skip_crawl = True
+        blog.save()
+        data_ = {'feed_url': 'https://jvns.ca/atom.xml'}
+
+        # When
+        response = self.client.post('/add_blog/', data=data_, follow=True)
+
+        # Then
+        self.assertRedirects(response, '/profile/{}/'.format(self.user.id))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(1, Blog.objects.count())
+        blog = Blog.objects.get(feed_url=data['feed_url'])
+        self.assertFalse(blog.skip_crawl)
+
     def test_post_add_blog_adds_different_feeds(self):
         # Given
         self.login()
@@ -323,6 +343,25 @@ class EditBlogViewTestCase(BaseViewTestCase):
         with self.assertRaises(Blog.DoesNotExist):
             Blog.objects.get(feed_url=feed_url)
         self.assertIsNotNone(Blog.objects.get(feed_url=data['feed_url']))
+
+    def test_should_unset_skip_crawl_on_edit_blog(self):
+        # Given
+        self.login()
+        feed_url = 'https://jvns.ca/atom.xml'
+        blog = Blog.objects.create(user=self.user, feed_url=feed_url, skip_crawl=True)
+        data = {'feed_url': 'https://jvns.ca/rss', 'stream': 'BLOGGING'}
+        assert blog.skip_crawl, 'Blog skip crawl should be True'
+
+        # When
+        response = self.client.post('/edit_blog/%s/' % blog.id, data=data, follow=True)
+
+        # Then
+        self.assertEqual(200, response.status_code)
+        with self.assertRaises(Blog.DoesNotExist):
+            Blog.objects.get(feed_url=feed_url)
+        blog = Blog.objects.get(feed_url=data['feed_url'])
+        self.assertIsNotNone(blog)
+        self.assertFalse(blog.skip_crawl)
 
     def test_should_show_edit_blog_form(self):
         # Given
