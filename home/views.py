@@ -17,7 +17,7 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render
 from django.utils import timezone
 
-from home.models import Blog, Hacker, LogEntry, Post
+from home.models import Blog, Hacker, LogEntry, Post, STREAM_CHOICES
 from home.oauth import update_user_details
 from home.feeds import LatestEntriesFeed
 import feedergrabber27
@@ -313,6 +313,7 @@ def most_viewed(request, ndays='7'):
     ndays = int(ndays)
     since = now - datetime.timedelta(days=ndays)
     entries = _get_most_viewed_entries(since=since)
+    streams = dict(STREAM_CHOICES)
 
     # Return a tab separated values file, if requested
     if request.GET.get('tsv') == '1':
@@ -322,7 +323,7 @@ def most_viewed(request, ndays='7'):
         response = HttpResponse(text, content_type='text/tab-separated-values')
 
     else:
-        Post = namedtuple('Post', ('authorid', 'avatar', 'slug', 'title'))
+        Post = namedtuple('Post', ('authorid', 'avatar', 'slug', 'title', 'stream'))
         context = {
             'post_list': [
                 Post(
@@ -330,11 +331,13 @@ def most_viewed(request, ndays='7'):
                     authorid=entry['post__blog__user__id'],
                     avatar=entry['post__blog__user__hacker__avatar_url'],
                     title=entry['post__title'],
+                    stream=streams[entry['post__blog__stream']],
                 )
                 for entry in entries
             ],
             'from': since.date(),
             'to': now.date(),
+            'show_avatars': True,
         }
         response = render(request, 'home/most_viewed.html', context)
 
@@ -348,7 +351,8 @@ def _get_most_viewed_entries(since, n=20):
     # Get post url and title
     entries = entries.values(
         'post__id', 'post__title', 'post__url', 'post__slug',
-        'post__blog__user__id', 'post__blog__user__hacker__avatar_url'
+        'post__blog__user__id', 'post__blog__user__hacker__avatar_url',
+        'post__blog__stream',
     )
 
     # Count the visits
