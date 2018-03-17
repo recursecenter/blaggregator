@@ -24,3 +24,6 @@ class LatestEntriesFeed(Feed):
     def item_author_name(self, item):
         user = item.blog.user
         return user.first_name + " " + user.last_name
+
+    def item_pubdate(self, item):
+        return item.posted_at
