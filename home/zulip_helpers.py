@@ -1,11 +1,12 @@
 # Standard library
 import logging
 import os
-from textwrap import dedent
 
 # 3rd-party library
 from django.conf import settings
 from django.core.urlresolvers import reverse
+from django.template.loader import get_template
+from django.utils.text import get_text_list
 import requests
 
 # Local imports
@@ -15,16 +16,6 @@ ZULIP_KEY = os.environ.get('ZULIP_KEY')
 ZULIP_EMAIL = os.environ.get('ZULIP_EMAIL')
 ZULIP_URL = 'https://recurse.zulipchat.com/api/v1/messages'
 ANNOUNCE_MESSAGE = u"**{}** has a new blog post: [{}]({})"
-SKIPPING_CRAWL_MESSAGE = dedent(
-    u"""
-    Hi {author},
-
-    You added {url} as a Blaggregator feed. We are unable to parse it.
-    Could you please update/remove it from [here]({profile_url})?
-
-    If this appears to be a problem with Blaggregator, or you need help fixing
-    this, please {contact}"""
-)
 log = logging.getLogger("blaggregator")
 
 
@@ -43,37 +34,18 @@ def announce_new_post(post, debug=True):
     send_message_zulip(to, subject, content, type_='stream')
 
 
-def get_contact_info():
-    """Returns contact info of staff, if present."""
-    staff = [
-        user.get_full_name()
-        for user in User.objects.filter(is_staff=True).exclude(hacker=None)
-    ]
-    names = ' or '.join(
-        filter(None, [', '.join(staff[:-1]), staff[-1]])
-    ) if staff else ''
-    message = (
-        'get in touch with {}'.format(
-            names
-        ) if names else 'file an issue [here](https://github.com/recursecenter/blaggregator/issues)'
-    )
-    return message
-
-
 def notify_uncrawlable_blog(blog, debug=True):
     """Notify blog owner about a blog that is failing crawls."""
     subject = 'Action required from Blaggregator'
-    profile_path = reverse('profile', kwargs={'user_id': blog.user.id})
-    profile_url = '{}/{}'.format(
-        settings.ROOT_URL.rstrip('/'), profile_path.lstrip('/')
+    admins = User.objects.filter(is_staff=True).exclude(hacker=None)
+    names = get_text_list([admin.get_full_name() for admin in admins], 'or')
+    context = dict(
+        user=blog.user,
+        blog=blog,
+        base_url=settings.ROOT_URL.rstrip('/'),
+        admins=names,
     )
-    message = SKIPPING_CRAWL_MESSAGE
-    content = message.format(
-        author=blog.author,
-        url=blog.feed_url,
-        profile_url=profile_url,
-        contact=get_contact_info(),
-    )
+    content = get_template('home/disabling-crawling.md').render(context)
     to = blog.user.email
     type_ = 'private'
     if debug:
