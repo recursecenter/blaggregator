@@ -14,6 +14,11 @@ install:
 
 before_script:
   - psql -c "CREATE DATABASE travisdb;" -U postgres
+  - # Random tokens that aren't really used
+  - export SOCIAL_AUTH_HS_KEY=897316929176464ebc9ad085f31e7284
+  - export SOCIAL_AUTH_HS_SECRET=26ab0db90d72e28ad0ba1e22ee510510
+  - export HS_PERSONAL_TOKEN=b026324c6904b2a9cb4b88d6d61c81d1
+
 
 # command to run tests
 script:

@@ -23,6 +23,7 @@ def request(self, url, method='GET', *args, **kwargs):
 
     response = Response()
     response._content = json.dumps(data)
+    response.status_code = 200
     return response
 
 
@@ -91,7 +92,8 @@ class OAuthTestCase(TestCase):
         self.USER_DATA['twitter'] = 'johndoe'
 
         # When
-        update_user_details(self.USER_DATA['id'], user)
+        with patch('requests.get', new=lambda url: request(None, url)):
+            update_user_details(self.USER_DATA['id'])
 
         # Then
         user = User.objects.get(email=self.USER_DATA['email'])

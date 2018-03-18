@@ -104,6 +104,11 @@ $ export DJANGO_DEBUG=True
   keys and store them in your environment as SOCIAL_AUTH_HS_KEY and
   SOCIAL_AUTH_HS_SECRET.
 
+- To update user details of all users (periodically), Blaggregator uses a
+  personal token. You can obtain a personal token from [your settings on
+  recurse.com](https://www.recurse.com/settings) too. Save the token in your
+  environment as HS_PERSONAL_TOKEN.
+
 - Then run a local server:
 
 ```bash
