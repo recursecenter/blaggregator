@@ -17,22 +17,21 @@ def create_user(strategy, details, response, uid, user=None, *args, **kwargs):
     if user:
         return
 
-    fields = dict((name, kwargs.get(name) or details.get(name))
-                  for name in strategy.setting('USER_FIELDS',
-                                               USER_FIELDS))
+    fields = dict(
+        (name, kwargs.get(name) or details.get(name))
+        for name in strategy.setting('USER_FIELDS', USER_FIELDS)
+    )
     # The new user ID should be the same as their ID on hackerschool.com
     fields['id'] = details.get("id")
-
     if not fields:
         return
 
-    return {
-        'is_new': True,
-        'user': strategy.create_user(**fields)
-    }
+    return {'is_new': True, 'user': strategy.create_user(**fields)}
 
 
-def create_or_update_hacker(strategy, details, response, user, *args, **kwargs):
+def create_or_update_hacker(
+    strategy, details, response, user, *args, **kwargs
+):
     if hasattr(user, 'hacker'):
         # If there's a hacker already, this is an existing user, and we'll
         # update the hacker.
@@ -41,14 +40,11 @@ def create_or_update_hacker(strategy, details, response, user, *args, **kwargs):
         # If there's no hacker, that means this is a new user. Let's make the
         # hacker.
         hacker = Hacker(user=user)
-
     changed = False
-
     for name, value in details.items():
         if name in HACKER_ATTRIBUTES:
             setattr(hacker, name, value)
             changed = True
-
     if changed:
         hacker.save()
 
@@ -74,7 +70,6 @@ def update_user_details(user_id):
 
 class HackerSchoolOAuth2(BaseOAuth2):
     """HackerSchool.com OAuth2 authentication backend"""
-
     name = 'hackerschool'
     HACKER_SCHOOL_ROOT = 'https://www.recurse.com'
     AUTHORIZATION_URL = HACKER_SCHOOL_ROOT + '/oauth/authorize'
@@ -85,12 +80,11 @@ class HackerSchoolOAuth2(BaseOAuth2):
     EXTRA_DATA = [
         ('id', 'id'),
         ('expires_in', 'expires_in'),
-        ('refresh_token', 'refresh_token')
+        ('refresh_token', 'refresh_token'),
     ]
 
     def auth_params(self, state=None):
         """Override to allow manually setting redirect_uri."""
-
         params = super(HackerSchoolOAuth2, self).auth_params(state)
         redirect_uri = os.environ.get('SOCIAL_AUTH_REDIRECT_URI')
         if redirect_uri:
@@ -129,5 +123,6 @@ class HackerSchoolOAuth2(BaseOAuth2):
         try:
             request = self.request(url, method='GET')
             return request.json()
+
         except ValueError:
             return None
