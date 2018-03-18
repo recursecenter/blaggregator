@@ -52,6 +52,10 @@ class Blog(models.Model):
     def author(self):
         return self.user.get_full_name()
 
+    @property
+    def post_count(self):
+        return Post.objects.filter(blog=self).count()
+
 
 class Post(models.Model):
 
