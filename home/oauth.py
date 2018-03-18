@@ -21,11 +21,11 @@ def create_user(strategy, details, response, uid, user=None, *args, **kwargs):
         (name, kwargs.get(name) or details.get(name))
         for name in strategy.setting('USER_FIELDS', USER_FIELDS)
     )
-    # The new user ID should be the same as their ID on hackerschool.com
-    fields['id'] = details.get("id")
     if not fields:
         return
 
+    # The new user ID should be the same as their ID on hackerschool.com
+    fields['id'] = details.get("id")
     return {'is_new': True, 'user': strategy.create_user(**fields)}
 
 
