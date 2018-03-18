@@ -9,7 +9,8 @@ from social_core.backends.oauth import BaseOAuth2
 from models import User, Hacker
 
 HACKER_ATTRIBUTES = ('avatar_url', 'twitter', 'github')
-USER_FIELDS = ['username', 'email']
+USER_FIELDS = ('username', 'email')
+USER_EXTRA_FIELDS = ('first_name', 'last_name', 'username')
 log = logging.getLogger("blaggregator")
 
 
@@ -44,6 +45,16 @@ def create_or_update_hacker(
         hacker.save()
 
 
+def update_user(user, details):
+    user_changed = False
+    for field in USER_FIELDS + USER_EXTRA_FIELDS:
+        if details[field] != getattr(user, field, None):
+            setattr(user, field, details[field])
+            user_changed = True
+    if user_changed:
+        user.save()
+
+
 def update_user_details(user_id):
     params = urlencode({'access_token': settings.HS_PERSONAL_TOKEN})
     path = '/api/v1/people/{}'.format(user_id)
@@ -54,10 +65,10 @@ def update_user_details(user_id):
         if response.status_code != 200:
             raise ValueError('Could not fetch data for {}'.format(user_id))
 
+        user = User.objects.get(id=user_id)
         hacker_data = HackerSchoolOAuth2.get_user_details(response.json())
-        create_or_update_hacker(
-            None, hacker_data, None, User.objects.get(id=user_id)
-        )
+        create_or_update_hacker(None, hacker_data, None, user)
+        update_user(user, hacker_data)
     except Exception as e:
         log.debug('Failed to update user data for hacker %s', user_id)
         log.error(e)
@@ -95,15 +106,14 @@ class HackerSchoolOAuth2(BaseOAuth2):
         return params
 
     @staticmethod
-    def get_user_details(response):
+    def get_user_details(details):
         """Return user details."""
-        first_name = response.setdefault('first_name', '')
-        last_name = response.setdefault('last_name', '')
-        response['username'] = first_name + last_name
-        response['avatar_url'] = response.get('image')
-        response.setdefault('github', '')
-        response.setdefault('twitter', '')
-        return response
+        fields = USER_FIELDS + USER_EXTRA_FIELDS + HACKER_ATTRIBUTES
+        for field in fields:
+            details.setdefault(field, '')
+        details['username'] = details['first_name'] + details['last_name']
+        details['avatar_url'] = details.get('image')
+        return details
 
     def get_user_id(self, details, response):
         """Return a unique ID for the current user, by default from server
