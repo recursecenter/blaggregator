@@ -7,6 +7,11 @@
             <div class="float-left">
             <h1 class="clearfix">{{ hacker.user.get_full_name }}</h1>
             <span class="clearfix">
+                <span class="mr-2">
+                    <a class="pr-2" target="_blank" href="https://recurse.com/people/{{hacker.user.id}}">
+                        <i style="display:inline-block" class="rc-logo align-top mt-1"></i>
+                    </a>
+                </span>
                 {% if hacker.github %}
                     <a class="mr-1 text-dark" target="_blank" href="https://github.com/{{hacker.github}}">
                         <i class="fa fa-github"></i>
