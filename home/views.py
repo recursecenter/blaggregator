@@ -208,7 +208,6 @@ def profile(request, user_id):
 
     context = {
         'hacker': request.hacker,
-        'blogs': added_blogs,
         'owner': owner,
         'post_list': post_list,
         'show_avatars': False,

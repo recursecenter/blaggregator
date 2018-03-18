@@ -1,13 +1,11 @@
-<div class="collapse" id="model-edit-{{form.instance.id}}">
-    <form class="my-4" action="{% url "edit_blog" blog_id=form.instance.id %}" method="POST">
-        {% csrf_token %}
-        <div class="form-row">
-            {% for field in form %}
-                <div class="col-sm-{% if field.name == 'feed_url' %}8{% else %}3{% endif %}">
-                    {{ field }}
-                </div>
-            {% endfor %}
-            <button class="btn btn-success" type="submit">Save</button>
-        </div>
-    </form>
-</div>
+<form action="{% url "edit_blog" blog_id=blog.id %}" method="POST">
+    {% csrf_token %}
+    <div class="form-row">
+        {% for field in form %}
+            <div class="col-sm-{% if field.name == 'feed_url' %}8{% else %}3{% endif %}">
+                {{ field }}
+            </div>
+        {% endfor %}
+        <button class="btn btn-success" type="submit">Save</button>
+    </div>
+</form>

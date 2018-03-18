@@ -25,50 +25,58 @@
         </div>
     {% endif %}
 
+
     <div class="clearfix py-2">
-        {% if blogs %}<h2>Blogs</h2> {% endif %}
-        <table class="table">
-            {% if blogs %}
+        {% if forms %}
+            <h2>Blogs</h2>
+            <table class="table">
                 <tr>
                     <th>Feed URL</th> <th>Crawling?</th> <th>Stream</th>
                     {% if owner %}
                         <th>&nbsp;</th>
                     {% endif %}
                 </tr>
-            {% endif %}
-            {% for blog in blogs %}
-                <tr>
-                    <td>
-                        <a href="{{blog.feed_url}}" target="_blank">{{blog.feed_url}}</a>
-                    </td>
-                    <td>
-                        {% if blog.skip_crawl %}
-                            <span class="badge badge-warning">Disabled</span>
-                        {% else %}
-                            <span class="badge badge-info">Active</span>
-                        {% endif %}
-                    </td>
-                    <td><a href="https://zulip.com/#narrow/stream/{{blog.get_stream_display}}" target="_blank">{{blog.get_stream_display}}</a></td>
-                    {% if owner %}
-                        <td>
-                            <button type="button"
-                                    class="btn btn-outline-dark btn-sm"
-                                    data-target="#model-edit-{{blog.id}}"
-                                    data-toggle="collapse">
-                                <i class="fa fa-pencil"></i> Edit
-                            </button>
-                            <button type="button"
-                                    class="btn btn-outline-danger btn-sm"
-                                    data-toggle="modal"
-                                    data-target="#modal-{{blog.id}}">
-                                Delete
-                            </button>
-                        </td>
-                    {% endif %}
-                    {% include 'home/confirm_delete.html' %}
-                </tr>
-            {% endfor %}
-        </table>
+                {% for form in forms %}
+                    {% with blog=form.instance %}
+                        <tr>
+                            <td>
+                                <a href="{{blog.feed_url}}" target="_blank">{{blog.feed_url}}</a>
+                            </td>
+                            <td>
+                                {% if blog.skip_crawl %}
+                                    <span class="badge badge-warning">Disabled</span>
+                                {% else %}
+                                    <span class="badge badge-info">Active</span>
+                                {% endif %}
+                            </td>
+                            <td><a href="https://zulip.com/#narrow/stream/{{blog.get_stream_display}}" target="_blank">{{blog.get_stream_display}}</a></td>
+                            {% if owner %}
+                                <td>
+                                    <button type="button"
+                                            class="btn btn-outline-dark btn-sm"
+                                            data-target="#edit-{{blog.id}}"
+                                            data-toggle="collapse">
+                                        <i class="fa fa-pencil"></i> Edit
+                                    </button>
+                                    <button type="button"
+                                            class="btn btn-outline-danger btn-sm"
+                                            data-toggle="modal"
+                                            data-target="#modal-{{blog.id}}">
+                                        Delete
+                                    </button>
+                                </td>
+                            {% endif %}
+                        </tr>
+                        {% include 'home/confirm_delete.html' %}
+                        <tr id="edit-{{blog.id}}" class="collapse">
+                            <td colspan="12">
+                                {% include 'home/edit_blog.html' %}
+                            </td>
+                        </tr>
+                    {% endwith %}
+                {% endfor %}
+            </table>
+        {% endif %}
         {% if owner %}
             {% include 'home/add_blog.html' %}
         {% endif %}
