@@ -372,7 +372,7 @@ class UpdatedAvatarViewTestCase(BaseViewTestCase):
         self.login()
         expected_url = 'foo.bar'
 
-        def update_user_details(user_id, user):
+        def update_user_details(user_id):
             self.user.hacker.avatar_url = expected_url
             self.user.hacker.save()
 

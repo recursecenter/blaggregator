@@ -257,7 +257,7 @@ def search(request):
 @login_required
 @ensure_hacker_exists
 def updated_avatar(request, user_id):
-    update_user_details(user_id, request.user)
+    update_user_details(user_id)
     hacker = Hacker.objects.get(user=user_id)
     return HttpResponse(hacker.avatar_url)
 

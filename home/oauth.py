@@ -1,14 +1,16 @@
+import logging
 import os
-
-from social_core.backends.oauth import BaseOAuth2
-from social_django.models import UserSocialAuth
-from social_django.strategy import DjangoStrategy
 from urllib import urlencode
+
+import requests
+from django.conf import settings
+from social_core.backends.oauth import BaseOAuth2
 
 from models import User, Hacker
 
 HACKER_ATTRIBUTES = ('avatar_url', 'twitter', 'github')
 USER_FIELDS = ['username', 'email']
+log = logging.getLogger("blaggregator")
 
 
 def find_legacy_user(strategy, uid, details, user=None, social=None, *args, **kwargs):
@@ -83,27 +85,23 @@ def create_or_update_hacker(strategy, details, response, user, *args, **kwargs):
         hacker.save()
 
 
-def update_user_details(hacker_id, user):
-    social_auth = UserSocialAuth.get_social_auth_for_user(user).first()
-    strategy = DjangoStrategy(None)
-    backend = social_auth.get_backend_instance(strategy)
+def update_user_details(user_id):
+    params = urlencode({'access_token': settings.HS_PERSONAL_TOKEN})
+    path = '/api/v1/people/{}'.format(user_id)
+    base_url = HackerSchoolOAuth2.HACKER_SCHOOL_ROOT
+    url = '{}{}?{}'.format(base_url, path, params)
     try:
-        social_auth.refresh_token(strategy)
-    except Exception:
-        pass  # Ignore failures to refresh token
-    url = backend.HACKER_SCHOOL_ROOT + '/api/v1/people/%s?' % hacker_id + urlencode({
-        'access_token': social_auth.extra_data['access_token']
-    })
+        response = requests.get(url)
+        if response.status_code != 200:
+            raise ValueError('Could not fetch data for {}'.format(user_id))
 
-    try:
-        response = backend.request(url, method='GET')
-        hacker_data = backend.get_user_details(response.json())
-        create_or_update_hacker(None, hacker_data, None, User.objects.get(id=hacker_id))
-
-    except Exception:
-        # It's not very bad, if we are not able to update the userdata... we
-        # silently ignore it.
-        pass
+        hacker_data = HackerSchoolOAuth2.get_user_details(response.json())
+        create_or_update_hacker(
+            None, hacker_data, None, User.objects.get(id=user_id)
+        )
+    except Exception as e:
+        log.debug('Failed to update user data for hacker %s', user_id)
+        log.error(e)
 
 
 class HackerSchoolOAuth2(BaseOAuth2):
@@ -139,7 +137,8 @@ class HackerSchoolOAuth2(BaseOAuth2):
             params['redirect_uri'] = redirect_uri
         return params
 
-    def get_user_details(self, response):
+    @staticmethod
+    def get_user_details(response):
         """Return user details."""
         first_name = response.setdefault('first_name', '')
         last_name = response.setdefault('last_name', '')
@@ -156,9 +155,9 @@ class HackerSchoolOAuth2(BaseOAuth2):
 
     def user_data(self, access_token, *args, **kwargs):
         """Loads user data."""
-        url = self.HACKER_SCHOOL_ROOT + '/api/v1/people/me?' + urlencode({
-            'access_token': access_token
-        })
+        url = self.HACKER_SCHOOL_ROOT + '/api/v1/people/me?' + urlencode(
+            {'access_token': access_token}
+        )
         try:
             request = self.request(url, method='GET')
             return request.json()
