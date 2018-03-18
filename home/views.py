@@ -1,7 +1,6 @@
 from collections import namedtuple
 import datetime
 from functools import wraps
-import re
 import uuid
 
 from django.contrib import messages
@@ -123,9 +122,11 @@ def log_out(request):
 @login_required
 def add_blog(request):
     ''' Adds a new blog to a user's profile. '''
+    user_id = request.user.id
+    # /add_blog in linked to in recurse.com, etc.
     if request.method == 'GET':
         return HttpResponseRedirect(
-            reverse('profile', kwargs={'user_id': request.user.id})
+            reverse('profile', kwargs={'user_id': user_id})
         )
 
     feed_url = request.POST.get('feed_url', None)
@@ -134,20 +135,13 @@ def add_blog(request):
         # add http:// prefix if missing
         if feed_url[:4] != "http":
             feed_url = "http://" + feed_url
-        # pull out human-readable url from feed_url
-        # (naively - later we will crawl blog url for feed url)
-        if re.search('atom.xml/*$', feed_url):
-            url = re.sub('atom.xml/*$', '', feed_url)
-        elif re.search('rss/*$', feed_url):
-            url = re.sub('rss/*$', '', feed_url)
-        else:
-            url = feed_url
-        # janky short circuit if they've already added this url
-        if Blog.objects.filter(user=request.user.id, url=url).exists():
-            Blog.objects.filter(feed_url=feed_url).update(skip_crawl=False)
+        # Check if the feed has already been added, and bail out
+        user_blogs = Blog.objects.filter(user=user_id, feed_url=feed_url)
+        if user_blogs.exists():
+            user_blogs.update(skip_crawl=False)
             messages.info(request, EXISTING_FEED_MESSAGE)
             return HttpResponseRedirect(
-                reverse('profile', kwargs={'user_id': request.user.id})
+                reverse('profile', kwargs={'user_id': user_id})
             )
 
         contents, errors = feedergrabber27.retrieve_file_contents(feed_url)
@@ -158,8 +152,7 @@ def add_blog(request):
                 extra_tags='safe',
             )
         elif (
-            contents.bozo
-            and not isinstance(
+            contents.bozo and not isinstance(
                 contents.bozo_exception,
                 feedergrabber27.CharacterEncodingOverride,
             )
@@ -172,9 +165,7 @@ def add_blog(request):
         else:
             # create new blog record in db
             Blog.objects.create(
-                user=User.objects.get(id=request.user.id),
-                feed_url=feed_url,
-                url=url,
+                user=User.objects.get(id=user_id), feed_url=feed_url
             )
             messages.success(
                 request,
@@ -184,7 +175,7 @@ def add_blog(request):
     else:
         messages.error(request, "No feed URL provided.")
     return HttpResponseRedirect(
-        reverse('profile', kwargs={'user_id': request.user.id})
+        reverse('profile', kwargs={'user_id': user_id})
     )
 
 

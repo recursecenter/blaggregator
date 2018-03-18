@@ -40,8 +40,9 @@ place to quickly see the latest changes that the project has undergone.
 
 ### Removed
 
-- [#156] Removed code for authenticating legacy users -- @punchagan
+- [#157] Removed URL attribute for blogs -- @punchagan
 
+- [#156] Removed code for authenticating legacy users -- @punchagan
 
 ## 2017-02
 

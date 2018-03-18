@@ -214,7 +214,7 @@ class AddBlogViewTestCase(BaseViewTestCase):
         self.login()
         data = {'feed_url': 'https://jvns.ca/atom.xml'}
         self.client.post('/add_blog/', data=data, follow=True)
-        data_ = {'feed_url': 'https://jvns.ca/rss'}
+        data_ = {'feed_url': 'https://jvns.ca/atom.xml'}
         # When
         response = self.client.post('/add_blog/', data=data_, follow=True)
         # Then
