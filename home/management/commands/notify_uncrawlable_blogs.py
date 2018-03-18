@@ -9,10 +9,9 @@ from django.conf import settings
 from django.db.models import Q
 from django.utils import timezone
 
-
 # Local library
-from home.models import Blog
-from home.zulip_helpers import notify_uncrawlable_blogs
+from home.models import Blog, User
+from home.zulip_helpers import notify_uncrawlable_blogs, guess_zulip_emails
 
 log = logging.getLogger("blaggregator")
 
@@ -43,14 +42,13 @@ class Command(BaseCommand):
         users = flagged_blogs.order_by('user').distinct('user').values_list(
             'user', flat=True
         )
-        for user in users:
+        for user in guess_zulip_emails(User.objects.filter(id__in=users)):
             blogs = flagged_blogs.filter(user=user)
-            user = blogs.first().user
             if notify_uncrawlable_blogs(user, blogs, debug=settings.DEBUG):
                 notified.add(user.email)
             else:
                 notify_failed.add(user.email)
-        # Logging about notifications
+        # Logging notification success/failure
         if notified:
             flagged_blogs.filter(user__email__in=notified).update(
                 skip_crawl=True
