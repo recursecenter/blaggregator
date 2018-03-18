@@ -11,7 +11,7 @@ place to quickly see the latest changes that the project has undergone.
 
 ### Added
 
-- [#155] Added command to update all user details -- @punchagan
+- [#155,#156] Added command to update all user details -- @punchagan
 
 - [#151] Added command to delete posts with duplicate titles -- @punchagan
 
@@ -37,6 +37,11 @@ place to quickly see the latest changes that the project has undergone.
 
 - [#155] Use a personal token to update user details, and old hairy code that
   fetched backend and tried to get user's new details -- @punchagan
+
+### Removed
+
+- [#156] Removed code for authenticating legacy users -- @punchagan
+
 
 ## 2017-02
 
