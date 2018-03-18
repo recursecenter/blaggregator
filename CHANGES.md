@@ -11,6 +11,8 @@ place to quickly see the latest changes that the project has undergone.
 
 ### Added
 
+- [#155] Added command to update all user details -- @punchagan
+
 - [#151] Added command to delete posts with duplicate titles -- @punchagan
 
 - [#147] Added a skip_crawl flag on blogs to ignore them during crawls. Also,
@@ -32,6 +34,9 @@ place to quickly see the latest changes that the project has undergone.
 
 - [#154] Upgraded to the latest version of bootstrap 4.0.0 and switched to CDN.
   Also merged the edit_blog page into the profile page. -- @punchagan
+
+- [#155] Use a personal token to update user details, and old hairy code that
+  fetched backend and tried to get user's new details -- @punchagan
 
 ## 2017-02
 
