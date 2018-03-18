@@ -40,7 +40,6 @@ class Blog(models.Model):
         return self.feed_url
 
     user = models.ForeignKey(User)
-    url = models.URLField()
     feed_url = models.URLField()
     last_crawled = models.DateTimeField('last crawled', blank=True, null=True)
     created = models.DateTimeField('date created', auto_now_add=True)
