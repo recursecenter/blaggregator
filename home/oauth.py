@@ -32,20 +32,15 @@ def create_user(strategy, details, response, uid, user=None, *args, **kwargs):
 def create_or_update_hacker(
     strategy, details, response, user, *args, **kwargs
 ):
-    if hasattr(user, 'hacker'):
-        # If there's a hacker already, this is an existing user, and we'll
-        # update the hacker.
-        hacker = user.hacker
-    else:
-        # If there's no hacker, that means this is a new user. Let's make the
-        # hacker.
-        hacker = Hacker(user=user)
-    changed = False
-    for name, value in details.items():
-        if name in HACKER_ATTRIBUTES:
-            setattr(hacker, name, value)
-            changed = True
-    if changed:
+    defaults = {
+        attribute: details[attribute] for attribute in HACKER_ATTRIBUTES
+    }
+    hacker, created = Hacker.objects.get_or_create(
+        user=user, defaults=defaults
+    )
+    if not created:
+        for attribute, value in defaults.items():
+            setattr(hacker, attribute, value)
         hacker.save()
 
 
