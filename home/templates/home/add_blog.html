@@ -1,12 +1,21 @@
 {% load customtags %}
 
 <div class="card bg-default">
-    <div class="card-header">
-        <div class="card-title">
-            <h4>{% if blogs %} Add another blog {% else %} Add your blog {% endif %}</h4>
+    {% if forms %}
+        <button type="button"
+                class="btn btn-outline-dark btn-sm"
+                data-target=".add-blog"
+                data-toggle="collapse">
+            <i class="fa fa-rss-square"></i> Add another blog
+        </button>
+    {% else %}
+        <div class="card-header">
+            <div class="card-title">
+                <h4>Add your blog</h4>
+            </div>
         </div>
-    </div>
-    <div class="card-body">
+    {% endif %}
+    <div class="card-body add-blog {% if forms and not messages %}collapse{% endif %}">
         <p>Please add your blog's <span style="color:red">(Atom/RSS) feed url</span></p>
         <ul>
             <li><strong>All</strong> your blog posts (in this feed) will show up on
@@ -16,7 +25,7 @@
             </li>
         </ul>
     </div>
-    <div class="card-footer">
+    <div class="card-footer add-blog {% if forms and not messages %}collapse{% endif %}">
         <form class="" action="{% url 'add_blog' %}" method="post">
             {% csrf_token %}
             {% if messages %}
@@ -37,7 +46,7 @@
                         <input class="form-control mx-0 px-10" name="feed_url" type="url" placeholder="Feed URL" required>
                     </div>
                     <div class="col-sm-2">
-                        <button class="btn btn-outline-primary mx-0 px-10" type="button submit">Add Your Blog</button>
+                        <button class="btn btn-outline-primary mx-0 px-10" type="button submit">Add Blog</button>
                     </div>
                 </div>
             </div>
