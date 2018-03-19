@@ -8,10 +8,11 @@ from django.core.management.base import BaseCommand
 from django.conf import settings
 from django.db.models import Q
 from django.utils import timezone
+from django.utils.text import get_text_list
 
 # Local library
 from home.models import Blog, User
-from home.zulip_helpers import notify_uncrawlable_blogs, guess_zulip_emails
+from home import zulip_helpers as Z
 
 log = logging.getLogger("blaggregator")
 
@@ -39,12 +40,18 @@ class Command(BaseCommand):
         # Skip crawls on these blogs in future, until the feed_url changes
         notified = set()
         notify_failed = set()
-        users = flagged_blogs.order_by('user').distinct('user').values_list(
+        ids = flagged_blogs.order_by('user').distinct('user').values_list(
             'user', flat=True
         )
-        for user in guess_zulip_emails(User.objects.filter(id__in=users)):
+        users = User.objects.filter(id__in=ids)
+        zulip_members = Z.get_members()
+        admins = User.objects.filter(is_staff=True).exclude(hacker=None)
+        links = [Z.get_pm_link(admin, zulip_members) for admin in admins]
+        links = get_text_list(links, 'or')
+        debug = settings.DEBUG
+        for user in Z.guess_zulip_emails(users, zulip_members):
             blogs = flagged_blogs.filter(user=user)
-            if notify_uncrawlable_blogs(user, blogs, debug=settings.DEBUG):
+            if Z.notify_uncrawlable_blogs(user, blogs, links, debug=debug):
                 notified.add(user.email)
             else:
                 notify_failed.add(user.email)

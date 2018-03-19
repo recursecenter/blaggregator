@@ -7,11 +7,7 @@ import re
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.template.loader import get_template
-from django.utils.text import get_text_list
 import requests
-
-# Local imports
-from home.models import User
 
 ZULIP_KEY = os.environ.get('ZULIP_KEY')
 ZULIP_EMAIL = os.environ.get('ZULIP_EMAIL')
@@ -36,16 +32,68 @@ def announce_new_post(post, debug=True):
     send_message_zulip(to, subject, content, type_='stream')
 
 
-def notify_uncrawlable_blogs(user, blogs, debug=True):
+def get_members():
+    """Returns info of all the Zulip users.
+
+    Returns a mapping with two keys - by_name and by_email.
+
+    """
+    try:
+        log.debug('Fetching all Zulip members')
+        response = requests.get(MEMBERS_URL, auth=(ZULIP_EMAIL, ZULIP_KEY))
+        members = response.json()['members']
+    except Exception as e:
+        log.error('Could not fetch zulip users: %s', e)
+    by_name = {
+        strip_batch(member['full_name']): member
+        for member in members
+        if not member['is_bot'] and member['is_active']
+    }
+    by_email = {member['email']: member for name, member in by_name.items()}
+    return dict(by_email=by_email, by_name=by_name)
+
+
+def get_pm_link(user, members):
+    """Returns a zulip link for PM with a user."""
+    name = user.get_full_name()
+    first_name = user.first_name.lower()
+    uid = members['by_name'][name]['user_id']
+    return '[{name}](#narrow/pm-with/{uid}-{first_name})'.format(
+        name=name, uid=uid, first_name=first_name
+    )
+
+
+def guess_zulip_emails(users, members):
+    """Get zulip emails for users
+
+    Some users may not have the same email ids on zulip and recurse.com, in
+    which case sending private messages will fail. This function tries to
+    detect the zulip email based on the full name of the user.
+
+    *NOTE*: The email in our DB is not changed. The email is temporarily set as
+     an attribute on the user, so that notifications can be sent to the user.
+
+    """
+    EMAILS = members['by_email']
+    NAMES = members['by_name']
+    for user in users:
+        if user.email not in EMAILS and user.get_full_name() in NAMES:
+            user.zulip_email = NAMES[user.get_full_name()]
+        else:
+            # Either the email is correct OR
+            # Both name and email have changed or account deleted!
+            pass
+    return users
+
+
+def notify_uncrawlable_blogs(user, blogs, admins, debug=True):
     """Notify blog owner about blogs that are failing crawls."""
     subject = 'Blaggregator: Action required!'
-    admins = User.objects.filter(is_staff=True).exclude(hacker=None)
-    names = get_text_list([admin.get_full_name() for admin in admins], 'or')
     context = dict(
         user=user,
         blogs=blogs,
         base_url=settings.ROOT_URL.rstrip('/'),
-        admins=names,
+        admins=admins,
     )
     content = get_template('home/disabling-crawling.md').render(context)
     to = getattr(user, 'zulip_email', user.email)
@@ -76,38 +124,6 @@ def send_message_zulip(to, subject, content, type_='private'):
     except Exception as e:
         log.exception(e)
         return False
-
-
-def guess_zulip_emails(users):
-    """Get zulip emails for users
-
-    Some users may not have the same email ids on zulip and recurse.com, in
-    which case sending private messages will fail. This function tries to
-    detect the zulip email based on the full name of the user.
-
-    *NOTE*: The email in our DB is not changed. The email is temporarily set as
-     an attribute on the user, so that notifications can be sent to the user.
-
-    """
-    try:
-        response = requests.get(MEMBERS_URL, auth=(ZULIP_EMAIL, ZULIP_KEY))
-        members = response.json()['members']
-    except Exception as e:
-        log.error('Could not fetch zulip users: %s', e)
-    NAMES = {
-        strip_batch(member['full_name']): member['email']
-        for member in members
-        if not member['is_bot'] and member['is_active']
-    }
-    EMAILS = {email: name for name, email in NAMES.items()}
-    for user in users:
-        if user.email not in EMAILS and user.get_full_name() in NAMES:
-            user.zulip_email = NAMES[user.get_full_name()]
-        else:
-            # Either the email is correct OR
-            # Both name and email have changed or account deleted!
-            pass
-    return users
 
 
 def strip_batch(name):
