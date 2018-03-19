@@ -33,10 +33,12 @@ class Command(BaseCommand):
         # Feedergrabber returns ( [(link, title, date, content)], [errors])
         crawled, errors = feedergrabber27.feedergrabber(blog.feed_url)
         if not crawled:
-            log.debug(str(errors))
+            log.debug('\n'.join(errors))
             return
 
         log.debug('Crawled %s posts from %s', len(crawled), blog.feed_url)
+        if errors:
+            log.debug('\n'.join(errors))
         blog.last_crawled = timezone.now()
         blog.save(update_fields=['last_crawled'])
         created_count = 0

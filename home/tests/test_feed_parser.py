@@ -46,8 +46,7 @@ class FeedParserTestCase(TestCase):
                 note(errors)
                 self.assertEqual(0, len(feed.items))
                 self.assertEqual(1, len(errors))
-                self.assertIn('Parsing methods not successful', errors[0][0])
-
+                self.assertIn('Parsing methods not successful', errors[0])
             else:
                 for i, (link, title, date, content) in enumerate(contents):
                     item = feed.items[i]
@@ -59,6 +58,7 @@ class FeedParserTestCase(TestCase):
                     self.assertGreaterEqual(
                         datetime.datetime.now().utctimetuple(), date.utctimetuple()
                     )
+
 
     @given(generate_full_feed())
     @settings(max_examples=1000, suppress_health_check=[HealthCheck.too_slow])
@@ -73,7 +73,7 @@ class FeedParserTestCase(TestCase):
             note(errors)
             self.assertIsNone(contents)
             self.assertEqual(len(feed.items) + 1, len(errors))
-            self.assertIn('Parsing methods not successful', errors[-1][0])
+            self.assertIn('Parsing methods not successful', errors[-1])
 
     @staticmethod
     def patch_open(feed, url, data=None, timeout=None):
@@ -113,8 +113,8 @@ class FeedParserHelpersTestCase(TestCase):
             contents, errors = feedergrabber('http://max.computer/index.html')
             self.assertIsNone(contents)
             self.assertEqual(2, len(errors))
-            self.assertIn('Parsing methods not successful', errors[-1][0])
-            self.assertIn('hugo page', errors[0][0])
+            self.assertIn('Parsing methods not successful', errors[-1])
+            self.assertIn('hugo page', errors[0])
 
     def test_medium_404s_marked_as_comments(self):
         url = 'https://medium.com/bogus/url/is/comment'
