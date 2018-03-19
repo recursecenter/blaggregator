@@ -7,7 +7,7 @@ from django.test import TestCase
 from hypothesis import given, HealthCheck, note, settings
 from mock import patch
 
-from home.feedergrabber27 import feedergrabber
+from home.feedergrabber27 import feedergrabber, is_medium_comment
 from home.tests.utils import generate_full_feed
 
 
@@ -60,14 +60,6 @@ class FeedParserTestCase(TestCase):
                         datetime.datetime.now().utctimetuple(), date.utctimetuple()
                     )
 
-    def test_parsing_feeds_with_min_dates(self):
-        with patch('urllib2.OpenerDirector.open', new=self.min_date_feed):
-            contents, errors = feedergrabber('http://max.computer/index.html')
-            self.assertIsNone(contents)
-            self.assertEqual(2, len(errors))
-            self.assertIn('Parsing methods not successful', errors[-1][0])
-            self.assertIn('No valid post date', errors[0][0])
-
     @given(generate_full_feed())
     @settings(max_examples=1000, suppress_health_check=[HealthCheck.too_slow])
     def test_parsing_broken_feeds(self, feed):
@@ -82,10 +74,6 @@ class FeedParserTestCase(TestCase):
             self.assertIsNone(contents)
             self.assertEqual(len(feed.items) + 1, len(errors))
             self.assertIn('Parsing methods not successful', errors[-1][0])
-
-    @staticmethod
-    def min_date_feed(*args, **kwargs):
-        return StringIO(MIN_DATE_FEED.strip())
 
     @staticmethod
     def patch_open(feed, url, data=None, timeout=None):
@@ -116,3 +104,31 @@ class FeedParserTestCase(TestCase):
             text = re.sub("(<item>.*?)(<id.*?>.*?</id>)(.*?</item>)", "\\1\\3", text)
         note(text)
         return StringIO(text)
+
+
+class FeedParserHelpersTestCase(TestCase):
+
+    def test_parsing_feeds_with_min_dates(self):
+        with patch('urllib2.OpenerDirector.open', new=self.min_date_feed):
+            contents, errors = feedergrabber('http://max.computer/index.html')
+            self.assertIsNone(contents)
+            self.assertEqual(2, len(errors))
+            self.assertIn('Parsing methods not successful', errors[-1][0])
+            self.assertIn('hugo page', errors[0][0])
+
+    def test_medium_404s_marked_as_comments(self):
+        url = 'https://medium.com/bogus/url/is/comment'
+        self.assertTrue(is_medium_comment(url))
+
+    def test_medium_posts_with_fetch_errors_are_comments(self):
+        url = 'https://medium.com/bogus/url/is/comment'
+
+        def raise_error(*args, **kwargs):
+            raise KeyError
+
+        with patch('requests.get', new=raise_error):
+            self.assertTrue(is_medium_comment(url))
+
+    @staticmethod
+    def min_date_feed(*args, **kwargs):
+        return StringIO(MIN_DATE_FEED.strip())

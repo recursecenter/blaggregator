@@ -111,9 +111,21 @@ def is_medium_comment(link):
     if 'medium.com' not in link:
         return False
 
-    try:
-        content = requests.get(link).content
-        is_comment = re.search(MEDIUM_COMMENT_RE, content) is not None
-    except Exception:
-        is_comment = False
+    retries = 3
+    for _ in range(retries):
+        try:
+            response = requests.get(link)
+            if response.status_code != 200:
+                is_comment = True
+            else:
+                content = response.content
+                is_comment = re.search(MEDIUM_COMMENT_RE, content) is not None
+        except Exception as e:
+            continue
+
+        else:
+            break
+
+    else:
+        is_comment = True
     return is_comment
