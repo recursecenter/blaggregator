@@ -26,7 +26,7 @@ def retrieve_file_contents(url):
     try:
         file_contents = feedparser.parse(url)
     except (urllib2.URLError, urllib2.HTTPError) as e:
-        errors.append([url, e])
+        errors.append('Fetching content for {} failed: {}'.format(url, e))
         file_contents = None
     return file_contents, errors
 
@@ -60,21 +60,17 @@ def feedergrabber(url):
         # Link
         link = getattr(entry, 'link', '')
         if not link:
-            errors.append(
-                [url + ': A link was unexpectedly not returned by feedparse.']
-            )
+            errors.append('No link was found for post: {}'.format(url))
             continue
 
         elif is_medium_comment(link):
-            errors.append([url + ': A medium comment link was skipped.'])
+            errors.append('A medium comment was skipped: {}'.format(link))
             continue
 
         # Title
         title = getattr(entry, 'title', '')
         if not title:
-            errors.append(
-                [url + ':A title was unexpectedly not returned by feedparse.']
-            )
+            errors.append('No title was returned for post: {}.'.format(link))
             continue
 
         title = h.unescape(title).replace('\n', ' ')
@@ -87,13 +83,13 @@ def feedergrabber(url):
             # No date posts are marked as crawled now
             post_date = now
         else:
-            post_date = datetime.datetime(* post_date[:6])
+            post_date = datetime.datetime(*post_date[:6])
             # future dated posts are marked as crawled now
             if post_date > now:
                 post_date = now
             # posts dated 0001-01-01 are ignored -- common for _pages_ in hugo feeds
             elif post_date == datetime.datetime.min:
-                errors.append([url + ': No valid post date, could be a page.'])
+                errors.append('Has min date - hugo page?: {}'.format(link))
                 continue
 
         # Post content
@@ -102,7 +98,7 @@ def feedergrabber(url):
         post_links_and_titles.append((link, title, post_date, content))
     if len(post_links_and_titles) == 0:
         post_links_and_titles = None
-        errors.append([url + ': Parsing methods not successful.'])
+        errors.append(url + ': Parsing methods not successful.')
     return post_links_and_titles, errors
 
 
@@ -121,6 +117,7 @@ def is_medium_comment(link):
                 content = response.content
                 is_comment = re.search(MEDIUM_COMMENT_RE, content) is not None
         except Exception as e:
+            print('Error trying to fetch {}: {}'.format(link, e))
             continue
 
         else:
