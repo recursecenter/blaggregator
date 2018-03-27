@@ -2,7 +2,7 @@ import os
 import dj_database_url
 from .base import ALLOWED_HOSTS, DATABASES
 
-ROOT_URL = 'https://blaggregator.recurse.com/'
+ROOT_URL = 'https://blaggregator.herokuapp.com/'
 # Allowed hostnames
 ALLOWED_HOSTS += [
     'blaggregator.herokuapp.com',
