@@ -32,9 +32,13 @@ def zulip_url(title, stream):
     # Some browsers zealously URI-decode the contents of window.location.hash.
     # So Zulip hides the URI-encoding by replacing '%' with '.'
     def replace(x):
-        return quote(x.encode('utf-8'), safe='').replace('.', '%2E').replace(
-            '%', '.'
+        return (
+            quote(x.encode("utf-8"), safe="")
+            .replace(".", "%2E")
+            .replace("%", ".")
         )
 
-    hash_path = 'narrow/stream/%s/topic/%s' % (replace(stream), replace(title))
-    return 'https://recurse.zulipchat.com/#%s' % hash_path
+    if len(title) > 60:
+        title = title[:57] + "..."
+    hash_path = "narrow/stream/%s/topic/%s" % (replace(stream), replace(title))
+    return "https://recurse.zulipchat.com/#%s" % hash_path
