@@ -31,26 +31,25 @@ MIN_DATE_FEED = """
 
 
 class FeedParserTestCase(TestCase):
-
     @given(generate_full_feed())
     @settings(max_examples=1000, suppress_health_check=[HealthCheck.too_slow])
     def test_parsing_valid_feeds(self, feed):
         note(feed.feed)
         note(feed.items)
         with patch(
-            'urllib2.OpenerDirector.open', new=partial(self.patch_open, feed)
+            "urllib2.OpenerDirector.open", new=partial(self.patch_open, feed)
         ):
-            contents, errors = feedergrabber(feed.feed['link'])
+            contents, errors = feedergrabber(feed.feed["link"])
             if contents is None:
                 note(errors)
                 self.assertEqual(0, len(feed.items))
                 self.assertEqual(1, len(errors))
-                self.assertIn('Parsing methods not successful', errors[0])
+                self.assertIn("Parsing methods not successful", errors[0])
             else:
                 for i, (link, title, date, content) in enumerate(contents):
                     item = feed.items[i]
-                    self.assertEqual(link, item['link'])
-                    item_date = item.get('pubdate', item.get('updateddate'))
+                    self.assertEqual(link, item["link"])
+                    item_date = item.get("pubdate", item.get("updateddate"))
                     note(item_date)
                     note(date)
                     self.assertIsNotNone(date)
@@ -65,19 +64,19 @@ class FeedParserTestCase(TestCase):
         note(feed.feed)
         note(feed.items)
         with patch(
-            'urllib2.OpenerDirector.open',
+            "urllib2.OpenerDirector.open",
             new=partial(self.patch_open_broken_feed, feed),
         ):
-            contents, errors = feedergrabber(feed.feed['link'])
+            contents, errors = feedergrabber(feed.feed["link"])
             note(contents)
             note(errors)
             self.assertIsNone(contents)
             self.assertEqual(len(feed.items) + 1, len(errors))
-            self.assertIn('Parsing methods not successful', errors[-1])
+            self.assertIn("Parsing methods not successful", errors[-1])
 
     @staticmethod
     def patch_open(feed, url, data=None, timeout=None):
-        xml = feed.writeString('utf8')
+        xml = feed.writeString("utf8")
         note(xml)
         return StringIO(xml)
 
@@ -85,7 +84,7 @@ class FeedParserTestCase(TestCase):
     def patch_open_broken_feed(feed, url, data=None, timeout=None):
         xml = FeedParserTestCase.patch_open(feed, url, data, timeout)
         text = xml.read()
-        text = text.replace('encoding="utf8"', '')
+        text = text.replace('encoding="utf8"', "")
         # feedgenerator makes title and link mandatory, hence we remove from
         # generated xml.
         if len(feed.items) % 2 == 0:
