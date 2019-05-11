@@ -44,6 +44,7 @@ def get_members():
         members = response.json()["members"]
     except Exception as e:
         log.error("Could not fetch zulip users: %s", e)
+        members = []
     by_name = {
         strip_batch(member["full_name"]): member
         for member in members
