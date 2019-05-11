@@ -1,4 +1,5 @@
 # Standard library
+import json
 import logging
 import os
 import re
@@ -32,6 +33,18 @@ def announce_new_post(post, debug=True):
     send_message_zulip(to, subject, content, type_="stream")
 
 
+def delete_message(message_id, content="(deleted)"):
+    message_url = "{}/{}".format(MESSAGES_URL, message_id)
+    params = {"content": content, "subject": content}
+    try:
+        response = requests.patch(
+            message_url, params=params, auth=(ZULIP_EMAIL, ZULIP_KEY)
+        )
+        assert response["result"] == "success"
+    except Exception as e:
+        log.error("Could not delete Zulip message %s: %s", message_id, e)
+
+
 def get_members():
     """Returns info of all the Zulip users.
 
@@ -62,6 +75,26 @@ def get_pm_link(user, members):
     return "[{name}](#narrow/pm-with/{uid}-{first_name})".format(
         name=name, uid=uid, first_name=first_name
     )
+
+
+def get_stream_messages(stream):
+    request = {
+        "anchor": 10000000000000000,
+        "num_before": 5000,
+        "num_after": 0,
+        "narrow": json.dumps([{"operator": "stream", "operand": stream}]),
+    }
+    try:
+        log.debug("Fetching Zulip messages")
+        response = requests.get(
+            MESSAGES_URL, params=request, auth=(ZULIP_EMAIL, ZULIP_KEY)
+        )
+        messages = response.json()["messages"]
+    except Exception as e:
+        log.error("Could not fetch Zulip messages: %s", e)
+        messages = []
+
+    return messages
 
 
 def guess_zulip_emails(users, members):

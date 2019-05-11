@@ -4,11 +4,11 @@ import bs4
 def is_medium_comment(entry):
     """Check if a link is a medium comment."""
 
-    link = entry.link or ""
+    link = getattr(entry, "link", getattr(entry, "url", ""))
     if "medium.com" not in link:
         return False
 
-    content = entry.summary or ""
+    content = getattr(entry, "summary", getattr(entry, "content", ""))
     title = entry.title or ""
     soup = bs4.BeautifulSoup(content, "lxml")
     # Medium comments set their title from the content of the comment. So, we
