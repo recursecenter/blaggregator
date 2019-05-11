@@ -61,10 +61,19 @@ $ pip install -r requirements.txt
       ```sql
       CREATE DATABASE blaggregator_dev;
       ```
-    The semicolon is critical. IMPORTANT: when you are creating your admin
-    account on the db, *don't* use the same email address as your Recurse
-    Center account or you won't be able to create a user account for
-    yourself. Do username+root@example.com or something.
+
+       The semicolon is critical. IMPORTANT: when you are creating your admin
+       account on the db, *don't* use the same email address as your Recurse
+       Center account or you won't be able to create a user account for
+       yourself. Do username+root@example.com or something.
+
+    - Create the user for Django to use. As the `postgres` user, you can run the following:
+
+     ```shell
+     createuser --interactive --pwprompt
+     ```
+
+      Set username and password to `sasha`.  Let the new user create and delete databases.
 
 - Alternatively, you could use Sqlite instead of Postgres to get off the
   blocks, quickly.  Change the value of `'ENGINE'` in the
@@ -73,7 +82,7 @@ $ pip install -r requirements.txt
 - Set up initial tables:
 
 ```bash
-$ python manage.py syncdb
+$ python manage.py migrate
 ```
 
 - Bring the tables up to date with the latest South migrations:
