@@ -7,14 +7,12 @@ from __future__ import print_function
 
 import datetime
 import HTMLParser
-import re
 import socket
 import urllib2
 
+import bs4
 import feedparser
-import requests
 
-MEDIUM_COMMENT_RE = re.compile('"inResponseToPostId":"\w+"')
 CharacterEncodingOverride = feedparser.CharacterEncodingOverride
 # Set a timeout of 60 seconds for sockets - useful when crawling some blogs
 socket.setdefaulttimeout(60)
@@ -64,7 +62,7 @@ def feedergrabber(url):
             errors.append("No link was found for post: {}".format(url))
             continue
 
-        elif is_medium_comment(link):
+        elif is_medium_comment(entry):
             errors.append("A medium comment was skipped: {}".format(link))
             continue
 
@@ -103,27 +101,19 @@ def feedergrabber(url):
     return post_links_and_titles, errors
 
 
-def is_medium_comment(link):
+def is_medium_comment(entry):
     """Check if a link is a medium comment."""
+
+    link = entry.link or ""
     if "medium.com" not in link:
         return False
 
-    retries = 3
-    for _ in range(retries):
-        try:
-            response = requests.get(link)
-            if response.status_code != 200:
-                is_comment = True
-            else:
-                content = response.content
-                is_comment = re.search(MEDIUM_COMMENT_RE, content) is not None
-        except Exception as e:
-            print("Error trying to fetch {}: {}".format(link, e))
-            continue
-
-        else:
-            break
-
-    else:
-        is_comment = True
+    content = entry.summary or ""
+    title = entry.title or ""
+    soup = bs4.BeautifulSoup(content, "lxml")
+    # Medium comments set their title from the content of the comment. So, we
+    # verify if the content starts with the content.
+    text_content = soup.text.encode("ascii", "replace").replace("?", " ")
+    title = title.encode("ascii", "replace").replace("?", " ").strip()
+    is_comment = text_content.startswith(title)
     return is_comment

@@ -121,27 +121,13 @@ class FeedParserTestCase(TestCase):
 
 
 class FeedParserHelpersTestCase(TestCase):
-
     def test_parsing_feeds_with_min_dates(self):
-        with patch('urllib2.OpenerDirector.open', new=self.min_date_feed):
-            contents, errors = feedergrabber('http://max.computer/index.html')
+        with patch("urllib2.OpenerDirector.open", new=self.min_date_feed):
+            contents, errors = feedergrabber("http://max.computer/index.html")
             self.assertIsNone(contents)
             self.assertEqual(2, len(errors))
-            self.assertIn('Parsing methods not successful', errors[-1])
-            self.assertIn('hugo page', errors[0])
-
-    def test_medium_404s_marked_as_comments(self):
-        url = 'https://medium.com/bogus/url/is/comment'
-        self.assertTrue(is_medium_comment(url))
-
-    def test_medium_posts_with_fetch_errors_are_comments(self):
-        url = 'https://medium.com/bogus/url/is/comment'
-
-        def raise_error(*args, **kwargs):
-            raise KeyError
-
-        with patch('requests.get', new=raise_error):
-            self.assertTrue(is_medium_comment(url))
+            self.assertIn("Parsing methods not successful", errors[-1])
+            self.assertIn("hugo page", errors[0])
 
     @staticmethod
     def min_date_feed(*args, **kwargs):
