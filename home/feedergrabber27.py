@@ -21,12 +21,12 @@ socket.setdefaulttimeout(60)
 
 
 def retrieve_file_contents(url):
-    '''Retrieve file contents from a given URL and log any errors.'''
+    """Retrieve file contents from a given URL and log any errors."""
     errors = []
     try:
         file_contents = feedparser.parse(url)
     except (urllib2.URLError, urllib2.HTTPError) as e:
-        errors.append('Fetching content for {} failed: {}'.format(url, e))
+        errors.append("Fetching content for {} failed: {}".format(url, e))
         file_contents = None
     return file_contents, errors
 
@@ -38,8 +38,9 @@ def find_feed_url(parsed_content):
     except AttributeError:
         links = []
     for link in links:
-        if link.get('type', '') in (
-            'application/atom+xml', 'application/rss+xml'
+        if link.get("type", "") in (
+            "application/atom+xml",
+            "application/rss+xml",
         ):
             return link.href
 
@@ -58,25 +59,25 @@ def feedergrabber(url):
     # Gather links, titles, dates and content
     for entry in file_contents.entries:
         # Link
-        link = getattr(entry, 'link', '')
+        link = getattr(entry, "link", "")
         if not link:
-            errors.append('No link was found for post: {}'.format(url))
+            errors.append("No link was found for post: {}".format(url))
             continue
 
         elif is_medium_comment(link):
-            errors.append('A medium comment was skipped: {}'.format(link))
+            errors.append("A medium comment was skipped: {}".format(link))
             continue
 
         # Title
-        title = getattr(entry, 'title', '')
+        title = getattr(entry, "title", "")
         if not title:
-            errors.append('No title was returned for post: {}.'.format(link))
+            errors.append("No title was returned for post: {}.".format(link))
             continue
 
-        title = h.unescape(title).replace('\n', ' ')
+        title = h.unescape(title).replace("\n", " ")
         # Date
         post_date = getattr(
-            entry, 'published_parsed', getattr(entry, 'updated_parsed', None)
+            entry, "published_parsed", getattr(entry, "updated_parsed", None)
         )
         now = datetime.datetime.now()
         if post_date is None:
@@ -89,22 +90,22 @@ def feedergrabber(url):
                 post_date = now
             # posts dated 0001-01-01 are ignored -- common for _pages_ in hugo feeds
             elif post_date == datetime.datetime.min:
-                errors.append('Has min date - hugo page?: {}'.format(link))
+                errors.append("Has min date - hugo page?: {}".format(link))
                 continue
 
         # Post content
-        content = getattr(entry, 'summary', '')
+        content = getattr(entry, "summary", "")
         # Append
         post_links_and_titles.append((link, title, post_date, content))
     if len(post_links_and_titles) == 0:
         post_links_and_titles = None
-        errors.append(url + ': Parsing methods not successful.')
+        errors.append(url + ": Parsing methods not successful.")
     return post_links_and_titles, errors
 
 
 def is_medium_comment(link):
     """Check if a link is a medium comment."""
-    if 'medium.com' not in link:
+    if "medium.com" not in link:
         return False
 
     retries = 3
@@ -117,7 +118,7 @@ def is_medium_comment(link):
                 content = response.content
                 is_comment = re.search(MEDIUM_COMMENT_RE, content) is not None
         except Exception as e:
-            print('Error trying to fetch {}: {}'.format(link, e))
+            print("Error trying to fetch {}: {}".format(link, e))
             continue
 
         else:
