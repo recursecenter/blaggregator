@@ -1,4 +1,7 @@
+backports.functools-lru-cache==1.5
+beautifulsoup4==4.7.1
 boto==2.43.0
+bs4==0.0.1
 certifi==2018.10.15
 chardet==3.0.4
 configparser==3.5.0
@@ -20,6 +23,7 @@ gunicorn==19.6.0
 hypothesis==3.6.0
 idna==2.7
 ipaddress==1.0.19
+lxml==4.3.3
 Markdown==2.6.7
 mccabe==0.5.2
 mock==2.0.0
@@ -37,5 +41,6 @@ requests-oauthlib==0.7.0
 six==1.11.0
 social-auth-app-django==2.1.0
 social-auth-core==1.7.0
+soupsieve==1.9.1
 text-unidecode==1.2
 urllib3==1.24.1
