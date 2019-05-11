@@ -9,10 +9,10 @@ from django.core.urlresolvers import reverse
 from django.template.loader import get_template
 import requests
 
-ZULIP_KEY = os.environ.get('ZULIP_KEY')
-ZULIP_EMAIL = os.environ.get('ZULIP_EMAIL')
-MESSAGES_URL = 'https://recurse.zulipchat.com/api/v1/messages'
-MEMBERS_URL = 'https://recurse.zulipchat.com/api/v1/users'
+ZULIP_KEY = os.environ.get("ZULIP_KEY")
+ZULIP_EMAIL = os.environ.get("ZULIP_EMAIL")
+MESSAGES_URL = "https://recurse.zulipchat.com/api/v1/messages"
+MEMBERS_URL = "https://recurse.zulipchat.com/api/v1/users"
 ANNOUNCE_MESSAGE = u"**{}** has a new blog post: [{}]({})"
 log = logging.getLogger("blaggregator")
 
@@ -23,13 +23,13 @@ def announce_new_post(post, debug=True):
     *NOTE*: If DEBUG mode is on, all messages are sent to the bot-test stream.
 
     """
-    to = post.blog.get_stream_display() if not debug else 'bot-test'
+    to = post.blog.get_stream_display() if not debug else "bot-test"
     title = post.title
     subject = title if len(title) <= 60 else title[:57] + "..."
-    path = reverse('view_post', kwargs={'slug': post.slug})
-    url = '{}/{}'.format(settings.ROOT_URL.rstrip('/'), path.lstrip('/'))
+    path = reverse("view_post", kwargs={"slug": post.slug})
+    url = "{}/{}".format(settings.ROOT_URL.rstrip("/"), path.lstrip("/"))
     content = ANNOUNCE_MESSAGE.format(post.author, title, url)
-    send_message_zulip(to, subject, content, type_='stream')
+    send_message_zulip(to, subject, content, type_="stream")
 
 
 def get_members():
@@ -39,17 +39,17 @@ def get_members():
 
     """
     try:
-        log.debug('Fetching all Zulip members')
+        log.debug("Fetching all Zulip members")
         response = requests.get(MEMBERS_URL, auth=(ZULIP_EMAIL, ZULIP_KEY))
-        members = response.json()['members']
+        members = response.json()["members"]
     except Exception as e:
-        log.error('Could not fetch zulip users: %s', e)
+        log.error("Could not fetch zulip users: %s", e)
     by_name = {
-        strip_batch(member['full_name']): member
+        strip_batch(member["full_name"]): member
         for member in members
-        if not member['is_bot'] and member['is_active']
+        if not member["is_bot"] and member["is_active"]
     }
-    by_email = {member['email']: member for name, member in by_name.items()}
+    by_email = {member["email"]: member for name, member in by_name.items()}
     return dict(by_email=by_email, by_name=by_name)
 
 
@@ -57,8 +57,8 @@ def get_pm_link(user, members):
     """Returns a zulip link for PM with a user."""
     name = user.get_full_name()
     first_name = user.first_name.lower()
-    uid = members['by_name'][name]['user_id']
-    return '[{name}](#narrow/pm-with/{uid}-{first_name})'.format(
+    uid = members["by_name"][name]["user_id"]
+    return "[{name}](#narrow/pm-with/{uid}-{first_name})".format(
         name=name, uid=uid, first_name=first_name
     )
 
@@ -74,8 +74,8 @@ def guess_zulip_emails(users, members):
      an attribute on the user, so that notifications can be sent to the user.
 
     """
-    EMAILS = members['by_email']
-    NAMES = members['by_name']
+    EMAILS = members["by_email"]
+    NAMES = members["by_name"]
     for user in users:
         if user.email not in EMAILS and user.get_full_name() in NAMES:
             user.zulip_email = NAMES[user.get_full_name()]
@@ -88,25 +88,25 @@ def guess_zulip_emails(users, members):
 
 def notify_uncrawlable_blogs(user, blogs, admins, debug=True):
     """Notify blog owner about blogs that are failing crawls."""
-    subject = 'Blaggregator: Action required!'
+    subject = "Blaggregator: Action required!"
     context = dict(
         user=user,
         blogs=blogs,
-        base_url=settings.ROOT_URL.rstrip('/'),
+        base_url=settings.ROOT_URL.rstrip("/"),
         admins=admins,
     )
-    content = get_template('home/disabling-crawling.md').render(context)
-    to = getattr(user, 'zulip_email', user.email)
-    type_ = 'private'
+    content = get_template("home/disabling-crawling.md").render(context)
+    to = getattr(user, "zulip_email", user.email)
+    type_ = "private"
     if debug:
-        log.debug(u'Sending message \n\n%s\n\n to %s (%s)', content, to, type_)
+        log.debug(u"Sending message \n\n%s\n\n to %s (%s)", content, to, type_)
         return False
 
     else:
         return send_message_zulip(to, subject, content, type_=type_)
 
 
-def send_message_zulip(to, subject, content, type_='private'):
+def send_message_zulip(to, subject, content, type_="private"):
     """Send a message to Zulip."""
     data = {"type": type_, "to": to, "subject": subject, "content": content}
     try:
@@ -115,7 +115,7 @@ def send_message_zulip(to, subject, content, type_='private'):
             MESSAGES_URL, data=data, auth=(ZULIP_EMAIL, ZULIP_KEY)
         )
         log.debug(
-            u'Post returned with %s: %s',
+            u"Post returned with %s: %s",
             response.status_code,
             response.content,
         )
@@ -128,4 +128,4 @@ def send_message_zulip(to, subject, content, type_='private'):
 
 def strip_batch(name):
     """Strip parenthesized batch from a name"""
-    return re.sub('\(.*\)', '', name).strip()
+    return re.sub("\(.*\)", "", name).strip()
