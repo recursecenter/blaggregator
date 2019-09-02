@@ -7,7 +7,7 @@ from django.test import TestCase
 from hypothesis import given, HealthCheck, note, settings
 from mock import patch
 
-from home.feedergrabber27 import feedergrabber, is_medium_comment
+from home.feedergrabber27 import feedergrabber
 from home.tests.utils import generate_full_feed
 
 MIN_DATE_FEED = """
