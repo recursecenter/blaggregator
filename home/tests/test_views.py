@@ -14,12 +14,11 @@ N_MAX = settings.MAX_FEED_ENTRIES
 
 @override_settings(
     AUTHENTICATION_BACKENDS=(
-        'django.contrib.auth.backends.ModelBackend',
-        'home.token_auth.TokenAuthBackend',
+        "django.contrib.auth.backends.ModelBackend",
+        "home.token_auth.TokenAuthBackend",
     )
 )
 class BaseViewTestCase(TestCase):
-
     def setUp(self):
         self.setup_test_user()
 
@@ -37,7 +36,7 @@ class BaseViewTestCase(TestCase):
             blog.save()
 
     def setup_test_user(self):
-        self.username = self.password = 'test'
+        self.username = self.password = "test"
         self.user = User.objects.create_user(self.username)
         self.user.set_password(self.password)
         self.user.save()
@@ -49,22 +48,21 @@ class BaseViewTestCase(TestCase):
 
 
 class FeedsViewTestCase(BaseViewTestCase):
-
     def test_should_enforce_authentication(self):
-        response = self.client.get('/atom.xml')
+        response = self.client.get("/atom.xml")
         self.assertEqual(response.status_code, 404)
-        response = self.client.get('/atom.xml', data={'token': ''})
+        response = self.client.get("/atom.xml", data={"token": ""})
         self.assertEqual(response.status_code, 404)
 
     def test_should_enforce_token(self):
         self.login()
-        response = self.client.get('/new/')
+        response = self.client.get("/new/")
         self.assertEqual(response.status_code, 200)
-        response = self.client.get('/atom.xml')
+        response = self.client.get("/atom.xml")
         self.assertEqual(response.status_code, 404)
-        response = self.client.get('/atom.xml', data={'token': ''})
+        response = self.client.get("/atom.xml", data={"token": ""})
         self.assertEqual(response.status_code, 404)
-        response = self.client.get('/atom.xml', data={'token': 'BOGUS-TOKEN'})
+        response = self.client.get("/atom.xml", data={"token": "BOGUS-TOKEN"})
         self.assertEqual(response.status_code, 404)
 
     def test_feed_with_no_posts(self):
@@ -106,7 +104,7 @@ class FeedsViewTestCase(BaseViewTestCase):
         posts = create_posts(n)
         # When
         response = self.client.get(
-            '/atom.xml', data={'token': self.hacker.token}
+            "/atom.xml", data={"token": self.hacker.token}
         )
         # Then
         self.assertEqual(n, Post.objects.count())
@@ -166,128 +164,126 @@ def html_page(*args, **kwargs):
     return StringIO(HTML_PAGE.strip())
 
 
-@patch('urllib2.OpenerDirector.open', new=empty_feed)
+@patch("urllib2.OpenerDirector.open", new=empty_feed)
 class AddBlogViewTestCase(BaseViewTestCase):
-
     def test_get_add_blog_requires_login(self):
         # When
-        response = self.client.post('/add_blog/', follow=True)
+        response = self.client.post("/add_blog/", follow=True)
         # Then
-        self.assertRedirects(response, '/login/?next=/add_blog/')
+        self.assertRedirects(response, "/login/?next=/add_blog/")
 
     def test_post_add_blog_without_blog_url_barfs(self):
         # Given
         self.login()
         # When
-        response = self.client.post('/add_blog/', follow=True)
+        response = self.client.post("/add_blog/", follow=True)
         # Then
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'No feed URL provided')
+        self.assertContains(response, "No feed URL provided")
 
     def test_post_add_blog_adds_blog(self):
         # Given
         self.login()
-        data = {'feed_url': 'https://jvns.ca/atom.xml'}
+        data = {"feed_url": "https://jvns.ca/atom.xml"}
         # When
-        response = self.client.post('/add_blog/', data=data, follow=True)
+        response = self.client.post("/add_blog/", data=data, follow=True)
         # Then
-        self.assertRedirects(response, '/profile/{}/'.format(self.user.id))
+        self.assertRedirects(response, "/profile/{}/".format(self.user.id))
         self.assertEqual(response.status_code, 200)
-        self.assertIsNotNone(Blog.objects.get(feed_url=data['feed_url']))
-        self.assertContains(response, 'has been added successfully')
+        self.assertIsNotNone(Blog.objects.get(feed_url=data["feed_url"]))
+        self.assertContains(response, "has been added successfully")
 
     def test_post_add_blog_adds_blog_without_schema(self):
         # Given
         self.login()
-        data = {'feed_url': 'jvns.ca/atom.xml'}
+        data = {"feed_url": "jvns.ca/atom.xml"}
         # When
-        response = self.client.post('/add_blog/', data=data, follow=True)
+        response = self.client.post("/add_blog/", data=data, follow=True)
         # Then
-        self.assertRedirects(response, '/profile/{}/'.format(self.user.id))
+        self.assertRedirects(response, "/profile/{}/".format(self.user.id))
         self.assertEqual(response.status_code, 200)
         self.assertIsNotNone(
-            Blog.objects.get(feed_url='http://{}'.format(data['feed_url']))
+            Blog.objects.get(feed_url="http://{}".format(data["feed_url"]))
         )
 
     def test_post_add_blog_adds_only_once(self):
         # Given
         self.login()
-        data = {'feed_url': 'https://jvns.ca/atom.xml'}
-        self.client.post('/add_blog/', data=data, follow=True)
-        data_ = {'feed_url': 'https://jvns.ca/atom.xml'}
+        data = {"feed_url": "https://jvns.ca/atom.xml"}
+        self.client.post("/add_blog/", data=data, follow=True)
+        data_ = {"feed_url": "https://jvns.ca/atom.xml"}
         # When
-        response = self.client.post('/add_blog/', data=data_, follow=True)
+        response = self.client.post("/add_blog/", data=data_, follow=True)
         # Then
-        self.assertRedirects(response, '/profile/{}/'.format(self.user.id))
+        self.assertRedirects(response, "/profile/{}/".format(self.user.id))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(1, Blog.objects.count())
 
     def test_post_add_blog_existing_unsets_skip_crawl(self):
         # Given
         self.login()
-        data = {'feed_url': 'https://jvns.ca/atom.xml'}
-        self.client.post('/add_blog/', data=data, follow=True)
-        blog = Blog.objects.get(feed_url=data['feed_url'])
+        data = {"feed_url": "https://jvns.ca/atom.xml"}
+        self.client.post("/add_blog/", data=data, follow=True)
+        blog = Blog.objects.get(feed_url=data["feed_url"])
         blog.skip_crawl = True
         blog.save()
-        data_ = {'feed_url': 'https://jvns.ca/atom.xml'}
+        data_ = {"feed_url": "https://jvns.ca/atom.xml"}
         # When
-        response = self.client.post('/add_blog/', data=data_, follow=True)
+        response = self.client.post("/add_blog/", data=data_, follow=True)
         # Then
-        self.assertRedirects(response, '/profile/{}/'.format(self.user.id))
+        self.assertRedirects(response, "/profile/{}/".format(self.user.id))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(1, Blog.objects.count())
-        blog = Blog.objects.get(feed_url=data['feed_url'])
+        blog = Blog.objects.get(feed_url=data["feed_url"])
         self.assertFalse(blog.skip_crawl)
 
     def test_post_add_blog_adds_different_feeds(self):
         # Given
         self.login()
-        data = {'feed_url': 'https://jvns.ca/atom.xml'}
-        self.client.post('/add_blog/', data=data, follow=True)
-        data_ = {'feed_url': 'https://jvns.ca/tags/blaggregator.xml'}
+        data = {"feed_url": "https://jvns.ca/atom.xml"}
+        self.client.post("/add_blog/", data=data, follow=True)
+        data_ = {"feed_url": "https://jvns.ca/tags/blaggregator.xml"}
         # When
-        response = self.client.post('/add_blog/', data=data_, follow=True)
+        response = self.client.post("/add_blog/", data=data_, follow=True)
         # Then
-        self.assertRedirects(response, '/profile/{}/'.format(self.user.id))
+        self.assertRedirects(response, "/profile/{}/".format(self.user.id))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(2, Blog.objects.count())
-        self.assertIsNotNone(Blog.objects.get(feed_url=data['feed_url']))
+        self.assertIsNotNone(Blog.objects.get(feed_url=data["feed_url"]))
 
     def test_post_add_blog_suggests_feed_url(self):
         # Given
         self.login()
-        data = {'feed_url': 'https://jvns.ca/'}
+        data = {"feed_url": "https://jvns.ca/"}
         # When
-        with patch('urllib2.OpenerDirector.open', new=html_page):
-            response = self.client.post('/add_blog/', data=data, follow=True)
+        with patch("urllib2.OpenerDirector.open", new=html_page):
+            response = self.client.post("/add_blog/", data=data, follow=True)
         # Then
         self.assertEqual(0, Blog.objects.count())
-        self.assertRedirects(response, '/profile/{}/'.format(self.user.id))
+        self.assertRedirects(response, "/profile/{}/".format(self.user.id))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Please use your blog's feed url")
         self.assertContains(response, "It could be -- ")
-        self.assertContains(response, 'https://jvns.ca/atom.xml')
+        self.assertContains(response, "https://jvns.ca/atom.xml")
 
 
 class DeleteBlogViewTestCase(BaseViewTestCase):
-
     def test_should_not_delete_blog_not_logged_in(self):
         # Given
-        feed_url = 'https://jvns.ca/atom.xml'
+        feed_url = "https://jvns.ca/atom.xml"
         blog = Blog.objects.create(user=self.user, feed_url=feed_url)
         # When
-        self.client.get('/delete_blog/%s/' % blog.id)
+        self.client.get("/delete_blog/%s/" % blog.id)
         # Then
         self.assertEqual(1, Blog.objects.count())
 
     def test_should_delete_blog(self):
         # Given
         self.login()
-        feed_url = 'https://jvns.ca/atom.xml'
+        feed_url = "https://jvns.ca/atom.xml"
         blog = Blog.objects.create(user=self.user, feed_url=feed_url)
         # When
-        self.client.get('/delete_blog/%s/' % blog.id)
+        self.client.get("/delete_blog/%s/" % blog.id)
         # Then
         self.assertEqual(0, Blog.objects.count())
         with self.assertRaises(Blog.DoesNotExist):
@@ -296,90 +292,88 @@ class DeleteBlogViewTestCase(BaseViewTestCase):
     def test_should_not_delete_unknown_blog(self):
         # Given
         self.login()
-        feed_url = 'https://jvns.ca/atom.xml'
+        feed_url = "https://jvns.ca/atom.xml"
         blog = Blog.objects.create(user=self.user, feed_url=feed_url)
-        self.client.get('/delete_blog/%s/' % blog.id)
+        self.client.get("/delete_blog/%s/" % blog.id)
         # When
-        response = self.client.get('/delete_blog/%s/' % blog.id)
+        response = self.client.get("/delete_blog/%s/" % blog.id)
         # Then
         self.assertEqual(404, response.status_code)
 
 
 class EditBlogViewTestCase(BaseViewTestCase):
-
     def test_should_not_edit_blog_not_logged_in(self):
         # Given
-        feed_url = 'https://jvns.ca/atom.xml'
+        feed_url = "https://jvns.ca/atom.xml"
         blog = Blog.objects.create(user=self.user, feed_url=feed_url)
         # When
-        response = self.client.get('/edit_blog/%s/' % blog.id, follow=True)
+        response = self.client.get("/edit_blog/%s/" % blog.id, follow=True)
         # Then
-        self.assertRedirects(response, '/login/?next=/edit_blog/%s/' % blog.id)
+        self.assertRedirects(response, "/login/?next=/edit_blog/%s/" % blog.id)
 
     def test_should_edit_blog(self):
         # Given
         self.login()
-        feed_url = 'https://jvns.ca/atom.xml'
+        feed_url = "https://jvns.ca/atom.xml"
         blog = Blog.objects.create(user=self.user, feed_url=feed_url)
-        data = {'feed_url': 'https://jvns.ca/rss', 'stream': 'BLOGGING'}
+        data = {"feed_url": "https://jvns.ca/rss", "stream": "BLOGGING"}
         # When
         response = self.client.post(
-            '/edit_blog/%s/' % blog.id, data=data, follow=True
+            "/edit_blog/%s/" % blog.id, data=data, follow=True
         )
         # Then
         self.assertEqual(200, response.status_code)
         with self.assertRaises(Blog.DoesNotExist):
             Blog.objects.get(feed_url=feed_url)
-        self.assertIsNotNone(Blog.objects.get(feed_url=data['feed_url']))
+        self.assertIsNotNone(Blog.objects.get(feed_url=data["feed_url"]))
 
     def test_should_unset_skip_crawl_on_edit_blog(self):
         # Given
         self.login()
-        feed_url = 'https://jvns.ca/atom.xml'
+        feed_url = "https://jvns.ca/atom.xml"
         blog = Blog.objects.create(
             user=self.user, feed_url=feed_url, skip_crawl=True
         )
-        data = {'feed_url': 'https://jvns.ca/rss', 'stream': 'BLOGGING'}
-        assert blog.skip_crawl, 'Blog skip crawl should be True'
+        data = {"feed_url": "https://jvns.ca/rss", "stream": "BLOGGING"}
+        assert blog.skip_crawl, "Blog skip crawl should be True"
         # When
         response = self.client.post(
-            '/edit_blog/%s/' % blog.id, data=data, follow=True
+            "/edit_blog/%s/" % blog.id, data=data, follow=True
         )
         # Then
         self.assertEqual(200, response.status_code)
         with self.assertRaises(Blog.DoesNotExist):
             Blog.objects.get(feed_url=feed_url)
-        blog = Blog.objects.get(feed_url=data['feed_url'])
+        blog = Blog.objects.get(feed_url=data["feed_url"])
         self.assertIsNotNone(blog)
         self.assertFalse(blog.skip_crawl)
 
     def test_should_not_edit_unknown_blog(self):
         # Given
         self.login()
-        data = {'feed_url': 'https://jvns.ca/rss', 'stream': 'BLOGGING'}
+        data = {"feed_url": "https://jvns.ca/rss", "stream": "BLOGGING"}
         # When
         response = self.client.post(
-            '/edit_blog/%s/' % 200, data=data, follow=True
+            "/edit_blog/%s/" % 200, data=data, follow=True
         )
         # Then
         self.assertEqual(404, response.status_code)
 
 
 class UpdatedAvatarViewTestCase(BaseViewTestCase):
-
     def test_should_update_avatar_url(self):
         # Given
         self.login()
-        expected_url = 'foo.bar'
+        expected_url = "foo.bar"
 
         def update_user_details(user_id):
             self.user.hacker.avatar_url = expected_url
             self.user.hacker.save()
 
         # When
-        with patch('home.views.update_user_details', new=update_user_details):
+        with patch("home.views.update_user_details", new=update_user_details):
             response = self.client.get(
-                '/updated_avatar/%s/' % self.user.id, follow=True
+                "/updated_avatar/%s/" % self.user.id, follow=True
             )
         self.assertEqual(200, response.status_code)
         self.assertEqual(expected_url, response.content)
@@ -388,48 +382,46 @@ class UpdatedAvatarViewTestCase(BaseViewTestCase):
         # Given
         self.login()
         # When
-        with patch('home.views.update_user_details', new=lambda x, y: None):
-            response = self.client.get('/updated_avatar/200/', follow=True)
+        with patch("home.views.update_user_details", new=lambda x, y: None):
+            response = self.client.get("/updated_avatar/200/", follow=True)
         self.assertEqual(404, response.status_code)
 
 
 class ViewPostViewTestCase(BaseViewTestCase):
-
     def test_should_redirect_to_post(self):
         # Given
         self.create_posts(1)
         post = Post.objects.filter()[0]
         post_url = post.url
         # When
-        response = self.client.get('/post/{}/view/'.format(post.slug))
+        response = self.client.get("/post/{}/view/".format(post.slug))
         # Then
-        self.assertEqual(response['Location'], post_url)
+        self.assertEqual(response["Location"], post_url)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(1, LogEntry.objects.filter(post=post).count())
 
     def test_does_not_redirect_to_bogus_post(self):
         # When
-        response = self.client.get('/post/BOGUS/view/')
+        response = self.client.get("/post/BOGUS/view/")
         # Then
         self.assertEqual(response.status_code, 404)
 
 
 class MostViewedViewTestCase(BaseViewTestCase):
-
     def test_should_enforce_authentication(self):
         # When
-        response = self.client.get('/most_viewed/', follow=True)
+        response = self.client.get("/most_viewed/", follow=True)
         # Then
-        self.assertRedirects(response, '/login/?next=/most_viewed/')
+        self.assertRedirects(response, "/login/?next=/most_viewed/")
 
     def test_should_show_most_viewed_posts(self):
         # Given
         self.login()
         self.create_posts(10)
         post = Post.objects.filter()[0]
-        self.client.get('/post/{}/view/'.format(post.slug))
+        self.client.get("/post/{}/view/".format(post.slug))
         # When
-        response = self.client.get('/most_viewed/', follow=True)
+        response = self.client.get("/most_viewed/", follow=True)
         # Then
         self.assertContains(response, post.title)
 
@@ -438,9 +430,9 @@ class MostViewedViewTestCase(BaseViewTestCase):
         self.login()
         self.create_posts(10)
         post = Post.objects.filter()[0]
-        self.client.get('/post/{}/view/'.format(post.slug))
+        self.client.get("/post/{}/view/".format(post.slug))
         # When
-        response = self.client.get('/most_viewed/30/', follow=True)
+        response = self.client.get("/most_viewed/30/", follow=True)
         # Then
         self.assertContains(response, post.title)
 
@@ -449,11 +441,11 @@ class MostViewedViewTestCase(BaseViewTestCase):
         self.login()
         self.create_posts(10)
         post = Post.objects.filter()[0]
-        self.client.get('/post/{}/view/'.format(post.slug))
+        self.client.get("/post/{}/view/".format(post.slug))
         # When
-        response = self.client.get('/most_viewed/?tsv=1', follow=True)
+        response = self.client.get("/most_viewed/?tsv=1", follow=True)
         # Then
-        self.assertEqual(response['Content-Type'], 'text/tab-separated-values')
+        self.assertEqual(response["Content-Type"], "text/tab-separated-values")
         self.assertContains(response, post.title)
 
     def test_should_show_most_viewed_posts_tsv_n_days(self):
@@ -461,22 +453,21 @@ class MostViewedViewTestCase(BaseViewTestCase):
         self.login()
         self.create_posts(10)
         post = Post.objects.filter()[0]
-        self.client.get('/post/{}/view/'.format(post.slug))
+        self.client.get("/post/{}/view/".format(post.slug))
         # When
-        response = self.client.get('/most_viewed/30/?tsv=1', follow=True)
+        response = self.client.get("/most_viewed/30/?tsv=1", follow=True)
         # Then
-        self.assertEqual(response['Content-Type'], 'text/tab-separated-values')
+        self.assertEqual(response["Content-Type"], "text/tab-separated-values")
         self.assertContains(response, post.title)
 
 
 class NewViewTestCase(BaseViewTestCase):
-
     def test_should_show_new_posts(self):
         # Given
         self.login()
         self.create_posts(5)
         # When
-        response = self.client.get('/new/', follow=True)
+        response = self.client.get("/new/", follow=True)
         # Then
         for post in Post.objects.all():
             self.assertContains(response, post.title)
@@ -487,8 +478,8 @@ class NewViewTestCase(BaseViewTestCase):
         self.login()
         self.create_posts(35)
         # When
-        response_1 = self.client.get('/new/', follow=True)
-        response_2 = self.client.get('/new/?page=2', follow=True)
+        response_1 = self.client.get("/new/", follow=True)
+        response_2 = self.client.get("/new/?page=2", follow=True)
         # Then
         for post in Post.objects.all():
             if post.title in response_1.content:
@@ -500,18 +491,17 @@ class NewViewTestCase(BaseViewTestCase):
 
 
 class SearchViewTestCase(BaseViewTestCase):
-
     def test_should_show_matching_posts(self):
         # Given
         self.login()
-        query = 'python'
+        query = "python"
         n = 5
-        matching_title = 'Python is awesome'
-        non_matching_title = 'Django rocks'
+        matching_title = "Python is awesome"
+        non_matching_title = "Django rocks"
         self.create_posts(n, title=matching_title)
         self.create_posts(n, title=non_matching_title)
         # When
-        response = self.client.get('/search/?q={}'.format(query), follow=True)
+        response = self.client.get("/search/?q={}".format(query), follow=True)
         # Then
         for post in Post.objects.all():
             if post.title == matching_title:
