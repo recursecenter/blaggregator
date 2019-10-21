@@ -12,18 +12,8 @@ to simplify setup of development environment. See
 the [traditional setup section](#traditional-setup) if you don't wish to use
 docker.
 
-In `settings/base.py` use the
-default [postgres settings](https://hub.docker.com/_/postgres/):
-
-```
-name: postgres
-user: postgres
-password: postgres
-database: postgres
-host: db
-````
-
-In `web-variables.env` fill out your credentials. See [Credentials](#credentials) for instructions on generating.
+In `web-variables.env` fill out your credentials. See
+[Credentials](#credentials) for instructions on generating.
 
 ```bash
 HS_PERSONAL_TOKEN=<token>
