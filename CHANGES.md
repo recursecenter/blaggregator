@@ -7,6 +7,13 @@ this project doesn't really have releases (or even versioning, until now), it
 is a project that effects Recursers in "real ways".  It would be nice to have a
 place to quickly see the latest changes that the project has undergone.
 
+## 2019-10
+
+### Fixed
+
+- [90d681383d840b913e8f53bbd4b0e5de70461391] Fixed problem with feed generation
+  when a post title/content contains control characters
+
 ## 2018-03
 
 ### Added
