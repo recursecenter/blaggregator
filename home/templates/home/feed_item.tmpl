@@ -1,6 +1,6 @@
 {% load customtags %}
 
-{{ obj.content|safe }}
+{{ obj.content|filter_control_chars|safe }}
 
 <p>
     This post was originally published <a href="{{ obj.url }}" target="_blank">here</a> and

@@ -3,6 +3,7 @@ from cStringIO import StringIO
 from django.conf import settings
 from django.test import TestCase
 from django.test.utils import override_settings
+from django.utils import timezone
 import feedparser
 from mock import patch
 
@@ -73,6 +74,26 @@ class FeedsViewTestCase(BaseViewTestCase):
 
     def test_feed_with_posts_more_than_max_feed_size(self):
         self.verify_feed_generation(N_MAX * 5)
+
+    def test_feed_with_control_characters(self):
+        # Given
+        blog = Blog.objects.create(user=self.user)
+        Post.objects.create(
+            blog=blog,
+            title="This is a title with control chars \x01",
+            content="This is content with control chars \x01",
+            posted_at=timezone.now(),
+        )
+
+        # When
+        response = self.client.get(
+            "/atom.xml", data={"token": self.hacker.token}
+        )
+
+        # Then
+        self.assertEqual(1, Post.objects.count())
+        self.assertIn("This is a title with control chars", response.content)
+        self.assertIn("This is content with control chars", response.content)
 
     # Helper methods ####
     def parse_feed(self, content):

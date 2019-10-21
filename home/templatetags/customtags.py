@@ -42,3 +42,9 @@ def zulip_url(title, stream):
         title = title[:57] + "..."
     hash_path = "narrow/stream/%s/topic/%s" % (replace(stream), replace(title))
     return "https://recurse.zulipchat.com/#%s" % hash_path
+
+
+@register.filter
+def filter_control_chars(text):
+    """Filter control characters from a given text. """
+    return re.sub(r"[\x00-\x08\x0B-\x0C\x0E-\x1F]", "", text)
