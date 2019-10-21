@@ -18,6 +18,8 @@
       build: .
       image: app
       command: python manage.py migrate
+      env_file:
+        - web-variables.env
       volumes:
         - .:/code
       links:
