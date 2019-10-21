@@ -12,7 +12,7 @@ to simplify setup of development environment. See
 the [traditional setup section](#traditional-setup) if you don't wish to use
 docker.
 
-In `settings.py` use the
+In `settings/base.py` use the
 default [postgres settings](https://hub.docker.com/_/postgres/):
 
 ```
@@ -23,12 +23,12 @@ database: postgres
 host: db
 ````
 
-In `web-variables.env` fill out your credentials from
-the [recurse oauth page](https://www.recurse.com/settings/oauth).
+In `web-variables.env` fill out your credentials. See [Credentials](#credentials) for instructions on generating.
 
 ```bash
-SOCIAL_AUTH_HS_KEY=1201200abcaaf971
-SOCIAL_AUTH_HS_SECRET=abc31212aaaae2123
+HS_PERSONAL_TOKEN=<token>
+SOCIAL_AUTH_HS_KEY=<token>
+SOCIAL_AUTH_HS_SECRET=<token>
 ```
 
 ```bash
@@ -106,17 +106,8 @@ then your server isn't running. Go fiddle with Postgres.app.
 $ export DJANGO_DEBUG=True
 ```
 
-- Blaggregator uses oauth2 to log in users against recurse.com. Go
-  to [your settings on recurse.com](https://www.recurse.com/settings), make a
-  new app. Name it something like "blaggregator-local" and the url should be
-  http://localhost:8000/complete/hackerschool/ (WITH trailing slash). Grab the
-  keys and store them in your environment as SOCIAL_AUTH_HS_KEY and
-  SOCIAL_AUTH_HS_SECRET.
+- Blaggregator uses oauth2 to log in users against recurse.com and tokens to update user details. Store `SOCIAL_AUTH_HS_KEY`, `SOCIAL_AUTH_HS_SECRET`, and HS_PERSONAL_TOKEN in your environment. See [Credentials](#credentials) for instructions on generating these.
 
-- To update user details of all users (periodically), Blaggregator uses a
-  personal token. You can obtain a personal token from [your settings on
-  recurse.com](https://www.recurse.com/settings) too. Save the token in your
-  environment as HS_PERSONAL_TOKEN.
 
 - Then run a local server:
 
@@ -139,6 +130,15 @@ page, you'll need to give your user account superuser privileges:
        the admin
 6.  `>>> u.save()` Save these changes to the db.
 7.  You should now be able to access localhost:8000/admin while logged in!
+
+## Setup
+
+### Credentials
+
+Go to [your settings on recurse.com](https://www.recurse.com/settings/apps), make a new app. Name it something like "blaggregator-local" and the url should be http://localhost:8000/complete/hackerschool/ (WITH trailing slash). There you can get `SOCIAL_AUTH_HS_KEY` and `SOCIAL_AUTH_HS_SECRET`.
+
+Also create a personal access token and give it a name. This will generate the token to use for `HS_PERSONAL_TOKEN`.
+
 
 ## Code overview
 
