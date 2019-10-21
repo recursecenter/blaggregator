@@ -1,5 +1,4 @@
 - [ ] Test
 - [ ] Screenshot
-- [ ] AUTHORS.md entry
 - [ ] CHANGES.md entry
 - [ ] Documentation
