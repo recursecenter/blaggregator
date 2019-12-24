@@ -24,6 +24,7 @@ class Command(BaseCommand):
 
     def crawlblog(self, blog):
         # Feedergrabber returns ( [(link, title, date, content)], [errors])
+        print(f"Crawling {blog.feed_url} ...")
         crawled, errors = feedergrabber27.feedergrabber(blog.feed_url)
         if not crawled:
             log.debug("\n".join(errors))
