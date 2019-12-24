@@ -6,7 +6,7 @@ services:
   - postgresql
 
 python:
-  - "2.7"
+  - "3.7"
 
 # command to install dependencies
 install:
