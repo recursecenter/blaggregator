@@ -1,4 +1,4 @@
-from cStringIO import StringIO
+from io import StringIO, BytesIO
 import datetime
 from functools import partial
 import re
@@ -10,7 +10,7 @@ from mock import patch
 from home.feedergrabber27 import feedergrabber
 from home.tests.utils import generate_full_feed
 
-MIN_DATE_FEED = """
+MIN_DATE_FEED = b"""
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
@@ -37,7 +37,8 @@ class FeedParserTestCase(TestCase):
         note(feed.feed)
         note(feed.items)
         with patch(
-            "urllib2.OpenerDirector.open", new=partial(self.patch_open, feed)
+            "urllib.request.OpenerDirector.open",
+            new=partial(self.patch_open, feed),
         ):
             contents, errors = feedergrabber(feed.feed["link"])
             if contents is None:
@@ -64,7 +65,7 @@ class FeedParserTestCase(TestCase):
         note(feed.feed)
         note(feed.items)
         with patch(
-            "urllib2.OpenerDirector.open",
+            "urllib.request.OpenerDirector.open",
             new=partial(self.patch_open_broken_feed, feed),
         ):
             contents, errors = feedergrabber(feed.feed["link"])
@@ -78,12 +79,12 @@ class FeedParserTestCase(TestCase):
     def patch_open(feed, url, data=None, timeout=None):
         xml = feed.writeString("utf8")
         note(xml)
-        return StringIO(xml)
+        return BytesIO(xml.encode("utf8"))
 
     @staticmethod
     def patch_open_broken_feed(feed, url, data=None, timeout=None):
         xml = FeedParserTestCase.patch_open(feed, url, data, timeout)
-        text = xml.read()
+        text = xml.read().decode("utf8")
         text = text.replace('encoding="utf8"', "")
         # feedgenerator makes title and link mandatory, hence we remove from
         # generated xml.
@@ -116,12 +117,14 @@ class FeedParserTestCase(TestCase):
                 "(<item>.*?)(<id.*?>.*?</id>)(.*?</item>)", "\\1\\3", text
             )
         note(text)
-        return StringIO(text)
+        return BytesIO(text.encode("utf8"))
 
 
 class FeedParserHelpersTestCase(TestCase):
     def test_parsing_feeds_with_min_dates(self):
-        with patch("urllib2.OpenerDirector.open", new=self.min_date_feed):
+        with patch(
+            "urllib.request.OpenerDirector.open", new=self.min_date_feed
+        ):
             contents, errors = feedergrabber("http://max.computer/index.html")
             self.assertIsNone(contents)
             self.assertEqual(2, len(errors))
@@ -130,4 +133,4 @@ class FeedParserHelpersTestCase(TestCase):
 
     @staticmethod
     def min_date_feed(*args, **kwargs):
-        return StringIO(MIN_DATE_FEED.strip())
+        return BytesIO(MIN_DATE_FEED.strip())

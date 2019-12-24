@@ -20,7 +20,7 @@ from django.views.decorators.http import require_POST
 from home.models import Blog, Hacker, LogEntry, Post, STREAM_CHOICES
 from home.oauth import update_user_details
 from home.feeds import LatestEntriesFeed
-import feedergrabber27
+from . import feedergrabber27
 
 EXISTING_FEED_MESSAGE = ('This feed has already been added!')
 NO_CONTENT_MESSAGE = (
@@ -349,7 +349,7 @@ def _get_most_viewed_entries(since, n=20):
 
 
 def _get_tsv(entry):
-    return u'{post__id}\t{post__title}\t{post__url}\t{total}'.format(**entry)
+    return '{post__id}\t{post__title}\t{post__url}\t{total}'.format(**entry)
 
 
 BlogForm = modelform_factory(

@@ -1,8 +1,8 @@
-from __future__ import print_function
+
 
 # Standard library
 import logging
-from urlparse import urlparse
+from urllib.parse import urlparse
 
 # 3rd-party library
 from django.core.management.base import BaseCommand
@@ -48,7 +48,7 @@ def delete_duplicate_title_posts():
             grequests.get(u, allow_redirects=True, timeout=30) for u in urls
         )
         responses = grequests.map(requests)
-        successful = dict(filter(filter_successful, zip(urls, responses)))
+        successful = dict(list(filter(filter_successful, list(zip(urls, responses)))))
         # Delete duplicate posts based on successful get or keep latest post ####
         for title, posts in iter_posts_with_duplicate_titles(blog, titles):
             for post in posts:

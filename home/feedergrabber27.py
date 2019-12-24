@@ -3,12 +3,13 @@
 # David Prager Branner
 """Retrieves the links and titles of recent posts from blog feeds."""
 
-from __future__ import print_function
 
 import datetime
-import HTMLParser
+import html.parser
 import socket
-import urllib2
+import urllib.request
+import urllib.error
+import urllib.parse
 
 import feedparser
 
@@ -25,7 +26,7 @@ def retrieve_file_contents(url):
     errors = []
     try:
         file_contents = feedparser.parse(url)
-    except (urllib2.URLError, urllib2.HTTPError) as e:
+    except (urllib.error.URLError, urllib.error.HTTPError) as e:
         errors.append("Fetching content for {} failed: {}".format(url, e))
         file_contents = None
     return file_contents, errors
@@ -50,7 +51,7 @@ def feedergrabber(url):
     # Initialize some variables
     post_links_and_titles = []
     # HTML parser to unescape HTML entities
-    h = HTMLParser.HTMLParser()
+    h = html.parser.HTMLParser()
     # Get file contents
     file_contents, errors = retrieve_file_contents(url)
     if file_contents is None:

@@ -11,18 +11,18 @@ from home.oauth import HackerSchoolOAuth2, update_user_details
 def request(self, url, method='GET', *args, **kwargs):
     if url.endswith('/oauth/token'):
         data = {
-            u'access_token': u'x',
-            u'created_at': 1478432443,
-            u'expires_in': 7200,
-            u'token_type': u'bearer',
-            u'scope': u'public',
-            u'refresh_token': u'y'
+            'access_token': 'x',
+            'created_at': 1478432443,
+            'expires_in': 7200,
+            'token_type': 'bearer',
+            'scope': 'public',
+            'refresh_token': 'y'
         }
     else:
         data = OAuthTestCase.USER_DATA
 
     response = Response()
-    response._content = json.dumps(data)
+    response._content = json.dumps(data).encode("utf8")
     response.status_code = 200
     return response
 
@@ -32,12 +32,12 @@ def request(self, url, method='GET', *args, **kwargs):
 class OAuthTestCase(TestCase):
 
     USER_DATA = {
-        u'id': 1729,
-        u'email': u'johndoe@foo-bar.com',
-        u'image': u'https://x.cloudfront.net/assets/people/y.jpg',
-        u'first_name': u'John',
-        u'last_name': u'Doe',
-        u'github': u'johndoe',
+        'id': 1729,
+        'email': 'johndoe@foo-bar.com',
+        'image': 'https://x.cloudfront.net/assets/people/y.jpg',
+        'first_name': 'John',
+        'last_name': 'Doe',
+        'github': 'johndoe',
     }
 
     def setUp(self):

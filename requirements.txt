@@ -6,6 +6,7 @@ certifi==2018.10.15
 chardet==3.0.4
 configparser==3.5.0
 coverage==4.2
+defusedxml==0.6.0
 dj-database-url==0.4.1
 Django==1.11.23
 django-storages==1.5.1
@@ -16,8 +17,8 @@ feedgenerator==1.9
 feedparser==5.2.1
 flake8==3.0.4
 funcsigs==1.0.2
-gevent==1.2.2
-greenlet==0.4.13
+gevent==1.4.0
+greenlet==0.4.15
 grequests==0.3.0
 gunicorn==19.6.0
 hypothesis==3.6.0
@@ -35,12 +36,13 @@ pyflakes==1.2.3
 PyJWT==1.4.2
 python-dateutil==2.7.0
 python-openid==2.2.5
+python3-openid==3.1.0
 pytz==2016.7
-requests==2.20.1
+requests==2.22.0
 requests-oauthlib==0.7.0
 six==1.11.0
 social-auth-app-django==2.1.0
 social-auth-core==1.7.0
 soupsieve==1.9.1
 text-unidecode==1.2
-urllib3==1.25.3
+urllib3==1.25.7

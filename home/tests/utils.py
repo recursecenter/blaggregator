@@ -9,7 +9,7 @@ from hypothesis.extra.fakefactory import fake_factory
 from home.models import Blog, Post, User
 
 tzinfo = timezone.get_default_timezone()
-alphabet = ''.join([unichr(i) for i in range(32, 2 ** 10)])
+alphabet = ''.join([chr(i) for i in range(32, 2 ** 10)])
 
 
 def _valid_text(allow_empty=True):
@@ -40,7 +40,7 @@ def _generate_feed(atom=False):
         'id': fake_factory('url') if atom else _valid_text(),
         'ttl': st.integers(min_value=0),
     }
-    feed.update([(k, _optional(v)) for (k, v) in optional.items()])
+    feed.update([(k, _optional(v)) for (k, v) in list(optional.items())])
     return feed
 
 
@@ -65,7 +65,7 @@ def _generate_item(atom=False):
         'item_copyright': _valid_text(),
         'ttl': st.integers(min_value=0),
     }
-    item.update([(k, _optional(v)) for (k, v) in optional.items()])
+    item.update([(k, _optional(v)) for (k, v) in list(optional.items())])
     return item
 
 

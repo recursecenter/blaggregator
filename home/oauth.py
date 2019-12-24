@@ -1,12 +1,12 @@
 import logging
 import os
-from urllib import urlencode
+from urllib.parse import urlencode
 
 import requests
 from django.conf import settings
 from social_core.backends.oauth import BaseOAuth2
 
-from models import User, Hacker
+from .models import User, Hacker
 
 HACKER_ATTRIBUTES = ('avatar_url', 'twitter', 'github')
 USER_FIELDS = ('username', 'email')
@@ -40,7 +40,7 @@ def create_or_update_hacker(
         user=user, defaults=defaults
     )
     if not created:
-        for attribute, value in defaults.items():
+        for attribute, value in list(defaults.items()):
             setattr(hacker, attribute, value)
         hacker.save()
 

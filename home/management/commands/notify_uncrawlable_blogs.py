@@ -1,5 +1,5 @@
 # Standard library
-from __future__ import print_function
+
 from datetime import timedelta
 import logging
 
@@ -33,7 +33,7 @@ class Command(BaseCommand):
             flagged_blogs.count(),
         )
         if not settings.DEBUG:
-            yes_or_no = raw_input('Are you sure you want to continue? [y/N]: ')
+            yes_or_no = input('Are you sure you want to continue? [y/N]: ')
             if yes_or_no.lower().strip()[:1] != 'y':
                 return
 
@@ -66,4 +66,4 @@ class Command(BaseCommand):
             )
         if notify_failed:
             log.debug('Failed to notify %s users:', len(notify_failed))
-            log.debug(u'\n'.join(notify_failed))
+            log.debug('\n'.join(notify_failed))

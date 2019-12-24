@@ -1,4 +1,4 @@
-from cStringIO import StringIO
+from io import BytesIO
 
 from django.core.management import execute_from_command_line
 from django.conf import settings
@@ -11,14 +11,13 @@ from .utils import BlogFactory, generate_full_feed
 
 def random_feed(url=None, data=None, timeout=None):
     feed = generate_full_feed(min_items=5, max_items=20).example()
-    xml = feed.writeString('utf8')
-    return StringIO(xml)
+    xml = feed.writeString("utf8")
+    return BytesIO(xml.encode("utf8"))
 
 
-@patch('urllib2.OpenerDirector.open', new=random_feed)
-@patch('requests.post')
+@patch("urllib.request.OpenerDirector.open", new=random_feed)
+@patch("requests.post")
 class CrawlPostsTestCase(TransactionTestCase):
-
     def setUp(self):
         # Setup the db with blogs
         BlogFactory.create_batch(2)
@@ -34,14 +33,14 @@ class CrawlPostsTestCase(TransactionTestCase):
 
     def test_crawling_posts(self, mock):
         # When
-        execute_from_command_line(['./manage.py', 'crawlposts'])
+        execute_from_command_line(["./manage.py", "crawlposts"])
         # Then
         for blog in self.blogs:
             # at least one post per blog
             self.assertGreater(Post.objects.filter(blog=blog).count(), 0)
             # posts are unique by blog and title
             post_titles = Post.objects.filter(blog=blog).values_list(
-                'title', flat=True
+                "title", flat=True
             )
             self.assertEqual(len(set(post_titles)), len(post_titles))
         # Number of announcements are correctly throttled
@@ -55,7 +54,7 @@ class CrawlPostsTestCase(TransactionTestCase):
         blog1.skip_crawl = True
         blog1.save()
         # When
-        execute_from_command_line(['./manage.py', 'crawlposts'])
+        execute_from_command_line(["./manage.py", "crawlposts"])
         # Then
         self.assertEqual(0, Post.objects.filter(blog=blog1).count())
         self.assertLess(0, Post.objects.filter(blog=blog2).count())

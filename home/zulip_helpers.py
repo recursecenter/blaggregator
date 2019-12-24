@@ -14,7 +14,7 @@ ZULIP_KEY = os.environ.get("ZULIP_KEY")
 ZULIP_EMAIL = os.environ.get("ZULIP_EMAIL")
 MESSAGES_URL = "https://recurse.zulipchat.com/api/v1/messages"
 MEMBERS_URL = "https://recurse.zulipchat.com/api/v1/users"
-ANNOUNCE_MESSAGE = u"**{}** has a new blog post: [{}]({})"
+ANNOUNCE_MESSAGE = "**{}** has a new blog post: [{}]({})"
 log = logging.getLogger("blaggregator")
 
 
@@ -63,7 +63,7 @@ def get_members():
         for member in members
         if not member["is_bot"] and member["is_active"]
     }
-    by_email = {member["email"]: member for name, member in by_name.items()}
+    by_email = {member["email"]: member for name, member in list(by_name.items())}
     return dict(by_email=by_email, by_name=by_name)
 
 
@@ -133,7 +133,7 @@ def notify_uncrawlable_blogs(user, blogs, admins, debug=True):
     to = getattr(user, "zulip_email", user.email)
     type_ = "private"
     if debug:
-        log.debug(u"Sending message \n\n%s\n\n to %s (%s)", content, to, type_)
+        log.debug("Sending message \n\n%s\n\n to %s (%s)", content, to, type_)
         return False
 
     else:
@@ -144,12 +144,12 @@ def send_message_zulip(to, subject, content, type_="private"):
     """Send a message to Zulip."""
     data = {"type": type_, "to": to, "subject": subject, "content": content}
     try:
-        log.debug(u'Sending message "%s" to %s (%s)', content, to, type_)
+        log.debug('Sending message "%s" to %s (%s)', content, to, type_)
         response = requests.post(
             MESSAGES_URL, data=data, auth=(ZULIP_EMAIL, ZULIP_KEY)
         )
         log.debug(
-            u"Post returned with %s: %s",
+            "Post returned with %s: %s",
             response.status_code,
             response.content,
         )

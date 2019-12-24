@@ -1,10 +1,3 @@
-# Patch everything as early as possible.
-import gevent.monkey
-
-# We turn off patching threading, since we don't really need it. If not, we get
-# a KeyError on threading shutdown.
-# See http://stackoverflow.com/a/12639040 for an explanation of the exception.
-gevent.monkey.patch_all(thread=False)
 # Standard library
 from collections import deque  # noqa
 import logging  # noqa
@@ -24,7 +17,7 @@ log = logging.getLogger("blaggregator")
 
 
 class Command(BaseCommand):
-    help = 'Periodically crawls all blogs for new posts.'
+    help = "Periodically crawls all blogs for new posts."
     # Queue up the messages for Zulip so they aren't sent until after the
     #   blog post instance is created in the database
     zulip_queue = deque()
@@ -33,14 +26,14 @@ class Command(BaseCommand):
         # Feedergrabber returns ( [(link, title, date, content)], [errors])
         crawled, errors = feedergrabber27.feedergrabber(blog.feed_url)
         if not crawled:
-            log.debug('\n'.join(errors))
+            log.debug("\n".join(errors))
             return
 
-        log.debug('Crawled %s posts from %s', len(crawled), blog.feed_url)
+        log.debug("Crawled %s posts from %s", len(crawled), blog.feed_url)
         if errors:
-            log.debug('\n'.join(errors))
+            log.debug("\n".join(errors))
         blog.last_crawled = timezone.now()
-        blog.save(update_fields=['last_crawled'])
+        blog.save(update_fields=["last_crawled"])
         created_count = 0
         for link, title, date, content in crawled:
             date = timezone.make_aware(date, timezone.get_default_timezone())
@@ -74,7 +67,7 @@ def get_or_create_post(blog, title, link, date, content):
         # The previous code checked only for url, and therefore, the db can
         # have posts with duplicate titles. So, we check if there is atleast
         # one post with the title -- using `filter.latest` instead of `get`.
-        post = Post.objects.filter(blog=blog, title=title).latest('posted_at')
+        post = Post.objects.filter(blog=blog, title=title).latest("posted_at")
         return post, False
 
     except Post.DoesNotExist:
@@ -82,7 +75,7 @@ def get_or_create_post(blog, title, link, date, content):
     post, created = Post.objects.get_or_create(
         blog=blog,
         url=link,
-        defaults={'title': title, 'posted_at': date, 'content': content},
+        defaults={"title": title, "posted_at": date, "content": content},
     )
     return post, created
 

@@ -1,5 +1,5 @@
 # Standard library
-from __future__ import print_function
+
 import logging
 
 # 3rd-party library

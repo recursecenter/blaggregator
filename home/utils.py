@@ -13,7 +13,6 @@ def is_medium_comment(entry):
     soup = bs4.BeautifulSoup(content, "lxml")
     # Medium comments set their title from the content of the comment. So, we
     # verify if the content starts with the content.
-    text_content = soup.text.encode("ascii", "replace").replace("?", " ")
-    title = title.encode("ascii", "replace").replace("?", " ").strip()
-    is_comment = text_content.startswith(title)
+    text_content = soup.text.strip()
+    is_comment = text_content.startswith(title.strip())
     return is_comment

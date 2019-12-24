@@ -1,4 +1,4 @@
-from cStringIO import StringIO
+from io import BytesIO
 
 from django.conf import settings
 from django.test import TestCase
@@ -92,8 +92,13 @@ class FeedsViewTestCase(BaseViewTestCase):
 
         # Then
         self.assertEqual(1, Post.objects.count())
-        self.assertIn("This is a title with control chars", response.content)
-        self.assertIn("This is content with control chars", response.content)
+        text = response.content.decode("utf8")
+        self.assertIn(
+            "This is a title with control chars", text,
+        )
+        self.assertIn(
+            "This is content with control chars", text,
+        )
 
     # Helper methods ####
     def parse_feed(self, content):
@@ -150,7 +155,7 @@ class FeedsViewTestCase(BaseViewTestCase):
         self.assertGreaterEqual(min_included_date, max_excluded_date)
 
 
-EMPTY_FEED = """
+EMPTY_FEED = b"""
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
@@ -161,7 +166,7 @@ EMPTY_FEED = """
   </channel>
 </rss>
 """
-HTML_PAGE = """
+HTML_PAGE = b"""
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -178,14 +183,14 @@ HTML_PAGE = """
 
 
 def empty_feed(*args, **kwargs):
-    return StringIO(EMPTY_FEED.strip())
+    return BytesIO(EMPTY_FEED.strip())
 
 
 def html_page(*args, **kwargs):
-    return StringIO(HTML_PAGE.strip())
+    return BytesIO(HTML_PAGE.strip())
 
 
-@patch("urllib2.OpenerDirector.open", new=empty_feed)
+@patch("urllib.request.OpenerDirector.open", new=empty_feed)
 class AddBlogViewTestCase(BaseViewTestCase):
     def test_get_add_blog_requires_login(self):
         # When
@@ -277,7 +282,7 @@ class AddBlogViewTestCase(BaseViewTestCase):
         self.login()
         data = {"feed_url": "https://jvns.ca/"}
         # When
-        with patch("urllib2.OpenerDirector.open", new=html_page):
+        with patch("urllib.request.OpenerDirector.open", new=html_page):
             response = self.client.post("/add_blog/", data=data, follow=True)
         # Then
         self.assertEqual(0, Blog.objects.count())
@@ -397,7 +402,7 @@ class UpdatedAvatarViewTestCase(BaseViewTestCase):
                 "/updated_avatar/%s/" % self.user.id, follow=True
             )
         self.assertEqual(200, response.status_code)
-        self.assertEqual(expected_url, response.content)
+        self.assertEqual(expected_url, response.content.decode("utf8"))
 
     def test_should_not_update_unknown_hacker_avatar_url(self):
         # Given
@@ -503,7 +508,7 @@ class NewViewTestCase(BaseViewTestCase):
         response_2 = self.client.get("/new/?page=2", follow=True)
         # Then
         for post in Post.objects.all():
-            if post.title in response_1.content:
+            if post.title in response_1.content.decode("utf8"):
                 self.assertContains(response_1, post.slug)
                 self.assertNotContains(response_2, post.title)
             else:
