@@ -17,6 +17,7 @@ class BlogInline(admin.StackedInline):
 class UserAdmin(UserAdmin):
     inlines = (HackerInline, BlogInline)
 
+
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
 admin.site.register(Post)

@@ -1,4 +1,4 @@
-from io import StringIO, BytesIO
+from io import BytesIO
 import datetime
 from functools import partial
 import re

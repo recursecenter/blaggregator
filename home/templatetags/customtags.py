@@ -8,19 +8,18 @@ register = Library()
 
 @register.tag(name="stripnewlines")
 def strip_newlines(parser, token):
-    nodelist = parser.parse(('endstripnewlines',))
+    nodelist = parser.parse(("endstripnewlines",))
     parser.delete_first_token()
     return StripNewlinesNode(nodelist)
 
 
 class StripNewlinesNode(Node):
-
     def __init__(self, nodelist):
         self.nodelist = nodelist
 
     def render(self, context):
         output = self.nodelist.render(context)
-        return re.sub('\s+', ' ', output.strip())
+        return re.sub(r"\s+", " ", output.strip())
 
 
 @register.filter

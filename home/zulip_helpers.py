@@ -63,7 +63,9 @@ def get_members():
         for member in members
         if not member["is_bot"] and member["is_active"]
     }
-    by_email = {member["email"]: member for name, member in list(by_name.items())}
+    by_email = {
+        member["email"]: member for name, member in list(by_name.items())
+    }
     return dict(by_email=by_email, by_name=by_name)
 
 
@@ -162,4 +164,4 @@ def send_message_zulip(to, subject, content, type_="private"):
 
 def strip_batch(name):
     """Strip parenthesized batch from a name"""
-    return re.sub("\(.*\)", "", name).strip()
+    return re.sub(r"\(.*\)", "", name).strip()
