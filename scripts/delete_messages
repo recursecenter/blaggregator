@@ -1,0 +1,28 @@
+#!/usr/bin/env python3
+
+"""Script to delete spammy messages sent by the blaggregator bot.
+
+We update the messages and set the topic and content of the messages to empty.
+See https://zulipchat.com/api/update-message for the API documentation.
+
+"""
+
+import os
+
+import requests
+
+# NOTE: For each run, manually populate this list
+MESSAGE_IDS = []
+EMAIL = os.environ["ZULIP_EMAIL"]
+KEY = os.environ["ZULIP_KEY"]
+
+session = requests.Session()
+auth = (EMAIL, KEY)
+
+
+for message_id in MESSAGE_IDS:
+    url = f"https://recurse.zulipchat.com/api/v1/messages/{message_id}"
+    data = {"topic": "(deleted)", "content": ""}
+    response = session.patch(url, data=data, auth=auth)
+    print(response.status_code)
+    print(response.json())
