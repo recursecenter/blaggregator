@@ -8,7 +8,7 @@ configparser==3.5.0
 coverage==4.2
 defusedxml==0.6.0
 dj-database-url==0.4.1
-Django==1.11.23
+Django==1.11.28
 django-storages==1.5.1
 entrypoints==0.3
 enum34==1.1.6
