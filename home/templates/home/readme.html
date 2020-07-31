@@ -69,21 +69,15 @@ crawler next checks the registered blogs. If Blaggregator finds many new posts
 on your blog, it will only post the two most recent posts to Zulip. All of your
 posts will still be available on the <a href="https://blaggregator.recurse.com">site</a></p>
 <h3>My blog post appears on blaggregator but no Zulip notification sent.</h3>
-<ul>
-<li>
-<p>When a blog is added to Blaggregator, all the posts currently in the feed are
-  added to the DB (and therefore marked as seen).  No notifications are sent
-  for these posts.</p>
-</li>
-<li>
-<p>From the next crawl onwards, for every crawl a maximum of 2 notifications are
-  sent for posts that haven't already been seen by blaggregator.</p>
-</li>
-</ul>
+<p>For every crawl a maximum of 2 notifications are sent for posts that haven't
+already been seen by blaggregator. So, if you published more than 2 posts
+between consecutive (hourly) crawls by blaggregator, only the last two posts
+will be notified on Zulip.</p>
 <h3>My blog is multi-purpose and not wholly code/Recurse Center specific</h3>
-<p>No problem! Tag or categorize your relevant posts and make a separate RSS/Atom
-feed for them.  Most blogging software has separate feeds for different
-categories/tags.</p>
+<p>No problem! RCers usually enjoy reading non-technical posts by others. </p>
+<p>But, if you like, you could tag or categorize your relevant posts and make a
+separate RSS/Atom feed for them. Most blogging software has separate feeds for
+different categories/tags.</p>
 <p>If you use Wordpress, for instance, categorize all your code-related posts
 "code", say. Then your code-specific RSS feed that you should publish to
 Blaggregator is: http://yoururl.com/blog/category/code/feed/.</p>
