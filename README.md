@@ -95,12 +95,10 @@ posts will still be available on the [site](https://blaggregator.recurse.com)
 
 ### My blog post appears on blaggregator but no Zulip notification sent.
 
-- When a blog is added to Blaggregator, all the posts currently in the feed are
-  added to the DB (and therefore marked as seen).  No notifications are sent
-  for these posts.
-
-- From the next crawl onwards, for every crawl a maximum of 2 notifications are
-  sent for posts that haven't already been seen by blaggregator.
+For every crawl a maximum of 2 notifications are sent for posts that haven't
+already been seen by blaggregator. So, if you published more than 2 posts
+between consecutive (hourly) crawls by blaggregator, only the last two posts
+will be notified on Zulip.
 
 ### My blog is multi-purpose and not wholly code/Recurse Center specific
 
