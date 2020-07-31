@@ -102,9 +102,11 @@ will be notified on Zulip.
 
 ### My blog is multi-purpose and not wholly code/Recurse Center specific
 
-No problem! Tag or categorize your relevant posts and make a separate RSS/Atom
-feed for them.  Most blogging software has separate feeds for different
-categories/tags.
+No problem! RCers usually enjoy reading non-technical posts by others. 
+
+But, if you like, you could tag or categorize your relevant posts and make a
+separate RSS/Atom feed for them. Most blogging software has separate feeds for
+different categories/tags.
 
 If you use Wordpress, for instance, categorize all your code-related posts
 "code", say. Then your code-specific RSS feed that you should publish to
