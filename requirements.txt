@@ -25,7 +25,7 @@ gunicorn==19.6.0
 hypothesis==3.6.0
 idna==2.7
 ipaddress==1.0.19
-lxml==4.3.3
+lxml==4.6.2
 Markdown==2.6.7
 mccabe==0.6.1
 mock==2.0.0
