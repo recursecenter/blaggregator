@@ -46,4 +46,4 @@ social-auth-app-django==2.1.0
 social-auth-core==1.7.0
 soupsieve==1.9.1
 text-unidecode==1.2
-urllib3==1.25.7
+urllib3==1.25.8
