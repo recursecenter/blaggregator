@@ -52,7 +52,7 @@ def delete_message(message_id, content="(deleted)"):
 def get_members():
     """Returns info of all the Zulip users.
 
-    Returns a mapping with two keys - by_name and by_email.
+    Returns a mapping with three keys - by_name, by_email and by_id.
 
     """
     try:
@@ -67,8 +67,9 @@ def get_members():
         for member in members
         if not member["is_bot"] and member["is_active"]
     }
-    by_email = {member["email"]: member for name, member in list(by_name.items())}
-    return dict(by_email=by_email, by_name=by_name)
+    by_email = {member["email"]: member for member in by_name.values()}
+    by_id = {member["user_id"]: member for member in by_name.values()}
+    return dict(by_email=by_email, by_name=by_name, by_id=by_id)
 
 
 def get_pm_link(user, members):
