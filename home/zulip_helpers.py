@@ -10,6 +10,9 @@ from django.template.loader import get_template
 from django.urls import reverse
 import requests
 
+from home.models import Hacker, Post
+from home.oauth import update_user_details
+
 ZULIP_KEY = os.environ.get("ZULIP_KEY")
 ZULIP_EMAIL = os.environ.get("ZULIP_EMAIL")
 MESSAGES_URL = "https://recurse.zulipchat.com/api/v1/messages"
@@ -47,6 +50,34 @@ def delete_message(message_id, content="(deleted)"):
         assert response["result"] == "success"
     except Exception as e:
         log.error("Could not delete Zulip message %s: %s", message_id, e)
+
+
+def get_author_zulip_ids(posts):
+    """Return mapping of post ID to author Zulip ID.
+
+    NOTE: The function also tries to update the Zulip IDs of users that are not
+    in our DB using data from the RC API end-point: /api/v1/profiles/:id
+
+    """
+
+    post_ids = {post.id for post in posts}
+    author_zulip_ids = dict(
+        Post.objects.filter(pk__in=post_ids).values_list(
+            "blog__user", "blog__user__hacker__zulip_id"
+        )
+    )
+
+    for user_id, zulip_id in author_zulip_ids.items():
+        if zulip_id is None:
+            update_user_details(user_id)
+            hacker = Hacker.objects.filter(user_id=user_id).first()
+            if hacker is not None and hacker.zulip_id is not None:
+                author_zulip_ids[user_id] = hacker.zulip_id
+                log.debug("Updated Zulip ID for hacker %s", user_id)
+            else:
+                log.error("Failed to update Zulip ID for hacker %s", user_id)
+
+    return {post.id: author_zulip_ids.get(post.blog.user_id) for post in posts}
 
 
 def get_members():
