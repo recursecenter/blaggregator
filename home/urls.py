@@ -6,6 +6,7 @@ from home import views
 urlpatterns = [
     re_path(r"^$", lambda x: HttpResponseRedirect(reverse("new"))),
     re_path(r"^login/$", views.log_in_oauth),
+    re_path(r"^profile/$", views.own_profile),
     re_path(r"^profile/(?P<user_id>\d+)/$", views.profile, name="profile"),
     re_path(r"^new/$", views.new, name="new"),
     re_path(r"^add_blog/$", views.add_blog, name="add_blog"),

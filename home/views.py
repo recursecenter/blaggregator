@@ -186,7 +186,7 @@ def edit_blog(request, blog_id):
 @ensure_hacker_exists
 def profile(request, user_id):
     added_blogs = Blog.objects.filter(user=user_id)
-    owner = True if int(user_id) == request.user.id else False
+    owner = int(user_id) == request.user.id
     post_list = Post.objects.filter(blog__user=user_id)
     feed_path = reverse("feed")
     feed_url = request.build_absolute_uri(f"{feed_path}?token={request.hacker.token}")
@@ -199,6 +199,11 @@ def profile(request, user_id):
         "feed_url": feed_url,
     }
     return render(request, "home/profile.html", context)
+
+
+@login_required
+def own_profile(request):
+    return HttpResponseRedirect(reverse("profile", kwargs={"user_id": request.user.id}))
 
 
 @login_required
