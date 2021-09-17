@@ -27,6 +27,18 @@ docker-compose up
 # You can ssh into box to run other commands
 ```
 
+#### Using Docker for the DB
+
+It is possible to use Docker just for the DB and use the traditional setup for
+setting up your Python development environment.
+
+```bash
+docker-compose -f docker-compose.pg.yml up --build
+```
+
+This will start a Postgres server that the server running on your local host
+machine can connect to, with no additional changes to the configuration.
+
 ### Traditional Setup
 - Set up your virtual environment
 
@@ -39,6 +51,9 @@ $ pip install -r requirements.txt
 - Install Postgres (it's easy on OSX
   with [postgres.app](http://postgresapp.com/)) and `pip install
   psycopg2`. Open the app to start your database server running locally.
+
+  It is possible to use Docker for running the DB, if you prefer. See section
+  Using Docker for the DB above.
 
     - Open a Postgres shell:
 
