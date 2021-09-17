@@ -5,7 +5,7 @@
 
 
 import datetime
-import html.parser
+import html
 import socket
 import urllib.request
 import urllib.error
@@ -50,8 +50,6 @@ def feedergrabber(url):
     """The main function of the module."""
     # Initialize some variables
     post_links_and_titles = []
-    # HTML parser to unescape HTML entities
-    h = html.parser.HTMLParser()
     # Get file contents
     file_contents, errors = retrieve_file_contents(url)
     if file_contents is None:
@@ -75,11 +73,9 @@ def feedergrabber(url):
             errors.append("No title was returned for post: {}.".format(link))
             continue
 
-        title = h.unescape(title).replace("\n", " ")
+        title = html.unescape(title).replace("\n", " ")
         # Date
-        post_date = getattr(
-            entry, "published_parsed", getattr(entry, "updated_parsed", None)
-        )
+        post_date = getattr(entry, "published_parsed", getattr(entry, "updated_parsed", None))
         now = datetime.datetime.now()
         if post_date is None:
             # No date posts are marked as crawled now
