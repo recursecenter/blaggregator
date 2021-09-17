@@ -1,7 +1,8 @@
 asgiref==3.4.1
 backports.functools-lru-cache==1.5
 beautifulsoup4==4.7.1
-boto==2.43.0
+boto3==1.18.43
+botocore==1.21.43
 bs4==0.0.1
 certifi==2018.10.15
 cffi==1.14.6
@@ -12,7 +13,7 @@ cryptography==3.4.8
 defusedxml==0.6.0
 dj-database-url==0.4.1
 Django==3.2.7
-django-storages==1.5.1
+django-storages==1.11.1
 entrypoints==0.3
 enum34==1.1.6
 factory-boy==2.10.0
@@ -28,6 +29,7 @@ gunicorn==19.6.0
 hypothesis==3.6.0
 idna==2.7
 ipaddress==1.0.19
+jmespath==0.10.0
 lxml==4.6.3
 Markdown==2.6.7
 mccabe==0.6.1
@@ -45,6 +47,7 @@ python3-openid==3.1.0
 pytz==2016.7
 requests==2.22.0
 requests-oauthlib==0.7.0
+s3transfer==0.5.0
 six==1.11.0
 social-auth-app-django==5.0.0
 social-auth-core==4.1.0
