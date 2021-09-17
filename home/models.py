@@ -25,6 +25,7 @@ class Hacker(models.Model):
     avatar_url = models.TextField(blank=True)
     github = models.TextField(blank=True, null=True)
     twitter = models.TextField(blank=True, null=True)
+    zulip_id = models.PositiveIntegerField(blank=True, null=True)
     token = models.SlugField(max_length=40, default=token_default, unique=True)
 
     @property

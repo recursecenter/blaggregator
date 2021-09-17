@@ -8,7 +8,7 @@ from social_core.backends.oauth import BaseOAuth2
 
 from .models import User, Hacker
 
-HACKER_ATTRIBUTES = ("avatar_url", "twitter", "github")
+HACKER_ATTRIBUTES = ("avatar_url", "twitter", "github", "zulip_id")
 USER_FIELDS = ("username", "email")
 USER_EXTRA_FIELDS = ("first_name", "last_name", "username")
 log = logging.getLogger("blaggregator")

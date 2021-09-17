@@ -39,6 +39,7 @@ class OAuthTestCase(TestCase):
         "last_name": "Doe",
         "name": "John Doe",
         "github": "johndoe",
+        "zulip_id": 1729,
     }
 
     def setUp(self):
