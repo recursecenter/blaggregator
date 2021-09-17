@@ -33,6 +33,12 @@ def announce_new_post(post, debug=True):
     send_message_zulip(to, subject, content, type_="stream")
 
 
+def announce_posts(posts, debug=True):
+    """Announce new posts on the correct stream."""
+    for post in posts:
+        announce_new_post(post, debug=debug)
+
+
 def delete_message(message_id, content="(deleted)"):
     message_url = "{}/{}".format(MESSAGES_URL, message_id)
     params = {"content": content, "subject": content}

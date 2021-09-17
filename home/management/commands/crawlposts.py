@@ -11,7 +11,7 @@ from gevent import pool, wait  # noqa
 # Local library
 from home import feedergrabber27  # noqa
 from home.models import Blog, Post  # noqa
-from home.zulip_helpers import announce_new_post  # noqa
+from home.zulip_helpers import announce_posts  # noqa
 
 log = logging.getLogger("blaggregator")
 
@@ -52,13 +52,9 @@ class Command(BaseCommand):
 
     def handle(self, **options):
         p = pool.Pool(20)
-        jobs = [
-            p.spawn(self.crawlblog, blog)
-            for blog in Blog.objects.filter(skip_crawl=False)
-        ]
+        jobs = [p.spawn(self.crawlblog, blog) for blog in Blog.objects.filter(skip_crawl=False)]
         wait(jobs)
-        for post in self.zulip_queue:
-            announce_new_post(post, debug=settings.DEBUG)
+        announce_posts(self.zulip_queue, debug=settings.DEBUG)
 
 
 def get_or_create_post(blog, title, link, date, content):
