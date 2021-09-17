@@ -188,12 +188,15 @@ def profile(request, user_id):
     added_blogs = Blog.objects.filter(user=user_id)
     owner = True if int(user_id) == request.user.id else False
     post_list = Post.objects.filter(blog__user=user_id)
+    feed_path = reverse("feed")
+    feed_url = request.build_absolute_uri(f"{feed_path}?token={request.hacker.token}")
     context = {
         "hacker": request.hacker,
         "owner": owner,
         "post_list": post_list,
         "show_avatars": False,
         "forms": [BlogForm(instance=blog) for blog in added_blogs],
+        "feed_url": feed_url,
     }
     return render(request, "home/profile.html", context)
 

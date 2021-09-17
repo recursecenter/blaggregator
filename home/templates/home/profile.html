@@ -94,13 +94,18 @@
                 <h2>Blaggregator RSS feed</h2>
                 <p>
                     Blaggregator provides an <strong>authenticated</strong>
-                    <a href="{% url 'feed' %}?token={{hacker.token}}">RSS feed</a>.  Please keep
+                    <a href="{{feed_url}}">RSS feed</a>.  Please keep
                     your feed URL private.  In case you accidentally share the URL, you
                     can reset it using the button below.
                 </p>
 
                 <form action={% url "refresh_token" %}>
-                    <input class="btn btn-info" type="submit" value="Create new feed URL">
+                  <div class="form-group">
+                    <input class="form-control" type="text" size=100 value="{{feed_url}}" disabled />
+                  </div>
+                  <div class="form-group">
+                    <input class="btn btn-secondary btn-sm" type="submit" value="Update feed token">
+                  </div>
                 </form>
             </div>
         </div>
