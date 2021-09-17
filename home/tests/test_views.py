@@ -51,20 +51,20 @@ class BaseViewTestCase(TestCase):
 class FeedsViewTestCase(BaseViewTestCase):
     def test_should_enforce_authentication(self):
         response = self.client.get("/atom.xml")
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 403)
         response = self.client.get("/atom.xml", data={"token": ""})
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 403)
 
     def test_should_enforce_token(self):
         self.login()
         response = self.client.get("/new/")
         self.assertEqual(response.status_code, 200)
         response = self.client.get("/atom.xml")
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 403)
         response = self.client.get("/atom.xml", data={"token": ""})
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 403)
         response = self.client.get("/atom.xml", data={"token": "BOGUS-TOKEN"})
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 403)
 
     def test_feed_with_no_posts(self):
         self.verify_feed_generation(0)

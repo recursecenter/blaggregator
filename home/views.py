@@ -12,7 +12,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Count
 from django.forms import Select, TextInput
 from django.forms.models import modelform_factory
-from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.http import HttpResponse, HttpResponseRedirect, Http404, HttpResponseForbidden
 from django.shortcuts import render
 from django.utils import timezone
 from django.views.decorators.http import require_POST
@@ -240,7 +240,7 @@ def feed(request):
     """Atom feed of new posts."""
     token = request.GET.get("token")
     if authenticate(token=token) is None:
-        raise Http404
+        return HttpResponseForbidden()
 
     return LatestEntriesFeed()(request)
 
