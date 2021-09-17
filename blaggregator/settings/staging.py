@@ -1,22 +1,16 @@
-import os
-import dj_database_url
-from .base import ALLOWED_HOSTS, DATABASES
+from .base import ALLOWED_HOSTS
+from .heroku import (
+    SECURE_PROXY_SSL_HEADER,
+    AWS_ACCESS_KEY_ID,
+    AWS_SECRET_ACCESS_KEY,
+    STATICFILES_STORAGE,
+    DEFAULT_FILE_STORAGE,
+)
 
 ROOT_URL = "https://blag.recurse.com/"
-# Allowed hostnames
 ALLOWED_HOSTS += ["blaggregator-staging.herokuapp.com", "blag.recurse.com"]
-# Parse database configuration from $DATABASE_URL
-DATABASES["default"] = dj_database_url.config()
-# Honor the 'X-Forwarded-Proto' header for request.is_secure()
-SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-# S3
-AWS_ACCESS_KEY_ID = os.environ["AWS_ACCESS_KEY_ID"]
-AWS_SECRET_ACCESS_KEY = os.environ["AWS_SECRET_ACCESS_KEY"]
 AWS_STORAGE_BUCKET_NAME = "blaggregator-staging"
 STATIC_URL = "http://" + AWS_STORAGE_BUCKET_NAME + ".s3.amazonaws.com/"
-STATICFILES_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
-DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
-# Social Auth
 SOCIAL_AUTH_HACKERSCHOOL_REDIRECT_URL = (
     "http://blaggregator-staging.herokuapp.com/complete/hackerschool"
 )
