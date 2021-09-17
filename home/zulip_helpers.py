@@ -6,8 +6,8 @@ import re
 
 # 3rd-party library
 from django.conf import settings
-from django.core.urlresolvers import reverse
 from django.template.loader import get_template
+from django.urls import reverse
 import requests
 
 ZULIP_KEY = os.environ.get("ZULIP_KEY")

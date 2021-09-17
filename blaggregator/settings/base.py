@@ -30,6 +30,8 @@ DATABASES = {
     }
 }
 
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
+
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = [
@@ -94,7 +96,7 @@ SECRET_KEY = os.environ.get(
     "BLAGGREGATOR_SECRET_KEY", "%dut3)!1f(nm0x8bm@tuj!*!2oe=+3+bsw2lf0)%(4l8d2^z8s"
 )
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = (
     "home.middleware.RecurseSubdomainMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",

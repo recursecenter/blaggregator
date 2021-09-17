@@ -7,7 +7,7 @@ from django.contrib.auth.backends import ModelBackend
 class TokenAuthBackend(ModelBackend):
     """Allows users to authenticate using a token."""
 
-    def authenticate(self, token):
+    def authenticate(self, request, token):
         # If a user with no related hacker exists in the db, token=None will
         # fetch that user!
         if not token:

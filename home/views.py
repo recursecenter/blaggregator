@@ -7,13 +7,13 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from django.core.urlresolvers import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Count
 from django.forms import Select, TextInput
 from django.forms.models import modelform_factory
 from django.http import HttpResponse, HttpResponseRedirect, Http404, HttpResponseForbidden
 from django.shortcuts import render
+from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 
@@ -98,7 +98,7 @@ def view_post(request, slug):
 
 
 def log_in_oauth(request):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         return HttpResponseRedirect(reverse("new"))
 
     else:

@@ -21,7 +21,7 @@ def token_default():
 
 
 class Hacker(models.Model):
-    user = models.OneToOneField(User)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     avatar_url = models.TextField(blank=True)
     github = models.TextField(blank=True, null=True)
     twitter = models.TextField(blank=True, null=True)
@@ -36,7 +36,7 @@ class Blog(models.Model):
     def __unicode__(self):
         return self.feed_url
 
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     feed_url = models.URLField()
     last_crawled = models.DateTimeField("last crawled", blank=True, null=True)
     created = models.DateTimeField("date created", auto_now_add=True)
@@ -56,7 +56,7 @@ class Post(models.Model):
     def __unicode__(self):
         return self.title
 
-    blog = models.ForeignKey(Blog)
+    blog = models.ForeignKey(Blog, on_delete=models.CASCADE)
     url = models.TextField()
     title = models.TextField(blank=True)
     content = models.TextField()
@@ -88,7 +88,7 @@ class LogEntry(models.Model):
     def __unicode__(self):
         return "%s %s" % (self.date, self.post)
 
-    post = models.ForeignKey(Post)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
     date = models.DateTimeField()
     referer = models.URLField(blank=True, null=True)
     remote_addr = models.GenericIPAddressField(blank=True, null=True)
