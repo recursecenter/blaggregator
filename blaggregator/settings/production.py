@@ -1,11 +1,5 @@
 from .base import ALLOWED_HOSTS
-from .heroku import (
-    SECURE_PROXY_SSL_HEADER,
-    AWS_ACCESS_KEY_ID,
-    AWS_SECRET_ACCESS_KEY,
-    STATICFILES_STORAGE,
-    DEFAULT_FILE_STORAGE,
-)
+from .heroku import *  # noqa
 
 ROOT_URL = "https://blaggregator.herokuapp.com/"
 ALLOWED_HOSTS += [
