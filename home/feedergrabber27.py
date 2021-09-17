@@ -1,8 +1,4 @@
-#!/usr/bin/python2,7
-# feedergrabber27.py
-# David Prager Branner
 """Retrieves the links and titles of recent posts from blog feeds."""
-
 
 import datetime
 import html
