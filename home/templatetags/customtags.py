@@ -24,18 +24,14 @@ class StripNewlinesNode(Node):
 
 @register.filter
 def zulip_url(title, stream):
-    """Return the Zulip url given the title. """
+    """Return the Zulip url given the title."""
 
     # We just replicate how Zulip creates/manages urls.
     # https://github.com/zulip/zulip/blob/33295180a918fcd420428d9aa2fb737b864cacaf/zerver/lib/notifications.py#L34
     # Some browsers zealously URI-decode the contents of window.location.hash.
     # So Zulip hides the URI-encoding by replacing '%' with '.'
     def replace(x):
-        return (
-            quote(x.encode("utf-8"), safe="")
-            .replace(".", "%2E")
-            .replace("%", ".")
-        )
+        return quote(x.encode("utf-8"), safe="").replace(".", "%2E").replace("%", ".")
 
     if len(title) > 60:
         title = title[:57] + "..."
@@ -45,5 +41,5 @@ def zulip_url(title, stream):
 
 @register.filter
 def filter_control_chars(text):
-    """Filter control characters from a given text. """
+    """Filter control characters from a given text."""
     return re.sub(r"[\x00-\x08\x0B-\x0C\x0E-\x1F]", "", text)

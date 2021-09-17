@@ -9,22 +9,24 @@ import django.utils.timezone
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('home', '0003_auto_20180313_1026'),
+        ("home", "0003_auto_20180313_1026"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='post',
-            old_name='date_posted_or_crawled',
-            new_name='created_at',
+            model_name="post",
+            old_name="date_posted_or_crawled",
+            new_name="created_at",
         ),
         migrations.AlterField(
-            model_name='post',
-            name='created_at',
-            field=models.DateTimeField(auto_now_add=True, verbose_name=b'creation timestamp'),
+            model_name="post",
+            name="created_at",
+            field=models.DateTimeField(
+                auto_now_add=True, verbose_name=b"creation timestamp"
+            ),
         ),
         migrations.AlterModelOptions(
-            name='post',
-            options={'ordering': ['-created_at']},
+            name="post",
+            options={"ordering": ["-created_at"]},
         ),
     ]

@@ -86,18 +86,18 @@ class FeedsViewTestCase(BaseViewTestCase):
         )
 
         # When
-        response = self.client.get(
-            "/atom.xml", data={"token": self.hacker.token}
-        )
+        response = self.client.get("/atom.xml", data={"token": self.hacker.token})
 
         # Then
         self.assertEqual(1, Post.objects.count())
         text = response.content.decode("utf8")
         self.assertIn(
-            "This is a title with control chars", text,
+            "This is a title with control chars",
+            text,
         )
         self.assertIn(
-            "This is content with control chars", text,
+            "This is content with control chars",
+            text,
         )
 
     # Helper methods ####
@@ -129,9 +129,7 @@ class FeedsViewTestCase(BaseViewTestCase):
         self.setup_test_user()
         posts = create_posts(n)
         # When
-        response = self.client.get(
-            "/atom.xml", data={"token": self.hacker.token}
-        )
+        response = self.client.get("/atom.xml", data={"token": self.hacker.token})
         # Then
         self.assertEqual(n, Post.objects.count())
         self.assertEqual(n, len(posts))
@@ -142,9 +140,7 @@ class FeedsViewTestCase(BaseViewTestCase):
         if n < 1:
             return
 
-        self.assertGreaterEqual(
-            entries[0].updated_parsed, entries[-1].updated_parsed
-        )
+        self.assertGreaterEqual(entries[0].updated_parsed, entries[-1].updated_parsed)
         included, excluded = self.get_included_excluded_posts(posts, entries)
         self.assertEqual(len(included), len(entries))
         if not excluded:
@@ -344,9 +340,7 @@ class EditBlogViewTestCase(BaseViewTestCase):
         blog = Blog.objects.create(user=self.user, feed_url=feed_url)
         data = {"feed_url": "https://jvns.ca/rss", "stream": "BLOGGING"}
         # When
-        response = self.client.post(
-            "/edit_blog/%s/" % blog.id, data=data, follow=True
-        )
+        response = self.client.post("/edit_blog/%s/" % blog.id, data=data, follow=True)
         # Then
         self.assertEqual(200, response.status_code)
         with self.assertRaises(Blog.DoesNotExist):
@@ -357,15 +351,11 @@ class EditBlogViewTestCase(BaseViewTestCase):
         # Given
         self.login()
         feed_url = "https://jvns.ca/atom.xml"
-        blog = Blog.objects.create(
-            user=self.user, feed_url=feed_url, skip_crawl=True
-        )
+        blog = Blog.objects.create(user=self.user, feed_url=feed_url, skip_crawl=True)
         data = {"feed_url": "https://jvns.ca/rss", "stream": "BLOGGING"}
         assert blog.skip_crawl, "Blog skip crawl should be True"
         # When
-        response = self.client.post(
-            "/edit_blog/%s/" % blog.id, data=data, follow=True
-        )
+        response = self.client.post("/edit_blog/%s/" % blog.id, data=data, follow=True)
         # Then
         self.assertEqual(200, response.status_code)
         with self.assertRaises(Blog.DoesNotExist):
@@ -379,9 +369,7 @@ class EditBlogViewTestCase(BaseViewTestCase):
         self.login()
         data = {"feed_url": "https://jvns.ca/rss", "stream": "BLOGGING"}
         # When
-        response = self.client.post(
-            "/edit_blog/%s/" % 200, data=data, follow=True
-        )
+        response = self.client.post("/edit_blog/%s/" % 200, data=data, follow=True)
         # Then
         self.assertEqual(404, response.status_code)
 

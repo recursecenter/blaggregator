@@ -6,31 +6,31 @@ from django.db import migrations, models
 
 
 def copy_created_at(apps, schema_editor):
-    Post = apps.get_model('home', 'Post')
-    Post.objects.all().update(posted_at=models.F('created_at'))
+    Post = apps.get_model("home", "Post")
+    Post.objects.all().update(posted_at=models.F("created_at"))
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('home', '0005_blog_skip_crawl'),
+        ("home", "0005_blog_skip_crawl"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='post',
-            name='posted_at',
-            field=models.DateTimeField(null=True, verbose_name=b'posted at'),
+            model_name="post",
+            name="posted_at",
+            field=models.DateTimeField(null=True, verbose_name=b"posted at"),
         ),
         migrations.RunPython(copy_created_at, lambda x, y: None),
         migrations.AlterField(
-            model_name='post',
-            name='posted_at',
-            field=models.DateTimeField(auto_now_add=True, verbose_name=b'posted at'),
+            model_name="post",
+            name="posted_at",
+            field=models.DateTimeField(auto_now_add=True, verbose_name=b"posted at"),
             preserve_default=False,
         ),
         migrations.AlterModelOptions(
-            name='post',
-            options={'ordering': ['-posted_at']},
+            name="post",
+            options={"ordering": ["-posted_at"]},
         ),
     ]

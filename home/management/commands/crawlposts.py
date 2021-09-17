@@ -39,9 +39,7 @@ class Command(BaseCommand):
         for link, title, date, content in crawled:
             date = timezone.make_aware(date, timezone.get_default_timezone())
             # create the post instance if it doesn't already exist
-            post, created = get_or_create_post(
-                blog, title, link, date, content
-            )
+            post, created = get_or_create_post(blog, title, link, date, content)
             if created:
                 created_count += 1
                 log.debug("Created '%s' from blog '%s'", title, blog.feed_url)

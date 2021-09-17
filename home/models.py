@@ -7,15 +7,13 @@ from django.db import models
 
 
 def generate_random_id():
-    return ''.join(
-        random.choice(
-            string.ascii_uppercase + string.digits + string.ascii_lowercase
-        )
+    return "".join(
+        random.choice(string.ascii_uppercase + string.digits + string.ascii_lowercase)
         for x in range(6)
     )
 
 
-STREAM_CHOICES = (('BLOGGING', 'blogging'), ('LOGS', 'Daily Logs'))
+STREAM_CHOICES = (("BLOGGING", "blogging"), ("LOGS", "Daily Logs"))
 
 
 def token_default():
@@ -35,18 +33,15 @@ class Hacker(models.Model):
 
 
 class Blog(models.Model):
-
     def __unicode__(self):
         return self.feed_url
 
     user = models.ForeignKey(User)
     feed_url = models.URLField()
-    last_crawled = models.DateTimeField('last crawled', blank=True, null=True)
-    created = models.DateTimeField('date created', auto_now_add=True)
-    stream = models.CharField(
-        max_length=100, default=STREAM_CHOICES[0][0], choices=STREAM_CHOICES
-    )
-    skip_crawl = models.BooleanField('skip crawling this blog', default=False)
+    last_crawled = models.DateTimeField("last crawled", blank=True, null=True)
+    created = models.DateTimeField("date created", auto_now_add=True)
+    stream = models.CharField(max_length=100, default=STREAM_CHOICES[0][0], choices=STREAM_CHOICES)
+    skip_crawl = models.BooleanField("skip crawling this blog", default=False)
 
     @property
     def author(self):
@@ -58,7 +53,6 @@ class Blog(models.Model):
 
 
 class Post(models.Model):
-
     def __unicode__(self):
         return self.title
 
@@ -66,11 +60,9 @@ class Post(models.Model):
     url = models.TextField()
     title = models.TextField(blank=True)
     content = models.TextField()
-    slug = models.CharField(
-        max_length=6, default=generate_random_id, unique=True
-    )
-    posted_at = models.DateTimeField('posted at')
-    created_at = models.DateTimeField('creation timestamp', auto_now_add=True)
+    slug = models.CharField(max_length=6, default=generate_random_id, unique=True)
+    posted_at = models.DateTimeField("posted at")
+    created_at = models.DateTimeField("creation timestamp", auto_now_add=True)
 
     @property
     def author(self):
@@ -89,11 +81,10 @@ class Post(models.Model):
         return self.blog.get_stream_display()
 
     class Meta:
-        ordering = ['-posted_at']
+        ordering = ["-posted_at"]
 
 
 class LogEntry(models.Model):
-
     def __unicode__(self):
         return "%s %s" % (self.date, self.post)
 

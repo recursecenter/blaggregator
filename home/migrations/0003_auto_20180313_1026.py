@@ -8,12 +8,12 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('home', '0002_auto_20161201_2313'),
+        ("home", "0002_auto_20161201_2313"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='post',
-            options={'ordering': ['-date_posted_or_crawled']},
+            name="post",
+            options={"ordering": ["-date_posted_or_crawled"]},
         ),
     ]

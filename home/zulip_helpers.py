@@ -37,9 +37,7 @@ def delete_message(message_id, content="(deleted)"):
     message_url = "{}/{}".format(MESSAGES_URL, message_id)
     params = {"content": content, "subject": content}
     try:
-        response = requests.patch(
-            message_url, params=params, auth=(ZULIP_EMAIL, ZULIP_KEY)
-        )
+        response = requests.patch(message_url, params=params, auth=(ZULIP_EMAIL, ZULIP_KEY))
         assert response["result"] == "success"
     except Exception as e:
         log.error("Could not delete Zulip message %s: %s", message_id, e)
@@ -63,9 +61,7 @@ def get_members():
         for member in members
         if not member["is_bot"] and member["is_active"]
     }
-    by_email = {
-        member["email"]: member for name, member in list(by_name.items())
-    }
+    by_email = {member["email"]: member for name, member in list(by_name.items())}
     return dict(by_email=by_email, by_name=by_name)
 
 
@@ -88,9 +84,7 @@ def get_stream_messages(stream):
     }
     try:
         log.debug("Fetching Zulip messages")
-        response = requests.get(
-            MESSAGES_URL, params=request, auth=(ZULIP_EMAIL, ZULIP_KEY)
-        )
+        response = requests.get(MESSAGES_URL, params=request, auth=(ZULIP_EMAIL, ZULIP_KEY))
         messages = response.json()["messages"]
     except Exception as e:
         log.error("Could not fetch Zulip messages: %s", e)
@@ -147,9 +141,7 @@ def send_message_zulip(to, subject, content, type_="private"):
     data = {"type": type_, "to": to, "subject": subject, "content": content}
     try:
         log.debug('Sending message "%s" to %s (%s)', content, to, type_)
-        response = requests.post(
-            MESSAGES_URL, data=data, auth=(ZULIP_EMAIL, ZULIP_KEY)
-        )
+        response = requests.post(MESSAGES_URL, data=data, auth=(ZULIP_EMAIL, ZULIP_KEY))
         log.debug(
             "Post returned with %s: %s",
             response.status_code,

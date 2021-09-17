@@ -8,13 +8,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('home', '0004_auto_20180316_0351'),
+        ("home", "0004_auto_20180316_0351"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='blog',
-            name='skip_crawl',
-            field=models.BooleanField(default=False, verbose_name=b'skip crawling this blog'),
+            model_name="blog",
+            name="skip_crawl",
+            field=models.BooleanField(
+                default=False, verbose_name=b"skip crawling this blog"
+            ),
         ),
     ]

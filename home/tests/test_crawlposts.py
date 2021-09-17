@@ -39,9 +39,7 @@ class CrawlPostsTestCase(TransactionTestCase):
             # at least one post per blog
             self.assertGreater(Post.objects.filter(blog=blog).count(), 0)
             # posts are unique by blog and title
-            post_titles = Post.objects.filter(blog=blog).values_list(
-                "title", flat=True
-            )
+            post_titles = Post.objects.filter(blog=blog).values_list("title", flat=True)
             self.assertEqual(len(set(post_titles)), len(post_titles))
         # Number of announcements are correctly throttled
         self.assertLessEqual(

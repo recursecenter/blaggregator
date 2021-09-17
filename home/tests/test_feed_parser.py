@@ -94,9 +94,7 @@ class FeedParserTestCase(TestCase):
                 "(<entry>.*?)(<title>.*?</title>)(.*?</entry>)", "\\1\\3", text
             )
             # Strip off item titles
-            text = re.sub(
-                "(<item>.*?)(<title>.*?</title>)(.*?</item>)", "\\1\\3", text
-            )
+            text = re.sub("(<item>.*?)(<title>.*?</title>)(.*?</item>)", "\\1\\3", text)
         else:
             # Strip off entry links
             text = re.sub(
@@ -109,22 +107,16 @@ class FeedParserTestCase(TestCase):
                 "(<item>.*?)(<link.*?>.*?</link>)(.*?</item>)", "\\1\\3", text
             )
             # Strip off entry ids
-            text = re.sub(
-                "(<entry>.*?)(<id.*?>.*?</id>)(.*?</entry>)", "\\1\\3", text
-            )
+            text = re.sub("(<entry>.*?)(<id.*?>.*?</id>)(.*?</entry>)", "\\1\\3", text)
             # Strip off item ids
-            text = re.sub(
-                "(<item>.*?)(<id.*?>.*?</id>)(.*?</item>)", "\\1\\3", text
-            )
+            text = re.sub("(<item>.*?)(<id.*?>.*?</id>)(.*?</item>)", "\\1\\3", text)
         note(text)
         return BytesIO(text.encode("utf8"))
 
 
 class FeedParserHelpersTestCase(TestCase):
     def test_parsing_feeds_with_min_dates(self):
-        with patch(
-            "urllib.request.OpenerDirector.open", new=self.min_date_feed
-        ):
+        with patch("urllib.request.OpenerDirector.open", new=self.min_date_feed):
             contents, errors = feedergrabber("http://max.computer/index.html")
             self.assertIsNone(contents)
             self.assertEqual(2, len(errors))

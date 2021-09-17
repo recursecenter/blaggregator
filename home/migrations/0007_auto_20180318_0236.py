@@ -8,17 +8,17 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('home', '0006_auto_20180317_0559'),
+        ("home", "0006_auto_20180317_0559"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='blog',
-            name='url',
+            model_name="blog",
+            name="url",
         ),
         migrations.AlterField(
-            model_name='post',
-            name='posted_at',
-            field=models.DateTimeField(verbose_name=b'posted at'),
+            model_name="post",
+            name="posted_at",
+            field=models.DateTimeField(verbose_name=b"posted at"),
         ),
     ]

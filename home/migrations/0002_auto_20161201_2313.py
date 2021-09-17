@@ -8,18 +8,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('home', '0001_initial'),
+        ("home", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='hacker',
-            name='github',
+            model_name="hacker",
+            name="github",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='hacker',
-            name='twitter',
+            model_name="hacker",
+            name="twitter",
             field=models.TextField(blank=True, null=True),
         ),
     ]
