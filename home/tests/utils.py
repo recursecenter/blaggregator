@@ -102,6 +102,7 @@ class UserFactory(factory.DjangoModelFactory):
         model = User
 
     username = factory.Faker("ssn")
+    first_name = factory.Faker("ssn")
 
 
 class BlogFactory(factory.DjangoModelFactory):

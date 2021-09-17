@@ -15,6 +15,8 @@ def random_feed(url=None, data=None, timeout=None):
     return BytesIO(xml.encode("utf8"))
 
 
+@patch("home.zulip_helpers.update_user_details", new=lambda x: None)
+@patch("home.zulip_helpers.get_members", new=lambda: {"by_id": {}})
 @patch("urllib.request.OpenerDirector.open", new=random_feed)
 @patch("requests.post")
 class CrawlPostsTestCase(TransactionTestCase):

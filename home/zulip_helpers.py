@@ -17,29 +17,35 @@ ZULIP_KEY = os.environ.get("ZULIP_KEY")
 ZULIP_EMAIL = os.environ.get("ZULIP_EMAIL")
 MESSAGES_URL = "https://recurse.zulipchat.com/api/v1/messages"
 MEMBERS_URL = "https://recurse.zulipchat.com/api/v1/users"
-ANNOUNCE_MESSAGE = "**{}** has a new blog post: [{}]({})"
+ANNOUNCE_MESSAGE = "{} has a new blog post: [{}]({})"
 log = logging.getLogger("blaggregator")
 
 
-def announce_new_post(post, debug=True):
-    """Announce new post on the correct stream.
+def announce_posts(posts, debug=True):
+    """Announce new posts on the correct stream.
 
     *NOTE*: If DEBUG mode is on, all messages are sent to the bot-test stream.
 
     """
-    to = post.blog.get_stream_display() if not debug else "bot-test"
-    title = post.title
-    subject = title if len(title) <= 60 else title[:57] + "..."
-    path = reverse("view_post", kwargs={"slug": post.slug})
-    url = "{}/{}".format(settings.ROOT_URL.rstrip("/"), path.lstrip("/"))
-    content = ANNOUNCE_MESSAGE.format(post.author, title, url)
-    send_message_zulip(to, subject, content, type_="stream")
 
+    if not posts:
+        log.debug("No posts to announce")
+        return
 
-def announce_posts(posts, debug=True):
-    """Announce new posts on the correct stream."""
+    author_zulip_ids = get_author_zulip_ids(posts)
+    zulip_members = get_members()["by_id"]
+
     for post in posts:
-        announce_new_post(post, debug=debug)
+        author_zulip_id = author_zulip_ids.get(post.id)
+        author_name = zulip_members.get(author_zulip_id, {}).get("full_name")
+        author = f"@**{author_name}**" if author_name else f"**{post.author}**"
+        to = post.blog.get_stream_display() if not debug else "bot-test"
+        title = post.title
+        subject = title if len(title) <= 60 else title[:57] + "..."
+        path = reverse("view_post", kwargs={"slug": post.slug})
+        url = "{}/{}".format(settings.ROOT_URL.rstrip("/"), path.lstrip("/"))
+        content = ANNOUNCE_MESSAGE.format(author, title, url)
+        send_message_zulip(to, subject, content, type_="stream")
 
 
 def delete_message(message_id, content="(deleted)"):
