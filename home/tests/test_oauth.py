@@ -34,9 +34,10 @@ class OAuthTestCase(TestCase):
     USER_DATA = {
         "id": 1729,
         "email": "johndoe@foo-bar.com",
-        "image": "https://x.cloudfront.net/assets/people/y.jpg",
+        "image_path": "https://x.cloudfront.net/assets/people/y.jpg",
         "first_name": "John",
         "last_name": "Doe",
+        "name": "John Doe",
         "github": "johndoe",
     }
 
@@ -55,9 +56,7 @@ class OAuthTestCase(TestCase):
 
         # Then
         self.assertEqual(302, response.status_code)
-        self.assertTrue(
-            response["Location"].startswith(HackerSchoolOAuth2.AUTHORIZATION_URL)
-        )
+        self.assertTrue(response["Location"].startswith(HackerSchoolOAuth2.AUTHORIZATION_URL))
 
     def test_authorization_completes(self):
         # When
@@ -68,7 +67,7 @@ class OAuthTestCase(TestCase):
         self.assertTrue(response["Location"].endswith("/new/"))
         self.assertEqual(1, User.objects.count())
         user = User.objects.get(email=self.USER_DATA["email"])
-        self.assertEqual(user.hacker.avatar_url, self.USER_DATA["image"])
+        self.assertEqual(user.hacker.avatar_url, self.USER_DATA["image_path"])
         self.assertEqual(user.hacker.github, self.USER_DATA.get("github", ""))
         self.assertEqual(user.hacker.twitter, self.USER_DATA.get("twitter", ""))
 
@@ -83,7 +82,7 @@ class OAuthTestCase(TestCase):
         self.assertTrue(response["Location"].endswith("/new/"))
         self.assertEqual(1, User.objects.count())
         user = User.objects.get(email=self.USER_DATA["email"])
-        self.assertEqual(user.hacker.avatar_url, self.USER_DATA["image"])
+        self.assertEqual(user.hacker.avatar_url, self.USER_DATA["image_path"])
         self.assertEqual(user.hacker.github, self.USER_DATA.get("github", ""))
         self.assertEqual(user.hacker.twitter, self.USER_DATA.get("twitter", ""))
 

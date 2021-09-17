@@ -51,7 +51,7 @@ def update_user(user, details):
 
 def update_user_details(user_id):
     params = urlencode({"access_token": settings.HS_PERSONAL_TOKEN})
-    path = "/api/v1/people/{}".format(user_id)
+    path = "/api/v1/profiles/{}".format(user_id)
     base_url = HackerSchoolOAuth2.HACKER_SCHOOL_ROOT
     url = "{}{}?{}".format(base_url, path, params)
     try:
@@ -106,8 +106,8 @@ class HackerSchoolOAuth2(BaseOAuth2):
         fields = USER_FIELDS + USER_EXTRA_FIELDS + HACKER_ATTRIBUTES
         for field in fields:
             details.setdefault(field, "")
-        details["username"] = details["first_name"] + details["last_name"]
-        details["avatar_url"] = details.get("image")
+        details["username"] = details["name"]
+        details["avatar_url"] = details.get("image_path")
         return details
 
     def get_user_id(self, details, response):
@@ -117,7 +117,7 @@ class HackerSchoolOAuth2(BaseOAuth2):
 
     def user_data(self, access_token, *args, **kwargs):
         """Loads user data."""
-        url = "{}/api/v1/people/me?{}".format(
+        url = "{}/api/v1/profiles/me?{}".format(
             self.HACKER_SCHOOL_ROOT, urlencode({"access_token": access_token})
         )
         try:
