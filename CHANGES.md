@@ -7,6 +7,28 @@ this project doesn't really have releases (or even versioning, until now), it
 is a project that effects Recursers in "real ways".  It would be nice to have a
 place to quickly see the latest changes that the project has undergone.
 
+
+## 2021-09
+
+### Added
+
+- [#165] Mention post authors when announcing posts on Zulip -- @punchagan
+
+### Changed
+
+- [0095aef45af9e906259b48f1e6757ec9cef86870] Switch to using Poetry to manage
+  dependencies. The requirements.txt file was quite unmanageable. Also, updated
+  all the dependencies to the latest versions.
+
+- [421af8fe46b74715a8d2f4020d6253607568821e] Upgrade to the latest version of
+  Django -- @punchagan
+
+## 2019-12
+
+### Changed
+
+- [cd957294e7f75f5b9ec2c9668325a3abc40ccca9] Upgrade from Python2 to Python3 -- @punchagan
+
 ## 2019-10
 
 ### Fixed
