@@ -1,18 +1,16 @@
-from io import BytesIO
-
 from django.core.management import execute_from_command_line
 from django.conf import settings
 from django.test import TransactionTestCase
 from mock import patch
 
 from home.models import Blog, Post, User
-from .utils import BlogFactory, generate_full_feed
+from .utils import BlogFactory, generate_full_feed, fake_response
 
 
 def random_feed(url=None, data=None, timeout=None):
-    feed = generate_full_feed(min_items=5, max_items=20).example()
+    feed = generate_full_feed(min_items=5, max_items=20)
     xml = feed.writeString("utf8")
-    return BytesIO(xml.encode("utf8"))
+    return fake_response(xml.encode("utf8"))()
 
 
 @patch("home.zulip_helpers.update_user_details", new=lambda x: None)
@@ -44,9 +42,7 @@ class CrawlPostsTestCase(TransactionTestCase):
             post_titles = Post.objects.filter(blog=blog).values_list("title", flat=True)
             self.assertEqual(len(set(post_titles)), len(post_titles))
         # Number of announcements are correctly throttled
-        self.assertLessEqual(
-            mock.call_count, settings.MAX_POST_ANNOUNCE * self.blogs.count()
-        )
+        self.assertLessEqual(mock.call_count, settings.MAX_POST_ANNOUNCE * self.blogs.count())
 
     def test_crawling_skips_flagged_blogs(self, mock):
         # Given

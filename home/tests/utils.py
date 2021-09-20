@@ -1,70 +1,76 @@
 """Utilities for tests."""
-from django.utils import timezone
+from django.utils import feedgenerator, timezone
 import factory
-import feedgenerator
-from hypothesis import strategies as st
-from hypothesis.extra.datetime import datetimes
-from hypothesis.extra.fakefactory import fake_factory
+from factory.django import DjangoModelFactory
+from faker import Faker
+from mock import Mock
 
 from home.models import Blog, Post, User
 
 tzinfo = timezone.get_default_timezone()
 alphabet = "".join([chr(i) for i in range(32, 2 ** 10)])
 
-
-def _valid_text(allow_empty=True):
-    return st.text(alphabet).map(lambda x: ("." if not allow_empty else "") + x)
-
-
-def _optional(s):
-    return st.one_of(s, st.none())
+fake = Faker(["it_IT", "en_US", "ja_JP"])
 
 
 def _generate_feed(atom=False):
+    link = fake.url()
     feed = {
-        "title": _valid_text(),
-        "link": fake_factory("url"),
-        "description": _valid_text(),
+        "title": fake.sentence(),
+        "link": link,
+        "description": fake.sentence(),
     }
     optional = {
-        "language": fake_factory("locale").map(lambda x: x.replace("_", "-")),
-        "author_email": fake_factory("email"),
-        "author_name": fake_factory("name"),
-        "author_link": fake_factory("url"),
-        "subtitle": _valid_text(),
-        "categories": st.lists(_valid_text()),
-        "feed_url": fake_factory("url"),
-        "feed_copyright": _valid_text(),
-        "id": fake_factory("url") if atom else _valid_text(),
-        "ttl": st.integers(min_value=0),
+        "language": fake.locale(),
+        "author_email": fake.email(),
+        "author_name": fake.name(),
+        "author_link": fake.url(),
+        "subtitle": fake.sentence(),
+        "categories": fake.pylist(nb_elements=5, value_types=[fake.word]),
+        "feed_url": fake.url(),
+        "feed_copyright": fake.sentence(),
+        "id": link if atom else fake.uuid4(),
+        "ttl": fake.pyint(),
     }
-    feed.update([(k, _optional(v)) for (k, v) in list(optional.items())])
+    feed.update([(k, v) for (k, v) in optional.items() if fake.pybool()])
     return feed
 
 
 def _generate_item(atom=False):
-    link = fake_factory("url")
+    link = fake.url()
     item = {
-        "title": _valid_text(allow_empty=False),
+        "title": fake.sentence(),
         "link": link,
-        "description": _valid_text(),
+        "description": fake.sentence(),
     }
     optional = {
-        "content": _valid_text(),
-        "author_email": fake_factory("email"),
-        "author_name": fake_factory("name"),
-        "author_link": fake_factory("url"),
-        "pubdate": datetimes(),
-        "updateddate": datetimes(),
-        # 'comments': to_unicode(comments),
-        "unique_id": link if atom else _valid_text(),
-        # # 'enclosure': enclosure,
-        # # 'categories': st.lists(_valid_text()),
-        "item_copyright": _valid_text(),
-        "ttl": st.integers(min_value=0),
+        "content": fake.paragraph(),
+        "author_email": fake.email(),
+        "author_name": fake.name(),
+        "author_link": fake.url(),
+        "pubdate": fake.date_time(),
+        "updateddate": fake.date_time(),
+        "unique_id": link if atom else fake.uuid4(),
+        "categories": fake.pylist(nb_elements=5, value_types=[fake.word]),
+        "item_copyright": fake.sentence(),
+        "ttl": fake.pyint(),
     }
-    item.update([(k, _optional(v)) for (k, v) in list(optional.items())])
+    item.update([(k, v) for (k, v) in optional.items() if fake.pybool()])
     return item
+
+
+def generate_full_feed(min_items=0, max_items=20):
+    atom = fake.boolean()
+    generator = feedgenerator.Atom1Feed if atom else feedgenerator.Rss201rev2Feed
+    feed = generator(**_generate_feed(atom=atom))
+    items = [
+        _generate_item(atom=atom)
+        for _ in range(fake.pyint(min_value=min_items, max_value=max_items))
+    ]
+    for item in items:
+        feed.add_item(**item)
+
+    return feed
 
 
 def create_posts(n, **kwargs):
@@ -72,40 +78,27 @@ def create_posts(n, **kwargs):
     return PostFactory.create_batch(n, **kwargs)
 
 
-def generate_feed():
-    rss = st.builds(feedgenerator.Rss201rev2Feed, **_generate_feed())
-    atom = st.builds(feedgenerator.Atom1Feed, **_generate_feed(atom=True))
-    return st.one_of(rss, atom)
+def fake_response(text):
+    def wrapped(*args, **kwargs):
+        response = Mock()
+        response.headers = {}
+        response.read = Mock(return_value=text.strip())
+        response.url = ""
+        return response
+
+    return wrapped
 
 
-def generate_full_feed(min_items=0, max_items=20):
-    def _create_feed(feed, items):
-        for item in items:
-            feed.add_item(**item)
-        return feed
-
-    return st.builds(
-        _create_feed,
-        generate_feed(),
-        generate_items(min_size=min_items, max_size=max_items),
-    )
-
-
-def generate_items(min_size=0, max_size=20):
-    return st.lists(
-        st.builds(dict, **_generate_item()), min_size=min_size, max_size=max_size
-    )
-
-
-class UserFactory(factory.DjangoModelFactory):
+class UserFactory(DjangoModelFactory):
     class Meta:
         model = User
 
-    username = factory.Faker("ssn")
-    first_name = factory.Faker("ssn")
+    username = factory.Faker("email")
+    first_name = factory.Faker("first_name")
+    last_name = factory.Faker("last_name")
 
 
-class BlogFactory(factory.DjangoModelFactory):
+class BlogFactory(DjangoModelFactory):
     class Meta:
         model = Blog
 
@@ -113,9 +106,7 @@ class BlogFactory(factory.DjangoModelFactory):
     feed_url = factory.Faker("uri")
 
 
-# FIXME: hypothesis doesn't work with this version of Django, if not we
-# probably wouldn't need all these factories!!
-class PostFactory(factory.DjangoModelFactory):
+class PostFactory(DjangoModelFactory):
     class Meta:
         model = Post
 
