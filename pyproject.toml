@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "blaggregator"
+version = "0.1.0"
+description = "A blog aggregator for the Recurse Center community"
+authors = ["Sasha Laundy <sasha.laundy@gmail.com>", "Puneeth Chaganti <punchagan@muse-amuse.in>"]
+license = "AGPL v3"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+Django = "^3.2.7"
+requests = "^2.26.0"
+feedparser = "^6.0.8"
+psycopg2 = "^2.9.1"
+django-storages = "^1.11.1"
+social-auth-app-django = "^5.0.0"
+beautifulsoup4 = "^4.10.0"
+gevent = "^21.8.0"
+dj-database-url = "^0.5.0"
+boto3 = "^1.18.44"
+gunicorn = "^20.1.0"
+
+[tool.poetry.dev-dependencies]
+mock = "^4.0.3"
+factory-boy = "^3.2.0"
+flake8 = "^3.9.2"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
