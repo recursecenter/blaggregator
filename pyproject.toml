@@ -18,7 +18,7 @@ gevent = "^21.8.0"
 dj-database-url = "^0.5.0"
 boto3 = "^1.18.44"
 gunicorn = "^20.1.0"
-lxml = "^4.6.3"
+lxml = "^4.9.1"
 
 [tool.poetry.dev-dependencies]
 mock = "^4.0.3"
