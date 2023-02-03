@@ -7,7 +7,7 @@ license = "AGPL v3"
 
 [tool.poetry.dependencies]
 python = "^3.9"
-Django = "^3.2.7"
+Django = "^3.2.17"
 requests = "^2.26.0"
 feedparser = "^6.0.8"
 psycopg2 = "^2.9.1"
