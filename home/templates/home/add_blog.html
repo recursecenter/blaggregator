@@ -1,5 +1,7 @@
 {% load customtags %}
-
+{% if forms %}
+    <div class="pb-3">Consider adding <a href="https://www.recurse.com/settings/scout" target="_blank" rel="noopener noreferrer">RC Scout</a> to your blog to help drive traffic to RC.</div>
+{% endif %}
 <div class="card bg-default">
     {% if forms %}
         <button type="button"
@@ -23,6 +25,7 @@
             <li>All your <strong>future</strong> blog posts (in this feed) will be notified on Zulip in
                 <a href="{{ ""|zulip_url:"blogging" }}" target="_blank">#blogging</a>
             </li>
+            <li>Consider adding <a href="https://www.recurse.com/settings/scout" target="_blank" rel="noopener noreferrer">RC Scout</a> to your blog to help drive traffic to RC.</li>
         </ul>
     </div>
     <div class="card-footer add-blog {% if forms and not messages %}collapse{% endif %}">
