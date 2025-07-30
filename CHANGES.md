@@ -51,6 +51,10 @@ production or staging.
 Added a "Log in as the dev user" button to the login page, for local
 development.
 
+- [#190] Zulip announcements of new posts now include a short quoted summary:
+  the first paragraph of the post with any text in it, cut off at 480
+  characters. -- @robbielyman and @punchagan
+
 - [#197] `/profile/` is now the default landing page after login, to help new
   and returning users discover features.
 
