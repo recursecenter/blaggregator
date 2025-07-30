@@ -9,6 +9,8 @@ import urllib.parse
 
 import feedparser
 
+from markdownify import markdownify as md
+
 from .utils import is_medium_comment
 
 
@@ -87,7 +89,7 @@ def feedergrabber(url):
                 continue
 
         # Post content
-        content = getattr(entry, "summary", "")
+        content = md(getattr(entry, "summary", ""))
         # Append
         post_links_and_titles.append((link, title, post_date, content))
     if len(post_links_and_titles) == 0:
