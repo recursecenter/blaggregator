@@ -12,8 +12,8 @@ to simplify setup of development environment. See
 the [traditional setup section](#traditional-setup) if you don't wish to use
 docker.
 
-In `web-variables.env` fill out your credentials. See
-[Credentials](#credentials) for instructions on generating.
+Copy `web-variables.env.template` to `web-variables.env` and fill out your
+credentials. See [Credentials](#credentials) for instructions on generating.
 
 ```bash
 HS_PERSONAL_TOKEN=<token>
@@ -140,7 +140,7 @@ page, you'll need to give your user account superuser privileges:
 
 ### Credentials
 
-Go to [your settings on recurse.com](https://www.recurse.com/settings/apps), make a new app. Name it something like "blaggregator-local" and the url should be http://localhost:8000/complete/hackerschool/ (WITH trailing slash). There you can get `SOCIAL_AUTH_HS_KEY` and `SOCIAL_AUTH_HS_SECRET`.
+Go to [your settings on recurse.com](https://www.recurse.com/settings/apps), make a new app. Name it something like "blaggregator-local" and the url should be http://localhost:8000/complete/hackerschool/ (WITH trailing slash). There you can get `SOCIAL_AUTH_HS_KEY` (the generated app ID) and `SOCIAL_AUTH_HS_SECRET` (the generated secret).
 
 Also create a personal access token and give it a name. This will generate the token to use for `HS_PERSONAL_TOKEN`.
 
