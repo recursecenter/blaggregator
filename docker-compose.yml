@@ -4,12 +4,18 @@
      image: postgres
      environment:
        POSTGRES_PASSWORD: postgres
+     healthcheck:
+       test: "pg_isready -U postgres"
+       # Give the DB a few seconds to finish setup before we start checking
+       start_period: 5s
    web:
      build: .
      command: python3 manage.py runserver 0.0.0.0:8000
      depends_on:
-       - db
-       - migration
+       db:
+         condition: service_healthy
+       migration:
+         condition: service_completed_successfully
      env_file:
       - web-variables.env
      ports:
@@ -27,4 +33,5 @@
       links:
         - db
       depends_on:
-        - db
+        db:
+         condition: service_healthy
