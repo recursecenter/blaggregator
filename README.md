@@ -74,6 +74,9 @@ If you use Wordpress, for instance, categorize all your code-related posts
 "code", say. Then your code-specific RSS feed that you should publish to
 Blaggregator is: http://yoururl.com/blog/category/code/feed/
 
+### Can I get an RSS feed of everyone's posts, to put into my feed reader?
+Yes! Find your personal authenticated URL in [your profile](https://blaggregator.recurse.com/profile/). 
+
 ### Who's behind it?
 
 [Sasha](https://github.com/sursh) was the initial author. [Puneeth](https://github.com/punchagan) is the head maintainer.
