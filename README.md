@@ -1,6 +1,6 @@
 # Blaggregator
 
-Blog post aggregator for the Recurse Center community! Add your blog and the Blaggregator Bot will share any new posts with your readers in the #blogging channel on Zulip.
+Blog aggregator for the Recurse Center community! Just add your blog and the Blaggregator Bot will share any new posts with your eager readers in the #blogging channel on Zulip.
 
 Check it out here: <https://blaggregator.recurse.com> (RC login required).
 
@@ -10,28 +10,18 @@ Check it out here: <https://blaggregator.recurse.com> (RC login required).
 
 <p>During her batch, Sasha (W '13) noticed that her peers were all blogging about
 their work at the Recurse Center on their individual blogs. It was really cool
-to see what they were working on and thinking about.</p>
+to see what they were working on and thinking about! </p>
 
-<p>Some folks would post about their new posts in Zulip, some on Twitter, and some
-wouldn't spread the word at all. There was all this great work going on, but it
-was scattered across the internet.</p>
+<p>But the challenge was hearing about it: many people had just started their blogs and didn't have an audience yet. Some folks would post about their new posts in Zulip, some on Twitter, and some were shy and wouldn't spread the word at all. There was all this great work going on, but it
+was scattered across the internet and hard to find.</p>
 
-<p>Blaggregator puts all this awesome content in one place, and provides a place
-for the members of the community to read and discuss it.  This has the nice
-side effect of providing a friendly audience for those who may have just
-launched their blog.</p>
+<p>Blaggregator puts all this awesome work in one place, and automatically shares your work and creates a Zulip discussion thread. You now have a built-in friendly audience, and we get to see your awesome work!</p>
 
 </div>
 
-[These awesome people](https://github.com/recursecenter/blaggregator/graphs/contributors) have
-helped make Blaggregator better!
 
-## License
 
-Copyright © 2013-2026 Sasha Laundy and others.
 
-This software is licensed under the terms of the AGPL, Version 3. The complete
-license can be found at https://www.gnu.org/licenses/agpl-3.0.html.
 
 ## FAQ
 
@@ -164,3 +154,10 @@ charity the group hates (added incentive to hit the publish button!).
 The Fall 2013 batch ran a very successful Iron Blogger program. Emilia
 Lazer-Walker
 [wrote a very nice article on how it worked](http://blog.lazerwalker.com/2013/12/24/one-post-a-week-running-an-iron-blogger-challenge).
+
+## License
+
+Copyright © 2013-2026 Sasha Laundy and others.
+
+This software is licensed under the terms of the AGPL, Version 3. The complete
+license can be found at https://www.gnu.org/licenses/agpl-3.0.html.
