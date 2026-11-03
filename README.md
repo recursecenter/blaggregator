@@ -2,6 +2,8 @@
 
 Blog aggregator for the Recurse Center community! Just add your blog and the Blaggregator Bot will share any new posts with your eager readers in the #blogging channel on Zulip.
 
+Blog + aggregator = blaggregator. Also inspired by [xkcd](https://www.explainxkcd.com/wiki/index.php/148:_Mispronouncing).
+
 Check it out here: <https://blaggregator.recurse.com> (RC login required).
 
 <div class="well">
