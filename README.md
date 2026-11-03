@@ -4,7 +4,7 @@ Blog aggregator for the Recurse Center community! Just add your blog and the Bla
 
 Blog + aggregator = blaggregator. Also inspired by [xkcd](https://www.explainxkcd.com/wiki/index.php/148:_Mispronouncing).
 
-Check it out here: <https://blaggregator.recurse.com> (RC login required).
+Add your blog to your profile here: <https://blaggregator.recurse.com> (RC login required).
 
 <div class="well">
 
@@ -22,14 +22,15 @@ was scattered across the internet and hard to find.</p>
 </div>
 
 
-
-
-
-## FAQ
+## FAQs
 
 ### How do I add my blog?
 
 Go [here](https://blaggregator.recurse.com/), log in, and go to your Profile in the upper-right corner.
+
+On Blaggregator's next crawl, your two newest posts will be shown
+
+(You'll see a vestigial feed of recent posts. The original concept was to discuss the posts on Blaggregator itself, to be a less noisy environment for alums than Zulip, but Zulip is much more lively)
 
 ### Why do I have to log in?
 
@@ -46,22 +47,20 @@ lots and lots of warning to decide how you want to participate.
 Once an hour, the crawler checks all registered blogs for new posts. New posts
 are displayed on the main page and a message is sent to Zulip.
 
-"New" is defined as a post having a new URL and a new title.  So you can tweak
-the title, change the content or the timestamp to your heart's content.
+See below for how Blaggregator defines "new" posts.
 
 ### I don't see my blog post.
 
 If you published it less than an hour ago, hang tight: it'll show up when the
-crawler next checks the registered blogs. If Blaggregator finds many new posts
-on your blog, it will only post the two most recent posts to Zulip. All of your
-posts will still be available on the [site](https://blaggregator.recurse.com)
+crawler next checks the registered blogs (as of this writing, hourly).
 
-### My blog post appears on blaggregator but no Zulip notification sent.
+### I need to move things around on my website, how do I avoid spamming Zulip?
 
-For every crawl a maximum of 2 notifications are sent for posts that haven't
-already been seen by blaggregator. So, if you published more than 2 posts
-between consecutive (hourly) crawls by blaggregator, only the last two posts
-will be notified on Zulip.
+So considerate of you to ask! Blaggregator already limits itself to posting only two new posts per crawl, for exactly this situation, so don't sweat it too much. 
+
+"New" is defined as a post having a new URL AND a new title. Blaggregator does not consider timestamps. If you need to change both, you *could* change the URLs, wait until the next crawl, then change the titles. But again, the worst case is two new posts. 
+
+If you posted more than two posts since Blaggregator's last crawl, it only Zulips about two of them, but all of them will appear in the (vestigial) feed on the live Blaggregator site. This also applies if you're adding a new blog with many past posts—only the last two will be Zuliped. 
 
 ### My blog is multi-purpose and not wholly code/Recurse Center specific
 
@@ -77,12 +76,12 @@ Blaggregator is: http://yoururl.com/blog/category/code/feed/
 
 ### Who's behind it?
 
-[Sasha](https://github.com/sursh) is the main author, with a bunch of
-other
-[recursers](https://github.com/recursecenter/blaggregator/graphs/contributors)
-contributing.  You are welcome to contribute as well!
+[Sasha](https://github.com/sursh) was the initial author. [Puneeth](https://github.com/punchagan) is the head maintainer.
 
-[Puneeth](https://github.com/punchagan) is the primary maintainer, currently.
+A bunch of other [recursers](https://github.com/recursecenter/blaggregator/graphs/contributors)
+have contributed.  You are welcome to contribute as well!
+
+
 
 ### Can I contribute fixes and features?
 
