@@ -1,7 +1,8 @@
 # Blaggregator
 
-Blog post aggregator for the Recurse Center community.  Live version runs at
-<https://blaggregator.recurse.com> (RC login required).
+Blog post aggregator for the Recurse Center community! Add your blog and the Blaggregator Bot will share any new posts with your readers in the #blogging channel on Zulip.
+
+Check it out here: <https://blaggregator.recurse.com> (RC login required).
 
 <div class="well">
 
@@ -27,20 +28,16 @@ helped make Blaggregator better!
 
 ## License
 
-Copyright © 2013-2017 Sasha Laundy and others.
+Copyright © 2013-2026 Sasha Laundy and others.
 
 This software is licensed under the terms of the AGPL, Version 3. The complete
 license can be found at https://www.gnu.org/licenses/agpl-3.0.html.
 
 ## FAQ
 
-### How does it work?
+### How do I add my blog?
 
-Once an hour, the crawler checks all registered blogs for new posts. New posts
-are displayed on the main page and a message is sent to Zulip.
-
-"New" is defined as a post having a new URL and a new title.  So you can tweak
-the title, change the content or the timestamp to your heart's content.
+Go [here](https://blaggregator.recurse.com/), log in, and go to your Profile in the upper-right corner.
 
 ### Why do I have to log in?
 
@@ -51,6 +48,40 @@ Center credentials
 If that ever changes (for instance, to surface the best posts that are coming
 out of the Recurse Center to show off what we're working on) you will be given
 lots and lots of warning to decide how you want to participate.
+
+### How does it work?
+
+Once an hour, the crawler checks all registered blogs for new posts. New posts
+are displayed on the main page and a message is sent to Zulip.
+
+"New" is defined as a post having a new URL and a new title.  So you can tweak
+the title, change the content or the timestamp to your heart's content.
+
+### I don't see my blog post.
+
+If you published it less than an hour ago, hang tight: it'll show up when the
+crawler next checks the registered blogs. If Blaggregator finds many new posts
+on your blog, it will only post the two most recent posts to Zulip. All of your
+posts will still be available on the [site](https://blaggregator.recurse.com)
+
+### My blog post appears on blaggregator but no Zulip notification sent.
+
+For every crawl a maximum of 2 notifications are sent for posts that haven't
+already been seen by blaggregator. So, if you published more than 2 posts
+between consecutive (hourly) crawls by blaggregator, only the last two posts
+will be notified on Zulip.
+
+### My blog is multi-purpose and not wholly code/Recurse Center specific
+
+No problem! RCers usually enjoy reading non-technical posts by others. 
+
+But, if you like, you could tag or categorize your relevant posts and make a
+separate RSS/Atom feed for them. Most blogging software has separate feeds for
+different categories/tags.
+
+If you use Wordpress, for instance, categorize all your code-related posts
+"code", say. Then your code-specific RSS feed that you should publish to
+Blaggregator is: http://yoururl.com/blog/category/code/feed/
 
 ### Who's behind it?
 
@@ -86,36 +117,6 @@ It's a Django (Python) app, with some Bootstrap on the frontend.  It's deployed
 on Heroku using their Postgres and Scheduler add-ons. Check out the
 code [here](https://github.com/recursecenter/blaggregator).
 
-### I don't see my blog post.
-
-If you published it less than an hour ago, hang tight: it'll show up when the
-crawler next checks the registered blogs. If Blaggregator finds many new posts
-on your blog, it will only post the two most recent posts to Zulip. All of your
-posts will still be available on the [site](https://blaggregator.recurse.com)
-
-### My blog post appears on blaggregator but no Zulip notification sent.
-
-For every crawl a maximum of 2 notifications are sent for posts that haven't
-already been seen by blaggregator. So, if you published more than 2 posts
-between consecutive (hourly) crawls by blaggregator, only the last two posts
-will be notified on Zulip.
-
-### My blog is multi-purpose and not wholly code/Recurse Center specific
-
-No problem! RCers usually enjoy reading non-technical posts by others. 
-
-But, if you like, you could tag or categorize your relevant posts and make a
-separate RSS/Atom feed for them. Most blogging software has separate feeds for
-different categories/tags.
-
-If you use Wordpress, for instance, categorize all your code-related posts
-"code", say. Then your code-specific RSS feed that you should publish to
-Blaggregator is: http://yoururl.com/blog/category/code/feed/.
-
-### Can I lurk?
-
-Sure, just make an account and don't add your blog. But you shouldn't lurk. You
-should blog.
 
 ### Why should I blog?
 
@@ -140,7 +141,7 @@ long, groundbreaking, perfect, or full of citations. Short, imperfect, and
 
 Don't let the perfect be the enemy of the good. Just get something up and
 resist the urge to fiddle with it. Use Tumblr if you have to. Just start
-writing.
+writing!
 
 ### I need some more inspiration.
 
@@ -160,6 +161,6 @@ writing one blog post a week, and are on the hook for $5 if they don't
 post. The pot can be used for a party, donated to charity, or donated to a
 charity the group hates (added incentive to hit the publish button!).
 
-The Fall 2013 batch ran a very successful Iron Blogger program. Mike
-Walker
+The Fall 2013 batch ran a very successful Iron Blogger program. Emilia
+Lazer-Walker
 [wrote a very nice article on how it worked](http://blog.lazerwalker.com/2013/12/24/one-post-a-week-running-an-iron-blogger-challenge).
