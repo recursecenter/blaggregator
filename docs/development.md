@@ -36,6 +36,18 @@ setting up your Python development environment.
 docker-compose -f docker-compose.pg.yml up --build
 ```
 
+OR use the following command if you don't have docker-compose
+
+```bash
+docker run --rm --name blaggregator-db \
+    -p 5432:5432 \
+    -e POSTGRES_USER=sasha \
+    -e POSTGRES_PASSWORD=sasha \
+    -e POSTGRES_DB=blaggregator_dev \
+    postgres \
+    postgres -c log_statement=all
+```
+
 This will start a Postgres server that the server running on your local host
 machine can connect to, with no additional changes to the configuration.
 
