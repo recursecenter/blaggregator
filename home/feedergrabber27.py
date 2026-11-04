@@ -9,8 +9,6 @@ import urllib.parse
 
 import feedparser
 
-from markdownify import markdownify as md
-
 from .utils import is_medium_comment
 
 

@@ -9,6 +9,7 @@ from django.conf import settings
 from django.template.loader import get_template
 from django.urls import reverse
 import requests
+from markdownify import markdownify as md
 
 from home.models import Hacker, Post
 from home.oauth import update_user_details
@@ -18,7 +19,7 @@ ZULIP_EMAIL = os.environ.get("ZULIP_EMAIL")
 MESSAGES_URL = "https://recurse.zulipchat.com/api/v1/messages"
 MEMBERS_URL = "https://recurse.zulipchat.com/api/v1/users"
 ANNOUNCE_MESSAGE = "{} has a new blog post: [{}]({})"
-QUOTE = "```quote\n{}\n```"
+QUOTE = "\n```quote\n{}\n```"
 log = logging.getLogger("blaggregator")
 
 
@@ -48,7 +49,7 @@ def announce_posts(posts, debug=True):
         content = ANNOUNCE_MESSAGE.format(author, title, url)
         if post.content:
              summary = post.content if len(post.content) <= 480 else post.content[:477] + "..."
-             content = content + QUOTE.format(summary)
+             content = content + QUOTE.format(md(summary))
         send_message_zulip(to, subject, content, type_="stream")
 
 
