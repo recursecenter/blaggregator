@@ -6,21 +6,21 @@ Blog + aggregator = blaggregator. Also inspired by [xkcd](https://www.explainxkc
 
 Add your blog to your profile here: <https://blaggregator.recurse.com> (RC login required).
 
-<div class="well">
+## What is this?
 
-<h2>What is this?</h2>
-
-<p>During her batch, Sasha (W '13) noticed that her peers were all blogging about
+During her batch, Sasha (W '13) noticed that her peers were all blogging about
 their work at the Recurse Center on their individual blogs. It was really cool
-to see what they were working on and thinking about! </p>
+to see what they were working on and thinking about!
 
-<p>But the challenge was hearing about it: many people had just started their blogs and didn't have an audience yet. Some folks would post about their new posts in Zulip, some on Twitter, and some were shy and wouldn't spread the word at all. There was all this great work going on, but it
-was scattered across the internet and hard to find.</p>
+But the challenge was hearing about it: many people had just started their
+blogs and didn't have an audience yet. Some folks would post about their new
+posts in Zulip, some on Twitter, and some were shy and wouldn't spread the word
+at all. There was all this great work going on, but it was scattered across the
+internet and hard to find.
 
-<p>Blaggregator puts all this awesome work in one place, and automatically shares your work and creates a Zulip discussion thread. You now have a built-in friendly audience, and we get to see your awesome work!</p>
-
-</div>
-
+Blaggregator puts all this awesome work in one place, and automatically
+shares your work and creates a Zulip discussion thread. You now have a built-in
+friendly audience, and we get to see your awesome work!
 
 ## FAQs
 
