@@ -14,6 +14,14 @@ place to quickly see the latest changes that the project has undergone.
 Modest updates to README to bring it into the modern era and clarify how
 crawler decides what's "new."
 
+Switched dependency management from Poetry to [uv](https://docs.astral.sh/uv/).
+
+Upgraded Python to 3.10 and bumped dependencies (e.g., gevent) that were
+incompatible with it.
+
+Added a `docker run` command for starting a local Postgres DB to the
+development docs.
+
 ## 2021-09
 
 ### Added
