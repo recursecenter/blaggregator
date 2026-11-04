@@ -22,9 +22,10 @@ incompatible with it.
 Added a `docker run` command for starting a local Postgres DB to the
 development docs.
 
-Upgraded Django from 3.2 to 5.2 (LTS), removed the deprecated `USE_L10N`
-setting, and set `FORMS_URLFIELD_ASSUME_HTTPS` to opt into the Django 6.0
-default.  Also fixed a flaky test caused by colliding random usernames.
+Upgraded Django from 3.2 to 6.1 (requires Python 3.12+), removed the deprecated
+`USE_L10N` setting. Switched the Postgres driver from `psycopg2` to `psycopg`
+3, since `psycopg2` crashes on Python 3.15. Also fixed a flaky test caused by
+colliding random usernames.
 
 ## 2021-09
 

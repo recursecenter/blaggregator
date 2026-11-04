@@ -19,8 +19,8 @@ MANAGERS = ADMINS
 
 DATABASES = {
     "default": {
-        # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        # Add 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+        "ENGINE": "django.db.backends.postgresql",
         "NAME": "blaggregator_dev",
         # The following settings are not used with sqlite3:
         "USER": "sasha",
@@ -31,9 +31,6 @@ DATABASES = {
 }
 
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
-
-# Opt into the Django 6.0 default for URL fields without a scheme.
-FORMS_URLFIELD_ASSUME_HTTPS = True
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts

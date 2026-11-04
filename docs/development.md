@@ -62,7 +62,7 @@ $ pip install -r requirements.txt
 
 - Install Postgres (it's easy on OSX
   with [postgres.app](http://postgresapp.com/)) and `pip install
-  psycopg2`. Open the app to start your database server running locally.
+  psycopg`. Open the app to start your database server running locally.
 
   It is possible to use Docker for running the DB, if you prefer. See section
   Using Docker for the DB above.
