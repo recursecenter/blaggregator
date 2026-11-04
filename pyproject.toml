@@ -1,30 +1,47 @@
-[tool.poetry]
+[project]
 name = "blaggregator"
 version = "0.1.0"
 description = "A blog aggregator for the Recurse Center community"
-authors = ["Sasha Laundy <sasha.laundy@gmail.com>", "Puneeth Chaganti <punchagan@muse-amuse.in>"]
-license = "AGPL v3"
+authors = [
+    { name = "Sasha Laundy", email = "sasha.laundy@gmail.com" },
+    { name = "Puneeth Chaganti", email = "punchagan@muse-amuse.in" },
+]
+requires-python = ">=3.9,<4"
+license = "AGPL-3.0-only"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+dependencies = [
+    "Django>=3.2.7,<4",
+    "requests>=2.26.0,<3",
+    "feedparser>=6.0.8,<7",
+    "psycopg2>=2.9.1,<3",
+    "django-storages>=1.11.1,<2",
+    "social-auth-app-django>=5.0.0,<6",
+    "beautifulsoup4>=4.10.0,<5",
+    "gevent>=21.8.0,<22",
+    "dj-database-url>=0.5.0,<0.6",
+    "boto3>=1.18.44,<2",
+    "gunicorn>=20.1.0,<21",
+    "lxml>=4.6.3,<5",
+]
 
-[tool.poetry.dependencies]
-python = "^3.9"
-Django = "^3.2.7"
-requests = "^2.26.0"
-feedparser = "^6.0.8"
-psycopg2 = "^2.9.1"
-django-storages = "^1.11.1"
-social-auth-app-django = "^5.0.0"
-beautifulsoup4 = "^4.10.0"
-gevent = "^21.8.0"
-dj-database-url = "^0.5.0"
-boto3 = "^1.18.44"
-gunicorn = "^20.1.0"
-lxml = "^4.6.3"
+[dependency-groups]
+dev = [
+    "mock>=4.0.3,<5",
+    "factory-boy>=3.2.0,<4",
+    "flake8>=3.9.2,<4",
+]
 
-[tool.poetry.dev-dependencies]
-mock = "^4.0.3"
-factory-boy = "^3.2.0"
-flake8 = "^3.9.2"
+[tool.uv.build-backend]
+module-root = ""
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["uv_build>=0.10.2,<0.11.0"]
+build-backend = "uv_build"
