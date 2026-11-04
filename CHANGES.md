@@ -11,7 +11,8 @@ place to quickly see the latest changes that the project has undergone.
 
 ### Changed
 
-Modest pdates to README to bring it into the modern era and clarify how crawler decides what's "new."
+Modest updates to README to bring it into the modern era and clarify how
+crawler decides what's "new."
 
 ## 2021-09
 

@@ -30,7 +30,9 @@ Go [here](https://blaggregator.recurse.com/), log in, and go to your Profile in 
 
 On Blaggregator's next crawl, your two newest posts will be shown
 
-(You'll see a vestigial feed of recent posts. The original concept was to discuss the posts on Blaggregator itself, to be a less noisy environment for alums than Zulip, but Zulip is much more lively)
+(You'll see a vestigial feed of recent posts. The original concept was to
+discuss the posts on Blaggregator itself, to be a less noisy environment for
+alums than Zulip, but Zulip is much more lively)
 
 ### Why do I have to log in?
 
@@ -56,15 +58,23 @@ crawler next checks the registered blogs (as of this writing, hourly).
 
 ### I need to move things around on my website, how do I avoid spamming Zulip?
 
-So considerate of you to ask! Blaggregator already limits itself to posting only two new posts per crawl, for exactly this situation, so don't sweat it too much. 
+So considerate of you to ask! Blaggregator already limits itself to posting
+only two new posts per crawl, for exactly this situation, so don't sweat it too
+much.
 
-"New" is defined as a post having a new URL AND a new title. Blaggregator does not consider timestamps. If you need to change both, you *could* change the URLs, wait until the next crawl, then change the titles. But again, the worst case is two new posts. 
+"New" is defined as a post having a new URL AND a new title. Blaggregator does
+not consider timestamps. If you need to change both, you *could* change the
+URLs, wait until the next crawl, then change the titles. But again, the worst
+case is two new posts.
 
-If you posted more than two posts since Blaggregator's last crawl, it only Zulips about two of them, but all of them will appear in the (vestigial) feed on the live Blaggregator site. This also applies if you're adding a new blog with many past posts—only the last two will be Zuliped. 
+If you posted more than two posts since Blaggregator's last crawl, it only
+Zulips about two of them, but all of them will appear in the (vestigial) feed
+on the live Blaggregator site. This also applies if you're adding a new blog
+with many past posts—only the last two will be Zuliped.
 
 ### My blog is multi-purpose and not wholly code/Recurse Center specific
 
-No problem! RCers usually enjoy reading non-technical posts by others. 
+No problem! RCers usually enjoy reading non-technical posts by others.
 
 But, if you like, you could tag or categorize your relevant posts and make a
 separate RSS/Atom feed for them. Most blogging software has separate feeds for
@@ -75,7 +85,7 @@ If you use Wordpress, for instance, categorize all your code-related posts
 Blaggregator is: http://yoururl.com/blog/category/code/feed/
 
 ### Can I get an RSS feed of everyone's posts, to put into my feed reader?
-Yes! Find your personal authenticated URL in [your profile](https://blaggregator.recurse.com/profile/). 
+Yes! Find your personal authenticated URL in [your profile](https://blaggregator.recurse.com/profile/).
 
 ### Who's behind it?
 
