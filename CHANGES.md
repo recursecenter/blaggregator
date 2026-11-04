@@ -22,6 +22,9 @@ incompatible with it.
 Added a `docker run` command for starting a local Postgres DB to the
 development docs.
 
+Upgraded Django from 3.2 to 4.2 (LTS), and removed the deprecated
+`USE_L10N` setting.
+
 ## 2021-09
 
 ### Added

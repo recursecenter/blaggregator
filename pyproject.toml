@@ -18,7 +18,7 @@ classifiers = [
     "Programming Language :: Python :: 3.14",
 ]
 dependencies = [
-    "Django>=3.2.25,<4",
+    "Django>=4.2,<5",
     "requests>=2.26.0,<3",
     "feedparser>=6.0.8,<7",
     "psycopg2>=2.9.1,<3",
