@@ -1,12 +1,13 @@
 from collections import namedtuple
 import datetime
 from functools import wraps
+import logging
 import uuid
 
 from django.contrib import messages
 from django.contrib.auth import authenticate, logout
 from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Count
 from django.forms import Select, TextInput
@@ -17,15 +18,18 @@ from django.http import (
     Http404,
     HttpResponseForbidden,
 )
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 
 from home.models import Blog, Hacker, LogEntry, Post, STREAM_CHOICES
 from home.oauth import update_user_details
+from home.permissions import BLOCK_CRAWLING
 from home.feeds import LatestEntriesFeed
 from . import feedergrabber27
+
+log = logging.getLogger("blaggregator")
 
 EXISTING_FEED_MESSAGE = "This feed has already been added!"
 NO_CONTENT_MESSAGE = (
@@ -181,6 +185,23 @@ def delete_blog(request, blog_id):
     user = request.user
     blog.delete()
     return HttpResponseRedirect(reverse("profile", kwargs={"user_id": user.id}))
+
+
+@login_required
+@permission_required(BLOCK_CRAWLING, raise_exception=True)
+@require_POST
+def block_crawling(request, blog_id):
+    """Stop crawling a blog.  For admins and Recurse staff only.
+
+    The owner can turn crawling back on by editing the blog.
+
+    """
+    blog = get_object_or_404(Blog, id=blog_id)
+    blog.skip_crawl = True
+    blog.save(update_fields=["skip_crawl"])
+    log.info("User %s turned off crawling for blog %s", request.user.id, blog.id)
+    messages.success(request, "Crawling is turned off for {}.".format(blog.feed_url))
+    return HttpResponseRedirect(reverse("profile", kwargs={"user_id": blog.user_id}))
 
 
 @login_required

@@ -12,6 +12,7 @@ urlpatterns = [
     re_path(r"^add_blog/$", views.add_blog, name="add_blog"),
     re_path(r"^edit_blog/(?P<blog_id>\d+)/$", views.edit_blog, name="edit_blog"),
     re_path(r"^delete_blog/(?P<blog_id>\d+)/$", views.delete_blog, name="delete_blog"),
+    re_path(r"^block_crawling/(?P<blog_id>\d+)/$", views.block_crawling, name="block_crawling"),
     re_path(r"^atom\.xml$", views.feed, name="feed"),
     re_path(r"^refresh_token/$", views.refresh_token, name="refresh_token"),
     re_path(r"^post/(?P<slug>\w+)/view", views.view_post, name="view_post"),

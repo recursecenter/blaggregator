@@ -29,6 +29,10 @@ Upgraded Django from 3.2 to 6.1 (requires Python 3.12+), removed the deprecated
 Migrations now run automatically as a Heroku release step (`release:` in the
 `Procfile`), so they are applied on every deploy.
 
+Admins and Recurse Center faculty can now turn off crawling for a blog (and
+therefore future Zulip notification), from the UI. Posts already crawled would
+not be deleted from the DB.
+
 - [#197] `/profile/` is now the default landing page after login, to help new
   and returning users discover features.
 

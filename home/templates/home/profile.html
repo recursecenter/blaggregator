@@ -53,6 +53,12 @@
                                     <span class="badge badge-warning">Disabled</span>
                                 {% else %}
                                     <span class="badge badge-info">Active</span>
+                                    {% if perms.home.block_crawling %}
+                                        <form method="post" action="{% url 'block_crawling' blog.id %}" class="d-inline">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-link btn-sm p-0 ml-1 text-danger">Turn off</button>
+                                        </form>
+                                    {% endif %}
                                 {% endif %}
                             </td>
                             <td><a href="https://zulip.com/#narrow/stream/{{blog.get_stream_display}}" target="_blank">{{blog.get_stream_display}}</a></td>
