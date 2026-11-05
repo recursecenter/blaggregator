@@ -33,6 +33,8 @@ Admins and Recurse Center faculty can now turn off crawling for a blog (and
 therefore future Zulip notification), from the UI. Posts already crawled would
 not be deleted from the DB.
 
+Moved CI from Travis to GitHub Actions.
+
 - [#197] `/profile/` is now the default landing page after login, to help new
   and returning users discover features.
 

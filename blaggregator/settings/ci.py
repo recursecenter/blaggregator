@@ -1,7 +1,7 @@
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "travisdb",  # Must match travis.yml setting
+        "NAME": "blaggregator_ci",  # Must match the service config in .github/workflows/ci.yml
         "USER": "postgres",
         "PASSWORD": "",
         "HOST": "localhost",

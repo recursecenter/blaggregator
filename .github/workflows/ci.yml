@@ -1,0 +1,69 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_DB: blaggregator_ci
+          # Settings (blaggregator/settings/ci.py) connect as "postgres", with no password
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      # `CI` is set by GitHub Actions, and selects blaggregator/settings/ci.py
+      # Random tokens that aren't really used
+      SOCIAL_AUTH_HS_KEY: dummy-key
+      SOCIAL_AUTH_HS_SECRET: dummy-secret
+      HS_PERSONAL_TOKEN: dummy-token
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: astral-sh/setup-uv@v10.3.3
+        with:
+          enable-cache: true
+
+      # Installs the Python version from .python-version
+      - name: Install dependencies
+        run: uv sync --locked
+
+      # The About page is generated from README.md
+      - name: Check README is synced to the About page
+        run: |
+          uv run ./scripts/readme_to_about
+          git diff --exit-code home/templates/home/readme.html || {
+            echo "::error::Run ./scripts/readme_to_about and commit home/templates/home/readme.html"
+            exit 1
+          }
+
+      - name: Run tests
+        run: uv run coverage run manage.py test home
+
+      - name: Coverage report
+        if: success() || failure()
+        run: uv run coverage report -m
+
+      - name: Lint
+        run: uv run flake8 --ignore=E501 --exclude=migrations,wsgi.py,blaggregator/settings/__init__.py,.venv .

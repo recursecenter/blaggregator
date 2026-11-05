@@ -8,9 +8,9 @@ elif "STAGING" in os.environ:
     print("** DETECTED STAGING ENVIRONMENT")
     from .staging import *
 
-elif "TRAVIS" in os.environ:
-    print("** DETECTED TRAVIS ENVIRONMENT")
-    from .travis import *
+elif "CI" in os.environ:
+    print("** DETECTED CI ENVIRONMENT")
+    from .ci import *
 
 elif "DOCKER_ENV" in os.environ:
     print("** DETECTED DOCKER ENVIRONMENT")
