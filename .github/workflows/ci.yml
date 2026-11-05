@@ -58,6 +58,10 @@ jobs:
             exit 1
           }
 
+      # Fails if a model was changed without committing a migration
+      - name: Check for missing migrations
+        run: uv run manage.py makemigrations --check --dry-run
+
       - name: Run tests
         run: uv run coverage run manage.py test home
 

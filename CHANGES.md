@@ -33,7 +33,8 @@ Admins and Recurse Center faculty can now turn off crawling for a blog (and
 therefore future Zulip notification), from the UI. Posts already crawled would
 not be deleted from the DB.
 
-Moved CI from Travis to GitHub Actions.
+Moved CI from Travis to GitHub Actions. CI also fails if a model change is
+missing a migration.
 
 Multiple fixes to the Docker-based development setup. CI now builds the image
 and runs the tests in it, so this doesn't silently break.
