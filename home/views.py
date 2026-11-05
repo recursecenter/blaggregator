@@ -11,7 +11,12 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Count
 from django.forms import Select, TextInput
 from django.forms.models import modelform_factory
-from django.http import HttpResponse, HttpResponseRedirect, Http404, HttpResponseForbidden
+from django.http import (
+    HttpResponse,
+    HttpResponseRedirect,
+    Http404,
+    HttpResponseForbidden,
+)
 from django.shortcuts import render
 from django.urls import reverse
 from django.utils import timezone
@@ -23,11 +28,16 @@ from home.feeds import LatestEntriesFeed
 from . import feedergrabber27
 
 EXISTING_FEED_MESSAGE = "This feed has already been added!"
-NO_CONTENT_MESSAGE = 'Could not fetch feed from <a href="{url}">{url}</a>. Is the website up?'
-INVALID_FEED_MESSAGE = (
-    "This does not seem to be a valid feed. " "Please use your blog's feed url (not the web url)!"
+NO_CONTENT_MESSAGE = (
+    'Could not fetch feed from <a href="{url}">{url}</a>. Is the website up?'
 )
-SUGGEST_FEED_URL_MESSAGE = INVALID_FEED_MESSAGE + (' It could be -- <a href="{url}">{url}</a>')
+INVALID_FEED_MESSAGE = (
+    "This does not seem to be a valid feed. "
+    "Please use your blog's feed url (not the web url)!"
+)
+SUGGEST_FEED_URL_MESSAGE = INVALID_FEED_MESSAGE + (
+    ' It could be -- <a href="{url}">{url}</a>'
+)
 SUCCESS_MESSAGE = (
     'Your blog (<a href="{url}">{url}</a>) has been added successfully. '
     "The next crawl (hourly) will fetch your posts."
@@ -145,7 +155,11 @@ def add_blog(request):
             feedergrabber27.CharacterEncodingOverride,
         ):  # Content failed to parse
             guessed_url = feedergrabber27.find_feed_url(contents)
-            message = SUGGEST_FEED_URL_MESSAGE if guessed_url is not None else INVALID_FEED_MESSAGE
+            message = (
+                SUGGEST_FEED_URL_MESSAGE
+                if guessed_url is not None
+                else INVALID_FEED_MESSAGE
+            )
             messages.error(request, message.format(url=guessed_url), extra_tags="safe")
         else:
             # create new blog record in db

@@ -20,8 +20,14 @@ urlpatterns = [
     re_path(r"^login-error/$", views.login_error, name="login_error"),
     re_path(r"^about/$", views.about, name="about"),
     re_path(r"^most_viewed/$", views.most_viewed, name="most_viewed"),
-    re_path(r"^most_viewed/(?P<ndays>\d+)/$", views.most_viewed, name="most_viewed_days"),
-    re_path(r"^updated_avatar/(?P<user_id>\d+)/$", views.updated_avatar, name="updated_avatar"),
+    re_path(
+        r"^most_viewed/(?P<ndays>\d+)/$", views.most_viewed, name="most_viewed_days"
+    ),
+    re_path(
+        r"^updated_avatar/(?P<user_id>\d+)/$",
+        views.updated_avatar,
+        name="updated_avatar",
+    ),
     re_path(r"^search/$", views.search, name="search"),
     path("", include("social_django.urls", namespace="social")),
 ]
