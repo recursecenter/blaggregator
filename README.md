@@ -56,6 +56,13 @@ See below for how Blaggregator defines "new" posts.
 If you published it less than an hour ago, hang tight: it'll show up when the
 crawler next checks the registered blogs (as of this writing, hourly).
 
+### I'm an admin or Recurse staff. How do I stop crawling someone's blog?
+
+Open their profile page, `https://blaggregator.recurse.com/profile/<id>/`,
+where `<id>` is the number in their `recurse.com/people/<id>` URL. Next to each
+of their blogs that is "Active", click "Turn off". Crawling stays off until the
+owner edits the blog or adds the feed again.
+
 ### I need to move things around on my website, how do I avoid spamming Zulip?
 
 So considerate of you to ask! Blaggregator already limits itself to posting
