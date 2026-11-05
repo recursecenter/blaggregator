@@ -65,7 +65,7 @@ class OAuthTestCase(TestCase):
 
         # Then
         self.assertEqual(302, response.status_code)
-        self.assertTrue(response["Location"].endswith("/new/"))
+        self.assertTrue(response["Location"].endswith("/profile/"))
         self.assertEqual(1, User.objects.count())
         user = User.objects.get(email=self.USER_DATA["email"])
         self.assertEqual(user.hacker.avatar_url, self.USER_DATA["image_path"])
@@ -80,7 +80,7 @@ class OAuthTestCase(TestCase):
 
         # Then
         self.assertEqual(302, response.status_code)
-        self.assertTrue(response["Location"].endswith("/new/"))
+        self.assertTrue(response["Location"].endswith("/profile/"))
         self.assertEqual(1, User.objects.count())
         user = User.objects.get(email=self.USER_DATA["email"])
         self.assertEqual(user.hacker.avatar_url, self.USER_DATA["image_path"])
