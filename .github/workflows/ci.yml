@@ -62,15 +62,15 @@ jobs:
       - name: Check for missing migrations
         run: uv run manage.py makemigrations --check --dry-run
 
+      - name: Lint
+        run: uv run flake8 --ignore=E501 --exclude=migrations,wsgi.py,blaggregator/settings/__init__.py,.venv .
+
       - name: Run tests
         run: uv run coverage run manage.py test home
 
       - name: Coverage report
         if: success() || failure()
         run: uv run coverage report -m
-
-      - name: Lint
-        run: uv run flake8 --ignore=E501 --exclude=migrations,wsgi.py,blaggregator/settings/__init__.py,.venv .
 
   # Make sure the Docker-based development setup (docs/development.md) works
   docker:
