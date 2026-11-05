@@ -35,6 +35,9 @@ not be deleted from the DB.
 
 Moved CI from Travis to GitHub Actions.
 
+Multiple fixes to the Docker-based development setup. CI now builds the image
+and runs the tests in it, so this doesn't silently break.
+
 - [#197] `/profile/` is now the default landing page after login, to help new
   and returning users discover features.
 
