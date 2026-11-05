@@ -5,5 +5,5 @@ bin/
 lib/
 include/
 .Python
-blaggregator/static-collected
+/blaggregator/settings/static-collected
 web-variables.env
