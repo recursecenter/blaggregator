@@ -43,7 +43,7 @@ manually [updated manually](DB-dump.md). Heroku lets you do
 It **doesn't** have Zulip keys, so no worries about accidents there.
 
 It has an env var STAGING which determines some things in settings.py (mostly
-which DB and S3 bucket to use)
+which DB to use)
 
 # Heroku Database backups
 

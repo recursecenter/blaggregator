@@ -7,6 +7,11 @@ SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 DEBUG = "DJANGO_DEBUG" in os.environ
 
 STATIC_URL = "/static/"
+
+STORAGES = {
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
+}
 ROOT_URL = "http://localhost:8000/"
 
 ADMINS = (
@@ -94,6 +99,8 @@ SECRET_KEY = os.environ.get(
 
 MIDDLEWARE = (
     "home.middleware.RecurseSubdomainMiddleware",
+    # Serves the files collected by `collectstatic` (from STATIC_ROOT).
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -140,7 +147,6 @@ INSTALLED_APPS = (
     "django.contrib.postgres",
     "home",
     "django.contrib.admin",
-    "storages",
     "django.contrib.humanize",
     "social_django",
 )
