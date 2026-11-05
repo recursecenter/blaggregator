@@ -7,10 +7,9 @@ get started with the code.
 ## Installation:
 
 ### Docker Setup
-Requires Docker and [Docker-compose](https://docs.docker.com/compose/install/)
-to simplify setup of development environment. See
-the [traditional setup section](#traditional-setup) if you don't wish to use
-docker.
+Requires [Docker](https://docs.docker.com/get-docker/) with the `docker compose`
+plugin. See the [traditional setup section](#traditional-setup) if you don't
+wish to use Docker.
 
 Copy `web-variables.env.template` to `web-variables.env` and fill out your
 credentials. See [Credentials](#credentials) for instructions on generating.
@@ -22,10 +21,26 @@ SOCIAL_AUTH_HS_SECRET=<token>
 ```
 
 ```bash
-docker-compose up
-# Runs migrations and the app using runserver
-# You can ssh into box to run other commands
+docker compose up
+# Runs migrations and the app (using runserver) at http://localhost:8000
 ```
+
+The code is mounted into the container, so edits show up right away.  Run other
+commands, like the tests, in the container with `docker compose run`:
+
+```bash
+docker compose run --rm web python manage.py test home
+```
+
+The ports can be changed if they clash with something else on your machine
+(`8000` for the app, `5432` for Postgres):
+
+```bash
+WEB_PORT=8001 DB_PORT=5433 docker compose up
+```
+
+If `docker compose up` fails with a database connection error, check the
+logs of the `db` container (`docker compose logs db`) first.
 
 #### Using Docker for the DB
 
@@ -33,23 +48,12 @@ It is possible to use Docker just for the DB and use the traditional setup for
 setting up your Python development environment.
 
 ```bash
-docker-compose -f docker-compose.pg.yml up --build
+docker compose up db
 ```
 
-OR use the following command if you don't have docker-compose
-
-```bash
-docker run --rm --name blaggregator-db \
-    -p 5432:5432 \
-    -e POSTGRES_USER=sasha \
-    -e POSTGRES_PASSWORD=sasha \
-    -e POSTGRES_DB=blaggregator_dev \
-    postgres \
-    postgres -c log_statement=all
-```
-
-This will start a Postgres server that the server running on your local host
-machine can connect to, with no additional changes to the configuration.
+This starts a Postgres server on port 5432, that the server running on your
+local host machine can connect to, with no additional changes to the
+configuration.
 
 ### Traditional Setup
 - Set up your virtual environment
