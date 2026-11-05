@@ -1,7 +1,7 @@
 from .base import ALLOWED_HOSTS
 from .heroku import *  # noqa
 
-ROOT_URL = "https://blaggregator.herokuapp.com/"
+ROOT_URL = "https://blaggregator.recurse.com/"
 ALLOWED_HOSTS += [
     "blaggregator.herokuapp.com",
     "www.blaggregator.us",
