@@ -79,8 +79,8 @@
                     </li>
                     {% if user.is_authenticated %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'feed' %}?token={{user.hacker.token}}" target="_blank">
-                                <img class="feed-icon" src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Rss-feed.svg/24px-Rss-feed.svg.png"/>
+                            <a class="nav-link" href="{% url 'profile' user.id %}#rss-feed">
+                                My RSS Feed
                             </a>
                         </li>
                     {% endif %}
