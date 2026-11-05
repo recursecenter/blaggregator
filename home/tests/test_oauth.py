@@ -53,7 +53,7 @@ class OAuthTestCase(TestCase):
 
     def test_login_redirects_to_authorization_url(self):
         # When
-        response = self.client.get("/login/hackerschool/")
+        response = self.client.post("/login/hackerschool/")
 
         # Then
         self.assertEqual(302, response.status_code)

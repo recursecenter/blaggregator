@@ -15,7 +15,10 @@
     the entire Recurse Center community, including alums. <a href="/about">Read
     more</a>.</p>
 
-    <p><a href="/login/hackerschool/" class="btn btn-primary">Recurse Center OAuth Login</a></p>
+    <form method="post" action="/login/hackerschool/">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">Recurse Center OAuth Login</button>
+    </form>
 
 </div>
 
