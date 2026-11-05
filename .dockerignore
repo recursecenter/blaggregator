@@ -1,0 +1,11 @@
+# Keep secrets and host-specific files out of the image
+.envrc
+web-variables.env
+
+.git
+.github
+.venv
+.mypy_cache
+__pycache__
+*.pyc
+blaggregator/settings/static-collected
