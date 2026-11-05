@@ -7,6 +7,13 @@ ALLOWED_HOSTS += [
     "www.blaggregator.us",
     "blaggregator.recurse.com",
 ]
+# Requests via blaggregator.recurse.com reach the app with
+# X-Forwarded-Proto=http (an extra proxy hop), so Django sees them as insecure
+# and its Origin check rejects the browser's https:// Origin on POSTs.
+CSRF_TRUSTED_ORIGINS = [
+    "https://blaggregator.recurse.com",
+    "https://blaggregator.herokuapp.com",
+]
 AWS_STORAGE_BUCKET_NAME = "blaggregator"
 STATIC_URL = "http://" + AWS_STORAGE_BUCKET_NAME + ".s3.amazonaws.com/"
 SOCIAL_AUTH_HACKERSCHOOL_REDIRECT_URL = "http://www.blaggregator.us/complete/hackerschool"
