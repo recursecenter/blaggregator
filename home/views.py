@@ -99,7 +99,7 @@ def view_post(request, slug):
 
 def log_in_oauth(request):
     if request.user.is_authenticated:
-        return HttpResponseRedirect(reverse("new"))
+        return HttpResponseRedirect(reverse("own_profile"))
 
     else:
         return render(request, "home/log_in_oauth.html")
