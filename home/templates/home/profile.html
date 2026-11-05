@@ -33,7 +33,7 @@
 
     <div class="clearfix py-2">
         {% if forms %}
-            <h2>Blogs</h2>
+            <h2>My Blogs</h2>
             <table class="table">
                 <tr>
                     <th>Feed URL</th> <th>Crawling?</th> <th>Stream</th>
@@ -91,7 +91,7 @@
     {% if owner %}
         <div class="clearfix my-4 py-4">
             <div class="alert-block">
-                <h2 id="rss-feed">Blaggregator RSS feed</h2>
+                <h2 id="rss-feed">My Blaggregator RSS feed</h2>
                 <p>
                     Blaggregator provides an <strong>authenticated</strong>
                     <a href="{{feed_url}}">RSS feed</a>.  Please keep
@@ -113,7 +113,7 @@
 
     <div class="clearfix">
         {% if post_list %}
-            <h2>Blog Posts</h2>
+            <h2>My Blog Posts</h2>
             <span class="text-muted">{{ post_list.count }} posts</span>
             {% include 'home/postlist.html' %}
         {% endif %}
