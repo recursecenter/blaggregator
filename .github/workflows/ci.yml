@@ -67,3 +67,23 @@ jobs:
 
       - name: Lint
         run: uv run flake8 --ignore=E501 --exclude=migrations,wsgi.py,blaggregator/settings/__init__.py,.venv .
+
+  # Make sure the Docker-based development setup (docs/development.md) works
+  docker:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Create env file
+        run: cp web-variables.env.template web-variables.env
+
+      - name: Build image
+        run: docker compose build
+
+      - name: Run tests
+        run: docker compose run --rm web python manage.py test home
+
+      - name: Tear down
+        if: always()
+        run: docker compose down -v
