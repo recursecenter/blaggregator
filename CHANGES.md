@@ -44,6 +44,10 @@ The app and the tests no longer need Recurse Center credentials
 locally. They are still required in production and staging, where a missing one
 is a startup error.
 
+Added a `seed_dev_data` management command, which creates fake users, blogs and
+posts for local development. It only runs with `DJANGO_DEBUG` set, and never on
+production or staging.
+
 - [#197] `/profile/` is now the default landing page after login, to help new
   and returning users discover features.
 
