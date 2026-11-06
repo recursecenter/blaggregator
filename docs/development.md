@@ -4,162 +4,111 @@ Heroku and uses their Postgres and Scheduler add-ons.
 This document aims to help you setup a development environment and to help you
 get started with the code.
 
-## Installation:
+## Quick start (Docker)
 
-### Docker Setup
-Requires [Docker](https://docs.docker.com/get-docker/) with the `docker compose`
-plugin. See the [traditional setup section](#traditional-setup) if you don't
-wish to use Docker.
-
-Copy `web-variables.env.template` to `web-variables.env` and fill out your
-credentials. See [Credentials](#credentials) for instructions on generating.
+You need [Docker](https://docs.docker.com/get-docker/) with the `docker compose`
+plugin.  You don't need any Recurse Center credentials.
 
 ```bash
-HS_PERSONAL_TOKEN=<token>
-SOCIAL_AUTH_HS_KEY=<token>
-SOCIAL_AUTH_HS_SECRET=<token>
-```
-
-```bash
+git clone https://github.com/recursecenter/blaggregator
+cd blaggregator
 docker compose up
-# Runs migrations and the app (using runserver) at http://localhost:8000
 ```
 
-The code is mounted into the container, so edits show up right away.  Run other
-commands, like the tests, in the container with `docker compose run`:
+This starts Postgres, runs the migrations and starts the app at
+http://localhost:8000.  The code is mounted into the container, so your edits
+show up right away.
+
+In another terminal, add some fake users, blogs and posts:
 
 ```bash
-docker compose run --rm web python manage.py test home
+docker compose exec web python manage.py seed_dev_data
 ```
 
-The ports can be changed if they clash with something else on your machine
-(`8000` for the app, `5432` for Postgres):
+Now open http://localhost:8000 and click "Log in as the dev user".  This logs
+you in as a superuser, so the [admin](http://localhost:8000/admin) works too.
+(The button only shows up when `DJANGO_DEBUG` and `DEV_LOGIN` are set, as they
+are in `docker-compose.yml`.  It is never enabled on a deployed server.)
+
+Other useful commands:
+
+```bash
+docker compose run --rm web python manage.py test home   # run the tests
+docker compose exec web python manage.py shell            # Django shell
+docker compose logs db                                    # database logs
+```
+
+If a port is already in use, pick other ones:
 
 ```bash
 WEB_PORT=8001 DB_PORT=5433 docker compose up
 ```
 
-If `docker compose up` fails with a database connection error, check the
-logs of the `db` container (`docker compose logs db`) first.
+If `docker compose up` fails with a database connection error, check the logs of
+the `db` container first.
 
-#### Using Docker for the DB
+## Without Docker
 
-It is possible to use Docker just for the DB and use the traditional setup for
-setting up your Python development environment.
+You need [uv](https://docs.astral.sh/uv/) and a Postgres server.  uv installs
+the Python version in `.python-version` for you.
+
+```bash
+uv sync
+```
+
+For Postgres, either use the one from `docker-compose.yml`:
 
 ```bash
 docker compose up db
 ```
 
-This starts a Postgres server on port 5432, that the server running on your
-local host machine can connect to, with no additional changes to the
-configuration.
-
-### Traditional Setup
-- Set up your virtual environment
-
-- Install dependencies:
+or create a database called `blaggregator_dev` in your own Postgres, owned by
+a user `sasha` with password `sasha` (the defaults in
+`blaggregator/settings/base.py`) that is allowed to create databases (the tests
+create their own).
 
 ```bash
-$ pip install -r requirements.txt
+export DJANGO_DEBUG=1 DEV_LOGIN=1
+uv run manage.py migrate
+uv run manage.py seed_dev_data
+uv run manage.py runserver
+uv run manage.py test home
 ```
 
-- Install Postgres (it's easy on OSX
-  with [postgres.app](http://postgresapp.com/)) and `pip install
-  psycopg`. Open the app to start your database server running locally.
+## Logging in with Recurse Center OAuth (optional)
 
-  It is possible to use Docker for running the DB, if you prefer. See section
-  Using Docker for the DB above.
+You only need this to work on the login flow, or on things that use the
+Recurse Center API (like fetching user details).  You need to be a Recurser.
 
-    - Open a Postgres shell:
+Go to [your settings on recurse.com](https://www.recurse.com/settings/apps),
+and make a new app.  Name it something like "blaggregator-local", and set the
+redirect URL to http://localhost:8000/complete/hackerschool/ (WITH trailing
+slash).  Then, set these environment variables:
 
-      ```bash
-      $ psql
-      ```
+| Variable                | Where to find it                       |
+|-------------------------|----------------------------------------|
+| `SOCIAL_AUTH_HS_KEY`    | the app's "ID"                         |
+| `SOCIAL_AUTH_HS_SECRET` | the app's "Secret"                     |
+| `HS_PERSONAL_TOKEN`     | a personal access token, created in the same settings page (give it a name) |
 
-    - Create your database:
+With Docker, copy `web-variables.env.template` to `web-variables.env`, fill it
+in, and restart `docker compose up`.  Without Docker, export them.
 
-      ```sql
-      CREATE DATABASE blaggregator_dev;
-      ```
+When you log in through OAuth, don't use an email address for your local admin
+account that is the same as your Recurse Center account, or you won't be able
+to create a user account for yourself.  Using the dev login avoids this problem.
 
-       The semicolon is critical. IMPORTANT: when you are creating your admin
-       account on the db, *don't* use the same email address as your Recurse
-       Center account or you won't be able to create a user account for
-       yourself. Do username+root@example.com or something.
+## Making yourself an admin
 
-    - Create the user for Django to use. As the `postgres` user, you can run the following:
+The dev user is already a superuser.  If you logged in with OAuth, open a Django
+shell (`manage.py shell`) and run:
 
-     ```shell
-     createuser --interactive --pwprompt
-     ```
-
-      Set username and password to `sasha`.  Let the new user create and delete databases.
-
-- Alternatively, you could use Sqlite instead of Postgres to get off the
-  blocks, quickly.  Change the value of `'ENGINE'` in the
-  `DATABASES['default']` dictionary to `'django.db.backends.sqlite3'`.
-
-- Set up initial tables:
-
-```bash
-$ python manage.py migrate
+```python
+from django.contrib.auth.models import User
+u = User.objects.get(first_name="Sasha")  # your first name
+u.is_superuser = u.is_staff = True
+u.save()
 ```
-
-- Bring the tables up to date with the latest South migrations:
-
-```bash
-$ python manage.py migrate
-```
-
-If you get this error:
-
-```
-OperationalError: could not connect to server: No such file or directory
-Is the server running locally and accepting
-connections on Unix domain socket "/var/pgsql_socket/.s.PGSQL.5432"?
-```
-then your server isn't running. Go fiddle with Postgres.app.
-
-- Turn on debugging in your environment so you can get useful error messages:
-
-```bash
-$ export DJANGO_DEBUG=True
-```
-
-- Blaggregator uses oauth2 to log in users against recurse.com and tokens to update user details. Store `SOCIAL_AUTH_HS_KEY`, `SOCIAL_AUTH_HS_SECRET`, and HS_PERSONAL_TOKEN in your environment. See [Credentials](#credentials) for instructions on generating these.
-
-
-- Then run a local server:
-
-```bash
-$ python manage.py runserver
-```
-
-You can administer your app through
-the [handy-dandy admin interface](http://localhost:8000/admin). To see this
-page, you'll need to give your user account superuser privileges:
-
-1. go to http://localhost:8000/ and auth in through HS's oauth
-2. `$ python manage.py shell` to open Django's shell and use its ORM
-3. `>>> from django.contrib.auth.models import User` import the User model
-   (should you need the other models defined in `models.py`, import from
-   `home.models`. User uses Django's built-in User model)
-4.  `>>> u = User.objects.get(first_name="Sasha")` or whatever your first name
-       is. Grab your user object from the db.
-5.  `>>> u.is_superuser = True` make your account a superuser so you can access
-       the admin
-6.  `>>> u.save()` Save these changes to the db.
-7.  You should now be able to access localhost:8000/admin while logged in!
-
-## Setup
-
-### Credentials
-
-Go to [your settings on recurse.com](https://www.recurse.com/settings/apps), make a new app. Name it something like "blaggregator-local" and the url should be http://localhost:8000/complete/hackerschool/ (WITH trailing slash). There you can get `SOCIAL_AUTH_HS_KEY` (the generated app ID) and `SOCIAL_AUTH_HS_SECRET` (the generated secret).
-
-Also create a personal access token and give it a name. This will generate the token to use for `HS_PERSONAL_TOKEN`.
-
 
 ## Code overview
 
@@ -167,7 +116,9 @@ Key files:
 
 - `home/views.py`: the heart of the app. all of the views ("controllers" if
   you're coming from Ruby)
-- `blaggregator/settings.py`: app settings
+- `blaggregator/settings/`: app settings (`base.py`, plus one file per environment)
 - `home/management/commands/crawlposts.py`: background crawler script
 - `home/feedergrabber27.py`: feed parser
 - `home/templates/home`: all templates live here
+- `home/dev.py`, `home/management/commands/seed_dev_data.py`: the dev login and
+  fake data, for working without Recurse Center credentials

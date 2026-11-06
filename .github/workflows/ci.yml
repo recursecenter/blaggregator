@@ -79,9 +79,6 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: Create env file
-        run: cp web-variables.env.template web-variables.env
-
       - name: Build image
         run: docker compose build
 

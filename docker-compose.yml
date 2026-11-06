@@ -9,7 +9,7 @@ services:
       POSTGRES_PASSWORD: sasha
       POSTGRES_DB: blaggregator_dev
     ports:
-      - "${DB_PORT:-5432}:5432"
+      - "127.0.0.1:${DB_PORT:-5432}:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -25,13 +25,17 @@ services:
       db:
         condition: service_healthy
     env_file:
-      - web-variables.env
+      # Optional: only needed to log in with Recurse Center OAuth
+      - path: web-variables.env
+        required: false
     environment:
       # DOCKER_ENV selects blaggregator/settings/docker.py (DB host: "db")
       DOCKER_ENV: "1"
       DJANGO_DEBUG: "1"
+      # A "log in as dev user" button, so no Recurse credentials are needed
+      DEV_LOGIN: "1"
     ports:
-      - "${WEB_PORT:-8000}:8000"
+      - "127.0.0.1:${WEB_PORT:-8000}:8000"
     volumes:
       - .:/code
 
