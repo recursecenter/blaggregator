@@ -54,6 +54,7 @@ def announce_posts(posts, debug=True):
             content = content + summary
         send_message_zulip(to, subject, content, type_="stream")
 
+
 def create_summary(content, limit=480):
     """From the contents of the first paragraph (or the whole content if no <p> tag),
     extract text up to a length of limit, preserving HTML tags.
@@ -77,8 +78,9 @@ def create_summary(content, limit=480):
             continue
         stopat = length - limit
         string.replace_with(string[:stopat], "...")
-        length = stop
+        length = limit
     return QUOTE.format(md(str(summary)))
+
 
 def delete_message(message_id, content="(deleted)"):
     message_url = "{}/{}".format(MESSAGES_URL, message_id)
