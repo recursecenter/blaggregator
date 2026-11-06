@@ -9,6 +9,9 @@ from django.conf import settings
 from django.template.loader import get_template
 from django.urls import reverse
 import requests
+from markdownify import markdownify as md
+from bs4 import BeautifulSoup
+import html
 
 from home.models import Hacker, Post
 from home.oauth import update_user_details
@@ -18,6 +21,7 @@ ZULIP_EMAIL = os.environ.get("ZULIP_EMAIL")
 MESSAGES_URL = "https://recurse.zulipchat.com/api/v1/messages"
 MEMBERS_URL = "https://recurse.zulipchat.com/api/v1/users"
 ANNOUNCE_MESSAGE = "{} has a new blog post: [{}]({})"
+QUOTE = "\n```quote\n{}\n```"
 log = logging.getLogger("blaggregator")
 
 
@@ -45,8 +49,36 @@ def announce_posts(posts, debug=True):
         path = reverse("view_post", kwargs={"slug": post.slug})
         url = "{}/{}".format(settings.ROOT_URL.rstrip("/"), path.lstrip("/"))
         content = ANNOUNCE_MESSAGE.format(author, title, url)
+        if post.content:
+            summary = create_summary(post.content)
+            content = content + summary
         send_message_zulip(to, subject, content, type_="stream")
 
+def create_summary(content, limit=480):
+    """From the contents of the first paragraph (or the whole content if no <p> tag),
+    extract text up to a length of limit, preserving HTML tags.
+    If nonempty, the returned value is a string formatted as markdown and surrounded by
+    ```quote
+    ```
+    """
+    soup = BeautifulSoup(html.unescape(content), 'html.parser')
+    summary = soup.p if soup.p else soup
+    if not summary.text:
+        return ""
+    if len(summary.text) <= limit:
+        return QUOTE.format(md(str(summary)))
+    length = 0
+    for string in summary.strings:
+        if length >= limit:
+            string.extract()
+            continue
+        if length + len(string) < limit:
+            length = length + len(string)
+            continue
+        stopat = stop - limit
+        string.replace_with(string[:stopat], "...")
+        length = stop
+    return QUOTE.format(md(str(summary)))
 
 def delete_message(message_id, content="(deleted)"):
     message_url = "{}/{}".format(MESSAGES_URL, message_id)
