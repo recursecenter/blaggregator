@@ -28,7 +28,7 @@ docker compose exec web python manage.py seed_dev_data
 Now open http://localhost:8000 and click "Log in as the dev user".  This logs
 you in as a superuser, so the [admin](http://localhost:8000/admin) works too.
 (The button only shows up when `DJANGO_DEBUG` and `DEV_LOGIN` are set, as they
-are in `docker-compose.yml`.  It is never enabled on a deployed server.)
+are in `dev.env`.  It is never enabled on a deployed server.)
 
 Other useful commands:
 
@@ -67,8 +67,16 @@ a user `sasha` with password `sasha` (the defaults in
 `blaggregator/settings/base.py`) that is allowed to create databases (the tests
 create their own).
 
+`dev.env` turns on debug mode and the dev login (it's what Docker uses too).
+Tell uv to load it, once per shell:
+
 ```bash
-export DJANGO_DEBUG=1 DEV_LOGIN=1
+export UV_ENV_FILE=dev.env
+```
+
+Then:
+
+```bash
 uv run manage.py migrate
 uv run manage.py seed_dev_data
 uv run manage.py runserver

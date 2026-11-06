@@ -25,15 +25,15 @@ services:
       db:
         condition: service_healthy
     env_file:
+      # Debug mode and the "log in as dev user" button, so no Recurse
+      # credentials are needed.  Also used for setups without Docker.
+      - dev.env
       # Optional: only needed to log in with Recurse Center OAuth
       - path: web-variables.env
         required: false
     environment:
       # DOCKER_ENV selects blaggregator/settings/docker.py (DB host: "db")
       DOCKER_ENV: "1"
-      DJANGO_DEBUG: "1"
-      # A "log in as dev user" button, so no Recurse credentials are needed
-      DEV_LOGIN: "1"
     ports:
       - "127.0.0.1:${WEB_PORT:-8000}:8000"
     volumes:
