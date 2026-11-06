@@ -20,6 +20,13 @@
         <button type="submit" class="btn btn-primary">Recurse Center OAuth Login</button>
     </form>
 
+    {% if dev_login %}
+    <form method="post" action="{% url 'dev_login' %}" style="margin-top: 15px">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-secondary">Log in as the dev user</button>
+    </form>
+    {% endif %}
+
 </div>
 
 {% endblock %}

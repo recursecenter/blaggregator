@@ -4,8 +4,9 @@ from functools import wraps
 import logging
 import uuid
 
+from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth import authenticate, logout
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -23,6 +24,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 
+from home.dev import get_dev_user
 from home.models import Blog, Hacker, LogEntry, Post, STREAM_CHOICES
 from home.oauth import update_user_details
 from home.permissions import BLOCK_CRAWLING
@@ -116,7 +118,18 @@ def log_in_oauth(request):
         return HttpResponseRedirect(reverse("own_profile"))
 
     else:
-        return render(request, "home/log_in_oauth.html")
+        return render(
+            request, "home/log_in_oauth.html", {"dev_login": settings.DEV_LOGIN}
+        )
+
+
+@require_POST
+def dev_login(request):
+    """Log in as a fake superuser.  For local development only."""
+    if not settings.DEV_LOGIN:
+        raise Http404
+    login(request, get_dev_user(), backend="home.oauth.HackerSchoolOAuth2")
+    return HttpResponseRedirect(reverse("own_profile"))
 
 
 @login_required

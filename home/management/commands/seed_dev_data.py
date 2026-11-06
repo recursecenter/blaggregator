@@ -3,6 +3,7 @@
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 
+from home.dev import DEV_USERNAME, get_dev_user
 from home.models import Hacker, User
 
 
@@ -20,13 +21,17 @@ class Command(BaseCommand):
         # Test factories are a development dependency, so import them lazily.
         from home.tests.utils import BlogFactory, PostFactory, UserFactory
 
-        if User.objects.exists():
+        dev_user = get_dev_user()
+        if User.objects.exclude(id=dev_user.id).exists():
             self.stdout.write("Database already has data; not adding any.")
             return
 
-        for user in UserFactory.create_batch(users):
-            Hacker.objects.create(user=user)
+        for user in [dev_user] + UserFactory.create_batch(users):
+            Hacker.objects.get_or_create(user=user)
             blog = BlogFactory(user=user)
             PostFactory.create_batch(posts, blog=blog)
 
-        self.stdout.write("Created {} users with {} posts each.".format(users, posts))
+        self.stdout.write(
+            "Created {} users with {} posts each.  Log in as {} using the dev "
+            "login (DEV_LOGIN=1).".format(users + 1, posts, DEV_USERNAME)
+        )

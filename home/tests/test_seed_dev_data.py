@@ -27,14 +27,15 @@ class SeedDevDataTestCase(TestCase):
     @override_settings(DEBUG=True)
     def test_creates_users_blogs_and_posts(self):
         self.run_command("--users", "2", "--posts", "3")
-        self.assertEqual(User.objects.count(), 2)
-        self.assertEqual(Hacker.objects.count(), 2)
-        self.assertEqual(Blog.objects.count(), 2)
-        self.assertEqual(Post.objects.count(), 6)
+        # The dev user, and two others
+        self.assertEqual(User.objects.count(), 3)
+        self.assertEqual(Hacker.objects.count(), 3)
+        self.assertEqual(Blog.objects.count(), 3)
+        self.assertEqual(Post.objects.count(), 9)
 
     @override_settings(DEBUG=True)
     def test_does_not_add_data_twice(self):
         self.run_command("--users", "1", "--posts", "1")
         self.run_command("--users", "1", "--posts", "1")
-        self.assertEqual(User.objects.count(), 1)
-        self.assertEqual(Post.objects.count(), 1)
+        self.assertEqual(User.objects.count(), 2)
+        self.assertEqual(Post.objects.count(), 2)

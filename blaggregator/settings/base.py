@@ -11,6 +11,10 @@ DEBUG = "DJANGO_DEBUG" in os.environ
 # Production and staging set these (see settings/__init__.py)
 DEPLOYED = "PROD" in os.environ or "STAGING" in os.environ
 
+# Lets developers log in as a fake superuser, without Recurse Center
+# credentials.  Needs DEBUG, and is never enabled on a deployed server.
+DEV_LOGIN = DEBUG and "DEV_LOGIN" in os.environ and not DEPLOYED
+
 
 def recurse_credential(name):
     """Get a Recurse Center API credential from the environment.

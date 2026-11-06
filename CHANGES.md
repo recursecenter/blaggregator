@@ -48,6 +48,9 @@ Added a `seed_dev_data` management command, which creates fake users, blogs and
 posts for local development. It only runs with `DJANGO_DEBUG` set, and never on
 production or staging.
 
+Added a "Log in as the dev user" button to the login page, for local
+development.
+
 - [#197] `/profile/` is now the default landing page after login, to help new
   and returning users discover features.
 
