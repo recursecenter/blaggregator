@@ -39,6 +39,11 @@ missing a migration.
 Multiple fixes to the Docker-based development setup. CI now builds the image
 and runs the tests in it, so this doesn't silently break.
 
+The app and the tests no longer need Recurse Center credentials
+(`HS_PERSONAL_TOKEN`, `SOCIAL_AUTH_HS_KEY`, `SOCIAL_AUTH_HS_SECRET`) to run
+locally. They are still required in production and staging, where a missing one
+is a startup error.
+
 - [#197] `/profile/` is now the default landing page after login, to help new
   and returning users discover features.
 

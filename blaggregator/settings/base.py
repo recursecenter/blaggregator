@@ -1,10 +1,32 @@
 import os
 
+from django.core.exceptions import ImproperlyConfigured
+
 SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 
 # True: heroku config:set DJANGO_DEBUG=True
 # False: heroku config:unset DJANGO_DEBUG
 DEBUG = "DJANGO_DEBUG" in os.environ
+
+# Production and staging set these (see settings/__init__.py)
+DEPLOYED = "PROD" in os.environ or "STAGING" in os.environ
+
+
+def recurse_credential(name):
+    """Get a Recurse Center API credential from the environment.
+
+    These are only required on deployed servers.  Elsewhere, a missing one
+    becomes an empty string, so the app and the tests work without credentials
+    (but logging in via Recurse Center's OAuth, or fetching details from their
+    API, won't).
+
+    """
+    if name in os.environ:
+        return os.environ[name]
+    if DEPLOYED:
+        raise ImproperlyConfigured("Environment variable {} is required".format(name))
+    return ""
+
 
 STATIC_URL = "/static/"
 
@@ -158,9 +180,9 @@ AUTHENTICATION_BACKENDS = (
 )
 
 LOGIN_URL = "/login/"
-HS_PERSONAL_TOKEN = os.environ["HS_PERSONAL_TOKEN"]
-SOCIAL_AUTH_HACKERSCHOOL_KEY = os.environ["SOCIAL_AUTH_HS_KEY"]
-SOCIAL_AUTH_HACKERSCHOOL_SECRET = os.environ["SOCIAL_AUTH_HS_SECRET"]
+HS_PERSONAL_TOKEN = recurse_credential("HS_PERSONAL_TOKEN")
+SOCIAL_AUTH_HACKERSCHOOL_KEY = recurse_credential("SOCIAL_AUTH_HS_KEY")
+SOCIAL_AUTH_HACKERSCHOOL_SECRET = recurse_credential("SOCIAL_AUTH_HS_SECRET")
 SOCIAL_AUTH_HACKERSCHOOL_LOGIN_URL = "/login"
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = "/profile/"
 SOCIAL_AUTH_LOGIN_ERROR_URL = "/login-error/"
