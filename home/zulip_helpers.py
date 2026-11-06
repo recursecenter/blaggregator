@@ -75,7 +75,7 @@ def create_summary(content, limit=480):
         if length + len(string) < limit:
             length = length + len(string)
             continue
-        stopat = stop - limit
+        stopat = length - limit
         string.replace_with(string[:stopat], "...")
         length = stop
     return QUOTE.format(md(str(summary)))

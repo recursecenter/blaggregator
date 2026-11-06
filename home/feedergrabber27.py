@@ -87,7 +87,7 @@ def feedergrabber(url):
                 continue
 
         # Post content
-        content = md(getattr(entry, "summary", ""))
+        content = getattr(entry, "summary", "")
         # Append
         post_links_and_titles.append((link, title, post_date, content))
     if len(post_links_and_titles) == 0:
