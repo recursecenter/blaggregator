@@ -1,7 +1,9 @@
 import datetime
 from functools import partial
+import re
 
 from django.test import TestCase
+from django.utils import feedgenerator
 from mock import patch
 
 from home.feedergrabber27 import feedergrabber
@@ -75,6 +77,13 @@ class FeedParserTestCase(TestCase):
             feed.feed["title"] = None
             for item in feed.items:
                 item["title"] = None
+        elif isinstance(feed, feedgenerator.Atom1Feed):
+            # The Atom generator can't write a None link, so strip the links
+            # and ids from the XML. Feedparser would use the id as a link.
+            text = feed.writeString("utf8")
+            text = re.sub(r"<link\b[^>]*/>", "", text)
+            text = re.sub(r"<id>.*?</id>", "", text)
+            return fake_response(text.encode("utf8"))()
         else:
             feed.feed["link"] = None
             feed.feed["id"] = None
