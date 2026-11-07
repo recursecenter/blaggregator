@@ -198,19 +198,34 @@ def get_pm_link(user, members):
     )
 
 
-def get_stream_messages(stream):
+def get_stream_messages(stream, sender=None, raw=False, limit=5000):
+    """Return the latest messages (oldest first) in a stream.
+
+    - sender: only return messages sent by this user (an email), like the ones
+      we sent ourselves -- use ZULIP_EMAIL for that.
+    - raw: return the markdown source of the messages in "content", instead of
+      the rendered HTML.
+    - limit: the maximum number of messages to return.
+
+    """
+    narrow = [{"operator": "stream", "operand": stream}]
+    if sender:
+        narrow.append({"operator": "sender", "operand": sender})
     request = {
-        "anchor": 10000000000000000,
-        "num_before": 5000,
+        "anchor": "newest",
+        "num_before": limit,
         "num_after": 0,
-        "narrow": json.dumps([{"operator": "stream", "operand": stream}]),
+        "narrow": json.dumps(narrow),
+        "apply_markdown": json.dumps(not raw),
     }
     try:
         log.debug("Fetching Zulip messages")
         response = requests.get(
             MESSAGES_URL, params=request, auth=(ZULIP_EMAIL, ZULIP_KEY)
         )
-        messages = response.json()["messages"]
+        data = response.json()
+        assert data["result"] == "success", data.get("msg", data)
+        messages = data["messages"]
     except Exception as e:
         log.error("Could not fetch Zulip messages: %s", e)
         messages = []

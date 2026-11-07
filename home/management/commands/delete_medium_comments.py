@@ -8,10 +8,9 @@ from django.core.management.base import BaseCommand
 # Local library
 from home.models import Post
 from home.utils import is_medium_comment
-from home.zulip_helpers import delete_message, get_stream_messages
+from home.zulip_helpers import ZULIP_EMAIL, delete_message, get_stream_messages
 
 log = logging.getLogger("blaggregator")
-EMAIL_PREFIX = "blaggregator-bot@"
 
 
 class Command(BaseCommand):
@@ -37,13 +36,11 @@ class Command(BaseCommand):
 
 
 def delete_messages_with_slugs(slugs, stream):
-    messages = get_stream_messages(stream)
-    bot_messages = [
-        message
-        for message in messages
-        if message["sender_email"].startswith(EMAIL_PREFIX)
-    ]
+    if not slugs:
+        return
+    # Only look at the announcements we sent ourselves
+    messages = get_stream_messages(stream, sender=ZULIP_EMAIL)
     slug_re = re.compile("/post/({})/view".format("|".join(slugs)))
-    for message in bot_messages:
+    for message in messages:
         if slug_re.search(message["content"]):
             delete_message(message["id"], "(medium comment deleted)")
