@@ -3,7 +3,7 @@ import json
 from django.test import SimpleTestCase
 from mock import Mock, patch
 
-from home.zulip_helpers import delete_message, get_stream_messages
+from home.zulip_helpers import delete_message, get_stream_messages, update_message_content
 
 
 def response(data):
@@ -63,8 +63,8 @@ class DeleteMessageTestCase(SimpleTestCase):
     def test_success(self, requests):
         requests.patch.return_value = response({"result": "success"})
         self.assertTrue(delete_message(5, "(gone)"))
-        params = requests.patch.call_args.kwargs["params"]
-        self.assertEqual({"content": "(gone)", "subject": "(gone)"}, params)
+        data = requests.patch.call_args.kwargs["data"]
+        self.assertEqual({"content": "(gone)", "subject": "(gone)"}, data)
         self.assertTrue(requests.patch.call_args.args[0].endswith("/5"))
 
     def test_success_is_not_logged_as_an_error(self, requests):
@@ -76,4 +76,19 @@ class DeleteMessageTestCase(SimpleTestCase):
         requests.patch.return_value = response({"result": "error", "msg": "Too old"})
         with self.assertLogs("blaggregator", level="ERROR") as logs:
             self.assertFalse(delete_message(5))
+        self.assertIn("Too old", logs.output[0])
+
+
+@patch("home.zulip_helpers.requests")
+class UpdateMessageContentTestCase(SimpleTestCase):
+    def test_only_the_content_is_changed(self, requests):
+        requests.patch.return_value = response({"result": "success"})
+        self.assertTrue(update_message_content(7, "new **content**"))
+        self.assertEqual({"content": "new **content**"}, requests.patch.call_args.kwargs["data"])
+        self.assertTrue(requests.patch.call_args.args[0].endswith("/7"))
+
+    def test_api_error(self, requests):
+        requests.patch.return_value = response({"result": "error", "msg": "Too old"})
+        with self.assertLogs("blaggregator", level="ERROR") as logs:
+            self.assertFalse(update_message_content(7, "new"))
         self.assertIn("Too old", logs.output[0])

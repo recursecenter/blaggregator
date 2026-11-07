@@ -121,20 +121,27 @@ def create_summary(content, limit=480):
     return quote(sanitize_markdown(md(str(summary))))
 
 
-def delete_message(message_id, content="(deleted)"):
-    """Replace the content and topic of a message. Return True if it worked."""
+def _edit_message(message_id, **fields):
+    """Edit a message on Zulip. Return True if it worked."""
     message_url = "{}/{}".format(MESSAGES_URL, message_id)
-    params = {"content": content, "subject": content}
     try:
-        response = requests.patch(
-            message_url, params=params, auth=(ZULIP_EMAIL, ZULIP_KEY)
-        )
+        response = requests.patch(message_url, data=fields, auth=(ZULIP_EMAIL, ZULIP_KEY))
         result = response.json()
         assert result["result"] == "success", result.get("msg", result)
     except Exception as e:
-        log.error("Could not delete Zulip message %s: %s", message_id, e)
+        log.error("Could not edit Zulip message %s: %s", message_id, e)
         return False
     return True
+
+
+def delete_message(message_id, content="(deleted)"):
+    """Replace the content and topic of a message. Return True if it worked."""
+    return _edit_message(message_id, content=content, subject=content)
+
+
+def update_message_content(message_id, content):
+    """Replace the content of a message. Return True if it worked."""
+    return _edit_message(message_id, content=content)
 
 
 def get_author_zulip_ids(posts):
