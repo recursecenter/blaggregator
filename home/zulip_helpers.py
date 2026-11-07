@@ -122,15 +122,19 @@ def create_summary(content, limit=480):
 
 
 def delete_message(message_id, content="(deleted)"):
+    """Replace the content and topic of a message. Return True if it worked."""
     message_url = "{}/{}".format(MESSAGES_URL, message_id)
     params = {"content": content, "subject": content}
     try:
         response = requests.patch(
             message_url, params=params, auth=(ZULIP_EMAIL, ZULIP_KEY)
         )
-        assert response["result"] == "success"
+        result = response.json()
+        assert result["result"] == "success", result.get("msg", result)
     except Exception as e:
         log.error("Could not delete Zulip message %s: %s", message_id, e)
+        return False
+    return True
 
 
 def get_author_zulip_ids(posts):
