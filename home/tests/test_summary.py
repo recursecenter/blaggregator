@@ -73,6 +73,16 @@ class ZulipSummaryTestCase(TransactionTestCase):
     def test_image_only_paragraph_gives_empty_summary(self):
         self.assertEqual("", create_summary("<p><img src='http://x/y.png'></p>"))
 
+    def test_empty_paragraphs_are_skipped(self):
+        for first in ["<p></p>", "<p> \n </p>", "<p><img src='http://x/y.png'></p>"]:
+            with self.subTest(first=first):
+                content = first + "<p>Second para</p><p>Third</p>"
+                self.assertEqual(self.quote("Second para"), create_summary(content))
+
+    def test_whitespace_only_content_gives_empty_summary(self):
+        self.assertEqual("", create_summary("  \n "))
+        self.assertEqual("", create_summary("<p> </p><p>\n</p>"))
+
     def test_truncates_long_text_without_tags(self):
         actual = create_summary("<p>" + "x" * 600 + "</p>", 60)
         self.assertEqual(self.quote("x" * 60 + "..."), actual)

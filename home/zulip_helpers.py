@@ -88,7 +88,8 @@ def quote(text):
 
 
 def create_summary(content, limit=480):
-    """From the contents of the first paragraph (or the whole content if no <p> tag),
+    """From the contents of the first paragraph with text (or the whole content if
+    there is none),
     extract text up to a length of limit, preserving HTML tags.
     If nonempty, the returned value is a string formatted as markdown and surrounded by
     ```quote
@@ -100,8 +101,9 @@ def create_summary(content, limit=480):
     if "<" not in content and ESCAPED_TAG.search(content):
         content = html.unescape(content)
     soup = BeautifulSoup(content, "html.parser")
-    summary = soup.p if soup.p else soup
-    if not summary.text:
+    # Skip paragraphs with no text, like the ones that only have an image
+    summary = next((p for p in soup.find_all("p") if p.get_text().strip()), soup)
+    if not summary.get_text().strip():
         return ""
     if len(summary.text) <= limit:
         return quote(sanitize_markdown(md(str(summary))))
