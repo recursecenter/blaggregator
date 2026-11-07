@@ -21,7 +21,11 @@ ZULIP_EMAIL = os.environ.get("ZULIP_EMAIL")
 MESSAGES_URL = "https://recurse.zulipchat.com/api/v1/messages"
 MEMBERS_URL = "https://recurse.zulipchat.com/api/v1/users"
 ANNOUNCE_MESSAGE = "{} has a new blog post: [{}]({})"
-QUOTE = "\n```quote\n{}\n```"
+MIN_FENCE = 3
+# Zulip mentions look like @**name**, @_**name** (silent) or @*group*
+MENTION = re.compile(r"(?<!\\)@_?(\*{1,2})([^*\n]+)\1")
+MENTION_START = re.compile(r"@(?=[*_])")
+ZWSP = "\u200b"
 ESCAPED_TAG = re.compile(r"&lt;/?[a-zA-Z]")
 log = logging.getLogger("blaggregator")
 
@@ -56,12 +60,40 @@ def announce_posts(posts, debug=True):
         send_message_zulip(to, subject, content, type_="stream")
 
 
+def sanitize_markdown(text):
+    """Make markdown made from untrusted HTML safe to post inside a quote block.
+
+    Zulip renders markdown inside quote blocks, so we remove anything that
+    could notify people or break out of the block:
+
+    - mentions (@**all**, @**name**, @_**name**, @*group*) are reduced to plain
+      text. markdownify escapes literal asterisks, but '@<b>all</b>' becomes
+      '@**all**', which would notify everyone.
+
+    """
+    text = MENTION.sub(r"@\2", text)
+    return MENTION_START.sub("@" + ZWSP, text)
+
+
+def quote(text):
+    """Wrap text in a Zulip quote block.
+
+    The fence is longer than any run of backticks in the text, so that code
+    blocks or backticks in the text cannot close the quote block early.
+
+    """
+    longest = max((len(run) for run in re.findall("`+", text)), default=0)
+    fence = "`" * max(MIN_FENCE, longest + 1)
+    return f"\n{fence}quote\n{text}\n{fence}"
+
+
 def create_summary(content, limit=480):
     """From the contents of the first paragraph (or the whole content if no <p> tag),
     extract text up to a length of limit, preserving HTML tags.
     If nonempty, the returned value is a string formatted as markdown and surrounded by
     ```quote
     ```
+    (the fence gets longer if the content has long runs of backticks)
     """
     # Some feeds escape their HTML twice (e.g., inside CDATA). But if there are
     # real tags, any "&lt;div&gt;" is text that talks about a tag; keep it.
@@ -72,7 +104,7 @@ def create_summary(content, limit=480):
     if not summary.text:
         return ""
     if len(summary.text) <= limit:
-        return QUOTE.format(md(str(summary)))
+        return quote(sanitize_markdown(md(str(summary))))
     length = 0
     for string in summary.strings:
         if length >= limit:
@@ -84,7 +116,7 @@ def create_summary(content, limit=480):
         stopat = limit - length
         string.replace_with(string[:stopat], "...")
         length = limit
-    return QUOTE.format(md(str(summary)))
+    return quote(sanitize_markdown(md(str(summary))))
 
 
 def delete_message(message_id, content="(deleted)"):

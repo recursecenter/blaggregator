@@ -1,4 +1,5 @@
 import feedparser
+import re
 from django.test import TransactionTestCase
 from home.zulip_helpers import create_summary
 
@@ -137,3 +138,73 @@ class FeedparserContentTestCase(TransactionTestCase):
         feed = self.ATOM.format("", "Tom &amp; Jerry")
         self.assertEqual(self.quote("Tom & Jerry"), self.summary(feed))
 
+
+class ZulipSummarySanitizeTestCase(TransactionTestCase):
+    """Zulip renders markdown inside quote blocks, so a blog post must not be
+    able to notify people (or whole streams) through its summary."""
+
+    # What Zulip treats as a (non-silent) mention in markdown
+    MENTION = re.compile(r"(?<!\\)@(_?)\*{1,2}[^*\n]+(?<!\\)\*{1,2}")
+
+    def assertNoMention(self, content, limit=480):
+        summary = create_summary(content, limit)
+        self.assertNotRegex(summary, self.MENTION, summary)
+
+    def test_wildcard_mentions_are_escaped(self):
+        for name in ["all", "everyone", "channel", "stream", "topic"]:
+            with self.subTest(name=name):
+                self.assertNoMention(f"<p>Hey @**{name}** look</p>")
+
+    def test_user_mentions_are_escaped(self):
+        self.assertNoMention("<p>Hi @**Some Person**</p>")
+
+    def test_silent_mentions_are_escaped(self):
+        self.assertNoMention("<p>Hi @_**Some Person**</p>")
+
+    def test_user_group_mentions_are_escaped(self):
+        self.assertNoMention("<p>Hi @*some-group*</p>")
+
+    def test_mention_inside_inline_tag(self):
+        self.assertNoMention("<p>hi <b>@**all**</b></p>")
+
+    def test_mention_built_from_inline_tags(self):
+        # '@' followed by <b>all</b> would turn into '@**all**' in markdown
+        self.assertNoMention("<p>@<b>all</b></p>")
+        self.assertNoMention("<p>@<strong>channel</strong></p>")
+        self.assertNoMention("<p>@_<b>Some Person</b></p>")
+
+    def test_mention_in_content_without_paragraph(self):
+        self.assertNoMention("Hey @**all** and <b>@**channel**</b>")
+
+    def test_mention_in_escaped_html(self):
+        self.assertNoMention("&lt;p&gt;Hey @**all**&lt;/p&gt;")
+
+    def test_mention_in_truncated_content(self):
+        self.assertNoMention("<p>@**all** " + "word " * 100 + "</p>", 60)
+
+    def test_plain_at_words_are_untouched(self):
+        # Without the markdown syntax these are not mentions in Zulip
+        self.assertEqual(
+            "\n```quote\n@all @channel and me@example.com\n```",
+            create_summary("<p>@all @channel and me@example.com</p>"),
+        )
+
+    def test_mentions_are_reduced_to_plain_text(self):
+        self.assertEqual(
+            "\n```quote\nHey @all and @Some Person\n```",
+            create_summary("<p>Hey @<b>all</b> and @<b>Some Person</b></p>"),
+        )
+
+    def test_code_fences_cannot_close_the_quote_block(self):
+        for content, fence in [
+            ("<p>text ``` more @**all**</p>", "````"),
+            ("<p>text\n```\n@<b>all</b></p>", "````"),
+            ("<pre>a\nb</pre>", "````"),
+            ("<p>four ```` backticks</p>", "`````"),
+            ("<code>`````</code>", "```````"),
+        ]:
+            with self.subTest(content=content):
+                summary = create_summary(content)
+                self.assertTrue(summary.startswith(f"\n{fence}quote\n"), summary)
+                self.assertTrue(summary.endswith(f"\n{fence}"), summary)
+                self.assertNoMention(content)
